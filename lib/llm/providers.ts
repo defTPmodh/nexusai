@@ -29,8 +29,8 @@ const openrouterClient = new OpenAI({
 // Note: Remove :free suffix if you want to use paid models or configure privacy settings
 // For free models, configure privacy at: https://openrouter.ai/settings/privacy
 const OPENROUTER_MODELS: Record<string, string> = {
-  // NVIDIA Nemotron Nano 12B 2 VL
-  'nemotron-nano-12b-2-vl': 'nvidia/nemotron-nano-12b-v2-vl',
+  // Google Gemini 2.0 Flash Exp (Free)
+  'gemini-2.0-flash-exp:free': 'google/gemini-2.0-flash-exp:free',
   // DeepSeek V3.1
   'deepseek-v3.1': 'deepseek/deepseek-chat-v3.1',
   // OpenAI GPT-OSS-20B
@@ -41,9 +41,12 @@ const OPENROUTER_MODELS: Record<string, string> = {
 
 export async function callLLM(
   config: LLMConfig,
-  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>
+  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>,
+  retryCount: number = 0
 ): Promise<LLMResponse> {
   const startTime = Date.now();
+  const maxRetries = 2;
+  const retryDelay = 2000; // 2 seconds
 
   try {
     // All models route through OpenRouter
@@ -69,8 +72,24 @@ export async function callLLM(
     const statusCode = error.status || error.response?.status;
     const openrouterModel = OPENROUTER_MODELS[config.model] || config.model;
     
+    // Handle 429 Rate Limit errors with retry
+    if (statusCode === 429 && retryCount < maxRetries) {
+      console.log(`Rate limit hit, retrying in ${retryDelay}ms... (attempt ${retryCount + 1}/${maxRetries})`);
+      await new Promise(resolve => setTimeout(resolve, retryDelay * (retryCount + 1))); // Exponential backoff
+      return callLLM(config, messages, retryCount + 1);
+    }
+    
     if (statusCode === 400 && errorMsg.includes('not a valid model ID')) {
       throw new Error(`Invalid model ID: ${openrouterModel}. Check available models at https://openrouter.ai/models or use /api/find-models endpoint`);
+    }
+    
+    // Better error messages for common issues
+    if (statusCode === 429) {
+      throw new Error(`Rate limit exceeded. Please wait a moment and try again. The API provider (OpenRouter) is temporarily limiting requests.`);
+    }
+    
+    if (statusCode === 401 || statusCode === 403) {
+      throw new Error(`Authentication failed. Please check your API key configuration.`);
     }
     
     throw new Error(`LLM API error (${statusCode || 'unknown'}): ${errorMsg}`);

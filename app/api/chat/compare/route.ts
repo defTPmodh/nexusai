@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { message } = body;
+    const { message, modelIds } = body;
 
     if (!message) {
       return NextResponse.json({ error: 'Missing message' }, { status: 400 });
@@ -64,7 +64,13 @@ export async function POST(request: NextRequest) {
       .eq('can_use', true);
 
     const allowedModelIds = new Set((permissions || []).map((p: any) => p.model_id));
-    const availableModels = models.filter((m: any) => allowedModelIds.has(m.id));
+    let availableModels = models.filter((m: any) => allowedModelIds.has(m.id));
+
+    // Filter by requested modelIds if provided
+    if (modelIds && Array.isArray(modelIds) && modelIds.length > 0) {
+      const requestedIds = new Set(modelIds);
+      availableModels = availableModels.filter((m: any) => requestedIds.has(m.id));
+    }
 
     if (availableModels.length === 0) {
       return NextResponse.json({ error: 'No models available for your role' }, { status: 403 });

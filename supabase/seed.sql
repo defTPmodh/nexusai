@@ -1,7 +1,7 @@
 -- Seed LLM Models with pricing
 INSERT INTO llm_models (provider, model_name, display_name, cost_per_1k_input_tokens, cost_per_1k_output_tokens, max_tokens) VALUES
--- NVIDIA (adjust model_name to match actual API endpoint)
-('nvidia', 'nemotron-nano-12b-2-vl', 'NVIDIA Nemotron Nano 12B 2 VL', 0.0001, 0.0002, 4096),
+-- Google Gemini 2.0 Flash Exp (Free)
+('google', 'gemini-2.0-flash-exp:free', 'Google Gemini 2.0 Flash Exp (Free)', 0, 0, 8192),
 -- DeepSeek (model_name will be mapped to 'deepseek-chat' in code)
 ('deepseek', 'deepseek-v3.1', 'DeepSeek V3.1', 0.00014, 0.00056, 16384),
 -- OpenAI GPT-OSS-20B

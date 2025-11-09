@@ -14,12 +14,35 @@ export async function GET(request: NextRequest) {
     // Get current user
     const { data: currentUser } = await supabase
       .from('users')
-      .select('id, team_id, email, name')
+      .select('id, team_id, email, name, role')
       .eq('auth0_id', session.user.sub)
       .single();
 
     if (!currentUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Check if user is admin or team owner (only owners/admins can view billing)
+    let isAdmin = currentUser.role === 'admin';
+    
+    // If not admin, check if user is a team owner
+    if (!isAdmin && currentUser.team_id) {
+      const { data: teamMember } = await supabase
+        .from('team_members')
+        .select('role')
+        .eq('team_id', currentUser.team_id)
+        .eq('user_id', currentUser.id)
+        .single();
+      
+      isAdmin = teamMember?.role === 'owner';
+    }
+
+    // If user is not admin/owner and is on a team, deny access
+    if (!isAdmin && currentUser.team_id) {
+      return NextResponse.json({ 
+        error: 'Access denied. Only team owners and admins can view billing information.',
+        accessDenied: true
+      }, { status: 403 });
     }
 
     // Get subscription (team or individual)

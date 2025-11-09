@@ -11,10 +11,10 @@ export async function GET(request: NextRequest) {
 
     const supabase = getSupabaseAdmin();
 
-    // Get user and check if admin
+    // Get user and check if admin or team owner
     let { data: user, error: userError } = await supabase
       .from('users')
-      .select('id, role')
+      .select('id, role, team_id')
       .eq('auth0_id', session.user.sub)
       .single();
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
           name: session.user.name || null,
           role: (count || 0) === 0 ? 'admin' : 'employee',
         })
-        .select('id, role')
+        .select('id, role, team_id')
         .single();
 
       if (createError || !newUser) {
@@ -48,10 +48,25 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    if (user.role !== 'admin') {
-      console.error('User role check failed:', { userId: user.id, role: user.role, auth0Id: session.user.sub });
+    // Check if user is admin or team owner
+    let isAdmin = user.role === 'admin';
+    
+    // If not admin, check if user is a team owner
+    if (!isAdmin && user.team_id) {
+      const { data: teamMember } = await supabase
+        .from('team_members')
+        .select('role')
+        .eq('team_id', user.team_id)
+        .eq('user_id', user.id)
+        .single();
+      
+      isAdmin = teamMember?.role === 'owner';
+    }
+
+    if (!isAdmin) {
+      console.error('User role check failed:', { userId: user.id, role: user.role, auth0Id: session.user.sub, teamId: user.team_id });
       return NextResponse.json({ 
-        error: 'Admin access required',
+        error: 'Admin access required. Team owners automatically have admin access.',
         debug: { userId: user.id, role: user.role }
       }, { status: 403 });
     }
@@ -81,10 +96,10 @@ export async function PUT(request: NextRequest) {
 
     const supabase = getSupabaseAdmin();
 
-    // Get user and check if admin
+    // Get user and check if admin or team owner
     let { data: user, error: userError } = await supabase
       .from('users')
-      .select('id, role')
+      .select('id, role, team_id')
       .eq('auth0_id', session.user.sub)
       .single();
 
@@ -103,7 +118,7 @@ export async function PUT(request: NextRequest) {
           name: session.user.name || null,
           role: (count || 0) === 0 ? 'admin' : 'employee',
         })
-        .select('id, role')
+        .select('id, role, team_id')
         .single();
 
       if (createError || !newUser) {
@@ -118,10 +133,25 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    if (user.role !== 'admin') {
-      console.error('User role check failed:', { userId: user.id, role: user.role, auth0Id: session.user.sub });
+    // Check if user is admin or team owner
+    let isAdmin = user.role === 'admin';
+    
+    // If not admin, check if user is a team owner
+    if (!isAdmin && user.team_id) {
+      const { data: teamMember } = await supabase
+        .from('team_members')
+        .select('role')
+        .eq('team_id', user.team_id)
+        .eq('user_id', user.id)
+        .single();
+      
+      isAdmin = teamMember?.role === 'owner';
+    }
+
+    if (!isAdmin) {
+      console.error('User role check failed:', { userId: user.id, role: user.role, auth0Id: session.user.sub, teamId: user.team_id });
       return NextResponse.json({ 
-        error: 'Admin access required',
+        error: 'Admin access required. Team owners automatically have admin access.',
         debug: { userId: user.id, role: user.role }
       }, { status: 403 });
     }

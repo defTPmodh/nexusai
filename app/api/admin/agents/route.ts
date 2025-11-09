@@ -11,15 +11,34 @@ export async function GET(request: NextRequest) {
 
     const supabase = getSupabaseAdmin();
 
-    // Get user and check if admin
+    // Get user and check if admin or team owner
     const { data: user } = await supabase
       .from('users')
-      .select('id, role')
+      .select('id, role, team_id')
       .eq('auth0_id', session.user.sub)
       .single();
 
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Check if user is admin or team owner
+    let isAdmin = user.role === 'admin';
+    
+    // If not admin, check if user is a team owner
+    if (!isAdmin && user.team_id) {
+      const { data: teamMember } = await supabase
+        .from('team_members')
+        .select('role')
+        .eq('team_id', user.team_id)
+        .eq('user_id', user.id)
+        .single();
+      
+      isAdmin = teamMember?.role === 'owner';
+    }
+
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Admin access required. Team owners automatically have admin access.' }, { status: 403 });
     }
 
     const { data, error } = await supabase

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Users, UserPlus, Mail, Crown, Shield, User as UserIcon, Trash2, Copy, Check, DollarSign, TrendingUp, LogOut } from 'lucide-react';
+import { Users, UserPlus, Mail, Crown, Shield, User as UserIcon, Trash2, Copy, Check, DollarSign, TrendingUp, LogOut, ArrowUp } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -130,6 +130,64 @@ export default function TeamPage() {
       }
     } catch (error: any) {
       alert(`Failed to remove member: ${error.message}`);
+    }
+  };
+
+  const handlePromoteMember = async (memberId: string, memberName: string) => {
+    if (!confirm(`Are you sure you want to promote ${memberName} to admin? They will have full admin access.`)) return;
+    if (!team) return;
+
+    try {
+      const res = await fetch(`/api/teams/members?teamId=${team.id}&memberId=${memberId}`, {
+        method: 'PUT',
+      });
+
+      if (res.ok) {
+        alert('Member promoted to admin successfully!');
+        fetchTeamData();
+      } else {
+        const data = await res.json();
+        alert(`Failed to promote member: ${data.error}`);
+      }
+    } catch (error: any) {
+      alert(`Failed to promote member: ${error.message}`);
+    }
+  };
+
+  const handleCreateTeam = async () => {
+    if (!teamName.trim()) {
+      alert('Please enter a team name');
+      return;
+    }
+
+    setCreatingTeam(true);
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          planName: 'premium',
+          teamName: teamName.trim()
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Team created successfully! Redirecting...');
+        window.location.href = '/admin/team';
+      } else {
+        if (data.error?.includes('plan') || data.error?.includes('subscription')) {
+          alert('Please purchase a premium plan first. Redirecting to pricing...');
+          window.location.href = '/pricing';
+        } else {
+          alert(`Failed to create team: ${data.error}`);
+        }
+      }
+    } catch (error: any) {
+      alert(`Failed to create team: ${error.message}`);
+    } finally {
+      setCreatingTeam(false);
     }
   };
 
@@ -430,15 +488,28 @@ export default function TeamPage() {
                     </div>
                   </div>
                   {canManage && member.role !== 'owner' && (
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleRemoveMember(member.id)}
-                      className="p-2 hover:bg-red-500/20 rounded-lg transition-colors border border-transparent hover:border-red-500/30"
-                      title="Remove member from team"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-400" />
-                    </motion.button>
+                    <div className="flex items-center gap-2">
+                      {member.user.role !== 'admin' && (
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => handlePromoteMember(member.id, member.user.name || member.user.email)}
+                          className="p-2 hover:bg-green-500/20 rounded-lg transition-colors border border-transparent hover:border-green-500/30"
+                          title="Promote to admin"
+                        >
+                          <ArrowUp className="w-4 h-4 text-green-400" />
+                        </motion.button>
+                      )}
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleRemoveMember(member.id)}
+                        className="p-2 hover:bg-red-500/20 rounded-lg transition-colors border border-transparent hover:border-red-500/30"
+                        title="Remove member from team"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-400" />
+                      </motion.button>
+                    </div>
                   )}
                 </motion.div>
               ))}

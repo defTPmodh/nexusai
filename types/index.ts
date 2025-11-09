@@ -1,5 +1,5 @@
 export type UserRole = 'employee' | 'manager' | 'admin';
-export type LLMProvider = 'openai' | 'nvidia' | 'deepseek' | 'minimax';
+export type LLMProvider = 'openai' | 'deepseek' | 'minimax' | 'google';
 export type DocumentStatus = 'processing' | 'completed' | 'failed';
 export type AgentExecutionStatus = 'running' | 'completed' | 'failed';
 export type LLMRequestStatus = 'success' | 'error';

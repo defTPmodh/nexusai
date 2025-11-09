@@ -49,6 +49,7 @@ export default function BillingPage() {
   const { user } = useUser();
   const [billing, setBilling] = useState<BillingData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -63,6 +64,13 @@ export default function BillingPage() {
       if (res.ok) {
         const data = await res.json();
         setBilling(data);
+        setAccessDenied(false);
+      } else {
+        const data = await res.json();
+        if (data.accessDenied || res.status === 403) {
+          setAccessDenied(true);
+          setBilling(null);
+        }
       }
     } catch (error) {
       console.error('Failed to fetch billing:', error);
@@ -111,22 +119,40 @@ export default function BillingPage() {
     );
   }
 
-  if (!billing) {
+  if (!billing || accessDenied) {
     return (
       <div className="h-screen flex bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#0a0a0f]">
         <Sidebar />
         <div className="flex-1 ml-64 flex items-center justify-center relative">
           {/* Grid Background */}
           <div className="absolute inset-0 bg-grid-pattern opacity-40"></div>
-          <div className="relative z-10 text-center">
-            <h2 className="text-2xl font-semibold gradient-text mb-4">No Billing Information</h2>
-            <p className="text-purple-200/70 mb-6">You don&apos;t have an active subscription</p>
-            <Link
-              href="/pricing"
-              className="inline-block px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-green-700 transition-all shadow-lg shadow-green-500/30"
-            >
-              View Plans
-            </Link>
+          <div className="relative z-10 text-center max-w-md px-6">
+            {accessDenied ? (
+              <>
+                <h2 className="text-2xl font-semibold gradient-text mb-4">Access Denied</h2>
+                <p className="text-purple-200/70 mb-6">
+                  Only team owners and admins can view billing information. 
+                  Contact your team owner to access billing details.
+                </p>
+                <Link
+                  href="/admin/team"
+                  className="inline-block px-6 py-3 bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-purple-500/50 transition-all glow-purple"
+                >
+                  Go to Team Page
+                </Link>
+              </>
+            ) : (
+              <>
+                <h2 className="text-2xl font-semibold gradient-text mb-4">No Billing Information</h2>
+                <p className="text-purple-200/70 mb-6">You don&apos;t have an active subscription</p>
+                <Link
+                  href="/pricing"
+                  className="inline-block px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-green-700 transition-all shadow-lg shadow-green-500/30"
+                >
+                  View Plans
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

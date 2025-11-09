@@ -102,10 +102,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to add owner to team' }, { status: 500 });
     }
 
-    // Update user's team_id
+    // Update user's team_id and set role to admin (team owners are admins)
     await supabase
       .from('users')
-      .update({ team_id: team.id })
+      .update({ team_id: team.id, role: 'admin' })
       .eq('id', (currentUser as any).id);
 
     // Create subscription

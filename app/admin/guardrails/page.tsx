@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Sidebar from '@/components/Sidebar';
 import { motion } from 'framer-motion';
-import { Shield, Save, Check, X, AlertTriangle, Eye, Ban, MessageSquare, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import { Shield, Save, Check, X, AlertTriangle, Eye, Ban, MessageSquare } from 'lucide-react';
 
 interface Guardrail {
   id: string;
@@ -138,8 +137,8 @@ export default function GuardrailsPage() {
       } else {
         let errorMsg = `Failed to save: ${responseData.error || 'Unknown error'}`;
         if (responseData.debug) {
-          errorMsg += `\n\nDebug info: Your role is '${responseData.debug.role}'. You need 'admin' role.`;
-          errorMsg += `\n\nTo promote yourself to admin, visit: /api/admin/promote`;
+          errorMsg += `\n\nDebug info: Your role is '${responseData.debug.role}'. You need to be a team owner to access admin features.`;
+          errorMsg += `\n\nTeam owners automatically have admin access. Create a team or contact your team owner.`;
         }
         alert(errorMsg);
       }
@@ -227,15 +226,11 @@ export default function GuardrailsPage() {
                     <h3 className="text-lg font-semibold text-red-400 mb-2">Admin Access Required</h3>
                     <p className="text-red-300 mb-4">
                       Your current role is: <span className="font-mono font-semibold">{userRole}</span>. 
-                      You need the <span className="font-mono font-semibold">admin</span> role to configure guardrails.
+                      You need to be a team owner to access admin features like guardrails. Team owners automatically have admin access.
                     </p>
-                    <Link
-                      href="/admin/promote"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors"
-                    >
-                      Promote to Admin
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    <p className="text-red-200/70 text-sm">
+                      Create a team or contact your team owner to get admin access.
+                    </p>
                   </div>
                 </div>
               </motion.div>

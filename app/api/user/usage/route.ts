@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Determine plan (team plan takes precedence)
-    const plan = teamPlan || userPlan;
+    const plan = (Array.isArray(teamPlan) ? teamPlan[0] : teamPlan) || (Array.isArray(userPlan) ? userPlan[0] : userPlan);
     const planName = plan?.name || 'free';
     
     // Calculate token limit:
