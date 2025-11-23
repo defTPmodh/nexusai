@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Clock3,
   Sparkle,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface UserProfile {
@@ -46,6 +47,7 @@ export default function ProfilePage() {
     department: '',
     position: '',
     bio: '',
+    avatar_url: '',
   });
 
   const planName = useMemo(() => {
@@ -53,6 +55,13 @@ export default function ProfilePage() {
     if (typeof prefPlan === 'string' && prefPlan.length > 0) return prefPlan;
     return 'Premium';
   }, [profile]);
+
+  const avatarSource = useMemo(
+    () => (formData.avatar_url || profile?.avatar_url || '').trim(),
+    [formData.avatar_url, profile?.avatar_url]
+  );
+
+  const hasAvatar = avatarSource.length > 0;
 
   const initials = useMemo(() => {
     const source = profile?.name || auth0User?.name || profile?.email || auth0User?.email;
@@ -85,6 +94,7 @@ export default function ProfilePage() {
           department: data.department || '',
           position: data.position || '',
           bio: data.bio || '',
+          avatar_url: data.avatar_url || '',
         });
       }
     } catch (error) {
@@ -172,8 +182,15 @@ export default function ProfilePage() {
               className="relative"
             >
               <div className="absolute inset-0 blur-xl bg-gradient-to-br from-emerald-400/40 via-cyan-500/30 to-violet-500/30 animate-pulse" />
-              <div className="relative h-14 w-14 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl flex items-center justify-center text-white font-semibold text-lg shadow-lg shadow-emerald-500/30">
-                {initials}
+              <div className="relative h-14 w-14 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden flex items-center justify-center text-white font-semibold text-lg shadow-lg shadow-emerald-500/30">
+                {hasAvatar ? (
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${avatarSource})` }}
+                  />
+                ) : (
+                  initials
+                )}
               </div>
             </motion.div>
           </div>
@@ -193,8 +210,15 @@ export default function ProfilePage() {
                 <div className="lg:col-span-2 space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-500 p-[2px]">
-                      <div className="h-full w-full rounded-2xl bg-black/70 backdrop-blur-xl border border-white/10 flex items-center justify-center text-2xl font-semibold text-white">
-                        {initials}
+                      <div className="h-full w-full rounded-2xl bg-black/70 backdrop-blur-xl border border-white/10 overflow-hidden flex items-center justify-center text-2xl font-semibold text-white">
+                        {hasAvatar ? (
+                          <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: `url(${avatarSource})` }}
+                          />
+                        ) : (
+                          initials
+                        )}
                       </div>
                       <span className="absolute -right-1 -bottom-1 h-6 w-6 rounded-full bg-emerald-500/90 text-black text-xs font-bold flex items-center justify-center shadow-lg shadow-emerald-500/40">
                         <Sparkle className="w-3 h-3" />
@@ -301,6 +325,33 @@ export default function ProfilePage() {
               </div>
 
               <div className="mt-6 grid gap-6 md:grid-cols-2">
+                {/* Avatar URL */}
+                <div className="md:col-span-2">
+                  <label className="block text-xs uppercase tracking-[0.2em] text-gray-400 mb-2 flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4" />
+                    Profile Photo URL
+                  </label>
+                  <div className="flex items-center gap-4">
+                    <div className="relative h-14 w-14 rounded-xl border border-white/10 bg-white/5 overflow-hidden flex items-center justify-center">
+                      {hasAvatar ? (
+                        <div
+                          className="absolute inset-0 h-full w-full rounded-xl bg-cover bg-center"
+                          style={{ backgroundImage: `url(${avatarSource})` }}
+                        />
+                      ) : (
+                        <ImageIcon className="w-5 h-5 text-gray-400" />
+                      )}
+                    </div>
+                    <input
+                      type="url"
+                      value={formData.avatar_url}
+                      onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
+                      placeholder="https://images.example.com/your-photo.jpg"
+                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-400/60"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Paste a direct image URL to personalize your workspace presence.</p>
+                </div>
                 {/* Email (read-only) */}
                 <div className="md:col-span-2">
                   <label className="block text-xs uppercase tracking-[0.2em] text-gray-400 mb-2 flex items-center gap-2">
