@@ -1,13 +1,9 @@
--- Seed LLM Models with pricing
+-- Seed LLM Models with pricing (allowlisted OpenRouter options only)
 INSERT INTO llm_models (provider, model_name, display_name, cost_per_1k_input_tokens, cost_per_1k_output_tokens, max_tokens) VALUES
--- Google Gemini 2.0 Flash Exp (Free)
-('google', 'gemini-2.0-flash-exp:free', 'Google Gemini 2.0 Flash Exp (Free)', 0, 0, 8192),
--- DeepSeek (model_name will be mapped to 'deepseek-chat' in code)
-('deepseek', 'deepseek-v3.1', 'DeepSeek V3.1', 0.00014, 0.00056, 16384),
--- OpenAI GPT-OSS-20B
-('openai', 'gpt-oss-20b', 'OpenAI GPT-OSS-20B', 0.0005, 0.0015, 4096),
--- Minimax M2
-('minimax', 'minimax-m2:free', 'Minimax M2', 0, 0, 32768)
+-- xAI Grok 4.1 Fast (Free)
+('xai', 'x-ai/grok-4.1-fast:free', 'Grok 4.1 Fast (Free)', 0, 0, 32768),
+-- OpenAI GPT-OSS-20B (Free)
+('openai', 'openai/gpt-oss-20b:free', 'GPT-OSS-20B (Free)', 0, 0, 4096)
 ON CONFLICT (provider, model_name) DO NOTHING;
 
 -- Seed Model Permissions
@@ -23,4 +19,3 @@ ON CONFLICT (model_id, role) DO NOTHING;
 INSERT INTO model_permissions (model_id, role, can_use)
 SELECT id, 'admin', true FROM llm_models
 ON CONFLICT (model_id, role) DO NOTHING;
-
