@@ -13,11 +13,8 @@ export async function GET() {
   });
 
   const testModels = [
-    'meta/nemotron-70b-instruct',
-    'nvidia/nemotron-70b',
-    'nvidia/nemotron-70b-v1',
-    'deepseek/deepseek-chat',
-    'openai/gpt-3.5-turbo',
+    'x-ai/grok-4.1-fast:free',
+    'openai/gpt-oss-20b:free',
   ];
 
   const results: Record<string, any> = {};

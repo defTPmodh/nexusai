@@ -168,6 +168,8 @@ export default function ChatPage() {
   }, [multiModelMode]);
 
   const fetchModels = async () => {
+    const allowedModelOrder = ['x-ai/grok-4.1-fast:free', 'openai/gpt-oss-20b:free'];
+
     try {
       const res = await fetch('/api/models');
       if (!res.ok) {
@@ -176,28 +178,19 @@ export default function ChatPage() {
       }
       const data = await res.json();
       if (Array.isArray(data)) {
-        // Sort models to put Gemini first for better visibility
         const sortedModels = [...data].sort((a, b) => {
-          const aIsGemini = a.provider === 'google' && a.model_name.includes('gemini');
-          const bIsGemini = b.provider === 'google' && b.model_name.includes('gemini');
-          if (aIsGemini && !bIsGemini) return -1;
-          if (!aIsGemini && bIsGemini) return 1;
-          return 0;
+          const aIndex = allowedModelOrder.indexOf(a.model_name);
+          const bIndex = allowedModelOrder.indexOf(b.model_name);
+
+          const safeAIndex = aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex;
+          const safeBIndex = bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex;
+
+          return safeAIndex - safeBIndex;
         });
         setModels(sortedModels);
         if (sortedModels.length > 0) {
-          // Select Gemini by default if available, otherwise first model
-          const geminiModel = sortedModels.find((m: LLMModel) => m.provider === 'google' && m.model_name.includes('gemini'));
-          setSelectedModel(geminiModel?.id || sortedModels[0].id);
-          // Enable Gemini and first 2 other models by default for multi-chat
-          const defaultEnabled = new Set<string>();
-          if (geminiModel) {
-            defaultEnabled.add(geminiModel.id);
-          }
-          sortedModels.filter((m: LLMModel) => m.id !== geminiModel?.id).slice(0, 2).forEach((m: LLMModel) => {
-            defaultEnabled.add(m.id);
-          });
-          setEnabledModels(defaultEnabled);
+          setSelectedModel(sortedModels[0].id);
+          setEnabledModels(new Set(sortedModels.map((m: LLMModel) => m.id)));
         }
       } else {
         console.error('Models API did not return an array:', data);

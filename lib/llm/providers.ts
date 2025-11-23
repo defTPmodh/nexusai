@@ -25,19 +25,20 @@ const openrouterClient = new OpenAI({
   },
 });
 
-// Model name mapping for OpenRouter
-// Note: Remove :free suffix if you want to use paid models or configure privacy settings
-// For free models, configure privacy at: https://openrouter.ai/settings/privacy
-const OPENROUTER_MODELS: Record<string, string> = {
-  // Google Gemini 2.0 Flash Exp (Free)
-  'gemini-2.0-flash-exp:free': 'google/gemini-2.0-flash-exp:free',
-  // DeepSeek V3.1
-  'deepseek-v3.1': 'deepseek/deepseek-chat-v3.1',
-  // OpenAI GPT-OSS-20B
-  'gpt-oss-20b': 'openai/gpt-oss-20b',
-  // Minimax M2 Free
-  'minimax-m2:free': 'minimax/minimax-m2:free',
+export const ALLOWED_MODELS: Record<string, { provider: LLMProvider; display: string; openrouterId: string }> = {
+  'x-ai/grok-4.1-fast:free': {
+    provider: 'xai',
+    display: 'Grok 4.1 Fast (Free)',
+    openrouterId: 'x-ai/grok-4.1-fast:free',
+  },
+  'openai/gpt-oss-20b:free': {
+    provider: 'openai',
+    display: 'GPT-OSS-20B (Free)',
+    openrouterId: 'openai/gpt-oss-20b:free',
+  },
 };
+
+export const ALLOWED_MODEL_IDS = Object.keys(ALLOWED_MODELS);
 
 export async function callLLM(
   config: LLMConfig,
@@ -49,8 +50,14 @@ export async function callLLM(
   const retryDelay = 2000; // 2 seconds
 
   try {
+    if (!ALLOWED_MODELS[config.model]) {
+      throw new Error(
+        `Unsupported model requested. Please choose one of: ${ALLOWED_MODEL_IDS.join(', ')}`
+      );
+    }
+
     // All models route through OpenRouter
-    const openrouterModel = OPENROUTER_MODELS[config.model] || config.model;
+    const openrouterModel = ALLOWED_MODELS[config.model].openrouterId;
 
     const response = await openrouterClient.chat.completions.create({
       model: openrouterModel,
@@ -70,7 +77,7 @@ export async function callLLM(
     // Provide more detailed error information
     const errorMsg = error.message || 'Unknown error';
     const statusCode = error.status || error.response?.status;
-    const openrouterModel = OPENROUTER_MODELS[config.model] || config.model;
+    const openrouterModel = ALLOWED_MODELS[config.model]?.openrouterId || config.model;
     
     // Handle 429 Rate Limit errors with retry
     if (statusCode === 429 && retryCount < maxRetries) {

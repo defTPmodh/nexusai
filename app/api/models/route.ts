@@ -1,6 +1,7 @@
 import { getSession } from '@auth0/nextjs-auth0';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase/client';
+import { ALLOWED_MODEL_IDS, ALLOWED_MODELS } from '@/lib/llm/providers';
 
 export async function GET(request: NextRequest) {
   try {
@@ -55,18 +56,39 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Filter to only return active models
+    // Filter to only return active models within the allowed OpenRouter set
+    const allowedIds = new Set(ALLOWED_MODEL_IDS);
     const availableModels = (models || [])
       .map((m: any) => m.llm_models)
-      .filter((m: any) => m && m.is_active);
+      .filter((m: any) => m && m.is_active && allowedIds.has(m.model_name))
+      .map((model: any) => ({
+        ...model,
+        provider: ALLOWED_MODELS[model.model_name]?.provider || model.provider,
+        display_name: ALLOWED_MODELS[model.model_name]?.display || model.display_name,
+      }));
+
+    // If Supabase doesn't yet have the allowlisted models, return a safe fallback payload
+    const fallbackModels = ALLOWED_MODEL_IDS.map((id) => ({
+      id,
+      provider: ALLOWED_MODELS[id]?.provider || 'openai',
+      model_name: id,
+      display_name: ALLOWED_MODELS[id]?.display || id,
+      cost_per_1k_input_tokens: 0,
+      cost_per_1k_output_tokens: 0,
+      max_tokens: null,
+      is_active: true,
+      created_at: new Date().toISOString(),
+    }));
+
+    const responseModels = availableModels.length > 0 ? availableModels : fallbackModels;
 
     // Debug logging
     if (process.env.NODE_ENV === 'development') {
       console.log('Models API - User role:', user.role);
       console.log('Models API - Found permissions:', models?.length || 0);
-      console.log('Models API - Available models:', availableModels.length);
-      console.log('Models API - Model IDs:', availableModels.map((m: any) => ({ id: m.id, name: m.display_name, provider: m.provider })));
-      
+      console.log('Models API - Available models:', responseModels.length);
+      console.log('Models API - Model IDs:', responseModels.map((m: any) => ({ id: m.id, name: m.display_name, provider: m.provider })));
+
       // Check if Minimax exists in database
       const { data: minimaxCheck } = await supabase
         .from('llm_models')
@@ -76,7 +98,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Ensure we always return an array
-    return NextResponse.json(Array.isArray(availableModels) ? availableModels : []);
+    return NextResponse.json(Array.isArray(responseModels) ? responseModels : []);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

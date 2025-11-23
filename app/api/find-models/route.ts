@@ -16,26 +16,10 @@ export async function GET() {
     },
   });
 
-  // Common model variations to test
+  // Only probe the allowlisted OpenRouter models
   const testModels = [
-    // NVIDIA variations
-    'meta/nemotron-70b-instruct',
-    'nvidia/nemotron-70b',
-    'nvidia/nemotron-70b-v1',
-    'nvidia/llama-3.1-nemotron-70b-instruct',
-    
-    // DeepSeek variations
-    'deepseek/deepseek-chat',
-    'deepseek/deepseek-reasoner',
-    'deepseek/deepseek-v2-chat',
-    
-    // OpenAI variations
-    'openai/gpt-3.5-turbo',
-    'openai/gpt-4',
-    
-    // Alternatives if above don't work
-    'anthropic/claude-3-haiku',
-    'google/gemini-pro',
+    'x-ai/grok-4.1-fast:free',
+    'openai/gpt-oss-20b:free',
   ];
 
   const results: Record<string, any> = {};
@@ -64,7 +48,7 @@ export async function GET() {
   return NextResponse.json({
     message: 'Tested OpenRouter models',
     results,
-    note: 'Use the model IDs marked as ✅ Available in lib/llm/providers.ts'
+    note: 'Only the allowlisted models in lib/llm/providers.ts are supported.'
   });
 }
 
