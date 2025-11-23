@@ -414,7 +414,7 @@ export default function ChatPage() {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 flex flex-col relative">
+      <div className="flex-1 ml-64 flex flex-col relative overflow-x-hidden">
         {/* Ambient Background */}
         <div className="absolute inset-0 bg-grid-pattern opacity-50"></div>
         <div className="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl" />
@@ -422,7 +422,8 @@ export default function ChatPage() {
 
         {/* Top Bar - Modern welcome and model selection */}
         <div className="relative z-10 px-6 pt-8">
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_20px_120px_-50px_rgba(16,185,129,0.45)]">
+          <div className="max-w-6xl mx-auto">
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_20px_120px_-50px_rgba(16,185,129,0.45)]">
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/15 via-cyan-500/10 to-purple-700/20" />
             <div
               className="absolute inset-0 opacity-40"
@@ -623,27 +624,28 @@ export default function ChatPage() {
                 </div>
               </div>
             ) : (
-              <div 
-                ref={scrollContainerRef}
-                className="h-full w-full multi-model-scroll" 
-                style={{ 
-                  overflowX: 'scroll', 
-                  overflowY: 'hidden',
-                  WebkitOverflowScrolling: 'touch',
-                  position: 'relative'
-                }}
-              >
-                <div 
-                  className="flex h-full gap-4 px-4 py-4"
-                  style={{ 
-                    width: `${Array.from(enabledModels).length * 440}px`,
-                    minWidth: `${Array.from(enabledModels).length * 440}px`,
-                    paddingRight: '2rem',
-                    flexShrink: 0,
-                    display: 'flex',
-                    boxSizing: 'border-box'
+              <div className="w-full overflow-hidden">
+                <div
+                  ref={scrollContainerRef}
+                  className="h-full w-full multi-model-scroll"
+                  style={{
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    WebkitOverflowScrolling: 'touch',
+                    position: 'relative'
                   }}
                 >
+                  <div
+                    className="flex h-full gap-4 px-4 py-4"
+                    style={{
+                      width: `${Array.from(enabledModels).length * 440}px`,
+                      minWidth: `${Array.from(enabledModels).length * 440}px`,
+                      paddingRight: '2rem',
+                      flexShrink: 0,
+                      display: 'flex',
+                      boxSizing: 'border-box'
+                    }}
+                  >
                   {Array.from(enabledModels).map((modelId, idx) => {
                   const columnMessages = modelMessages[modelId] || [];
                   const model = models.find(m => m.id === modelId);
@@ -795,6 +797,7 @@ export default function ChatPage() {
                     </motion.div>
                   );
                   })}
+                  </div>
                 </div>
               </div>
             )}
@@ -802,6 +805,7 @@ export default function ChatPage() {
         ) : (
           // Regular single-model view
           <div className="flex-1 overflow-y-auto px-6 py-8 relative z-10" style={{ paddingRight: '2rem' }}>
+            <div className="max-w-5xl mx-auto w-full">
             <AnimatePresence>
               {messages.length === 0 && (
                 <motion.div
@@ -1118,7 +1122,7 @@ export default function ChatPage() {
             })}
           </AnimatePresence>
           
-          {loading && (
+            {loading && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1161,12 +1165,14 @@ export default function ChatPage() {
               </motion.div>
             </motion.div>
           )}
-          <div ref={messagesEndRef} />
-        </div>
+            <div ref={messagesEndRef} />
+            </div>
+          </div>
         )}
 
         {/* Chat Input Area */}
         <div className="relative z-10 px-6 py-6 bg-[#0f0f0f] border-t border-gray-800">
+          <div className="max-w-5xl mx-auto w-full">
           {/* Action Buttons Above Input */}
           <div className="flex justify-center gap-3 mb-4">
             <motion.button
@@ -1256,8 +1262,8 @@ export default function ChatPage() {
           </div>
 
           {/* Input Field */}
-          <div className="max-w-4xl mx-auto">
-            <motion.div 
+          <div className="max-w-4xl w-full mx-auto">
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -1330,6 +1336,8 @@ export default function ChatPage() {
               </motion.button>
             </div>
           </div>
+          </div>
+        </div>
         </div>
       </div>
     </div>
