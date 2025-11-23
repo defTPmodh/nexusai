@@ -409,15 +409,18 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen flex overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950/60 to-black text-white">
+    <div className="min-h-screen flex overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950/60 to-black text-white relative">
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 flex flex-col relative">
+      <div className="flex-1 ml-64 flex flex-col relative overflow-hidden">
         {/* Ambient Background */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-50"></div>
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.35]"></div>
         <div className="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl" />
         <div className="absolute -bottom-24 -right-24 w-[30rem] h-[30rem] rounded-full bg-teal-400/10 blur-3xl" />
+        <div className="aurora-layer" />
+        <div className="floating-orb w-40 h-40 -left-10 top-24" />
+        <div className="floating-orb blue w-48 h-48 right-10 bottom-10" />
 
         {/* Top Bar - Model Selection */}
         <div className="relative z-10 glass-dark border-b border-white/5 px-6 py-5 backdrop-blur-md">
@@ -546,6 +549,81 @@ export default function ChatPage() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Experience strip */}
+        <div className="relative z-10 px-6 -mt-3 pb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+            className="neon-border glass-card rounded-2xl px-5 py-4 shadow-xl shadow-emerald-500/5"
+          >
+            <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/25 via-teal-500/20 to-cyan-500/30 flex items-center justify-center border border-emerald-400/30 shadow-lg shadow-emerald-500/15 pulse-ring">
+                  <Rocket className="w-5 h-5 text-emerald-100" />
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.18em] text-emerald-200/70">Experience</p>
+                  <p className="text-base font-semibold text-white">Immersive, responsive, and aesthetic by default</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-2 backdrop-blur">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Realtime polish</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[{
+                title: 'Multi-model space',
+                description: 'Flip into compare mode instantly with tactile toggles and silky scroll.',
+                icon: Globe,
+                active: multiModelMode,
+              }, {
+                title: 'RAG context',
+                description: 'Stay grounded with contextual answers and visible guardrails.',
+                icon: FileText,
+                active: useRAG,
+              }, {
+                title: 'Creative launch',
+                description: 'Ride playful gradients, micro-interactions, and cinematic glows.',
+                icon: Wand2,
+                active: true,
+              }].map((item, idx) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 + 0.05, type: 'spring', stiffness: 120 }}
+                  className="glass-card rounded-xl px-4 py-3 border border-white/10 hover:border-white/15 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="flex items-start gap-3 relative z-10">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center border ${item.active ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-100' : 'border-white/10 bg-white/5 text-white/70'}`}>
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-semibold text-white flex items-center gap-2">
+                        {item.title}
+                        {item.active && (
+                          <motion.span
+                            layout
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-100 border border-emerald-400/20"
+                          >
+                            Live
+                          </motion.span>
+                        )}
+                      </p>
+                      <p className="text-xs text-white/70 leading-relaxed">{item.description}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
 
         {/* Messages Area - Column Layout for Multi-Model Mode */}
@@ -744,6 +822,7 @@ export default function ChatPage() {
         ) : (
           // Regular single-model view
           <div className="flex-1 overflow-y-auto px-6 py-8 relative z-10" style={{ paddingRight: '2rem' }}>
+            <div className="absolute left-10 top-6 bottom-6 w-[2px] bg-gradient-to-b from-emerald-500/30 via-white/10 to-transparent rounded-full pointer-events-none" />
             <AnimatePresence>
               {messages.length === 0 && (
                 <motion.div
@@ -936,7 +1015,7 @@ export default function ChatPage() {
                   >
                     <motion.div
                       whileHover={{ scale: 1.01 }}
-                      className={`rounded-2xl px-5 py-4 relative overflow-hidden group ${
+                      className={`rounded-2xl px-5 py-4 relative overflow-hidden group neon-border ${
                         msg.role === 'user'
                           ? 'bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 shadow-lg shadow-emerald-500/30 border border-emerald-100/50'
                           : 'bg-white/5 backdrop-blur-lg border border-white/10 text-white/90 shadow-lg shadow-emerald-500/10 hover:border-emerald-400/30 transition-all duration-300'
@@ -1162,13 +1241,14 @@ export default function ChatPage() {
 
           {/* Input Field */}
           <div className="max-w-4xl mx-auto">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="relative glass-card border border-white/8 rounded-2xl px-4 py-4 flex items-end gap-3 focus-within:border-white/15 focus-within:shadow-md focus-within:shadow-white/5 transition-all duration-300"
+              className="relative glass-card neon-border rounded-2xl px-4 py-5 flex items-end gap-3 focus-within:border-white/15 focus-within:shadow-lg focus-within:shadow-emerald-500/10 transition-all duration-300"
             >
-              <motion.button 
+              <div className="absolute inset-x-4 top-3 h-0.5 bg-gradient-to-r from-emerald-400/40 via-cyan-400/40 to-white/30 rounded-full blur-sm opacity-70" />
+              <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
                 className="p-2 hover:bg-white/5 rounded-lg transition-colors duration-300"
@@ -1187,7 +1267,7 @@ export default function ChatPage() {
                 style={{ minHeight: '24px', maxHeight: '120px' }}
               />
               <div className="flex items-center gap-2">
-                <motion.button 
+                <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   className="p-2 hover:bg-white/5 rounded-lg transition-colors duration-300"
@@ -1206,7 +1286,7 @@ export default function ChatPage() {
                   disabled={loading || (!multiModelMode && !imageMode && !selectedModel) || !input.trim()}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-2.5 bg-gradient-to-r from-white/15 to-white/10 text-white rounded-lg hover:from-white/20 hover:to-white/15 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-sm shadow-white/5 disabled:shadow-none border border-white/10 hover:border-white/15 backdrop-blur-sm"
+                  className="relative p-2.5 bg-gradient-to-r from-emerald-500/25 via-cyan-500/20 to-white/10 text-white rounded-lg hover:from-emerald-500/35 hover:to-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-emerald-500/20 disabled:shadow-none border border-emerald-400/30 hover:border-emerald-300/40 backdrop-blur-sm shimmer-border overflow-hidden"
                 >
                   <motion.div
                     animate={{ rotate: loading ? 360 : 0 }}
