@@ -37,14 +37,29 @@ export default function Home() {
       },
     ];
 
+    const pathway = [
+      {
+        title: 'Connect',
+        detail: 'Wire in your auth, data, and preferred model providers with instant previews.',
+      },
+      {
+        title: 'Orchestrate',
+        detail: 'Design routed conversations, safety checks, and streaming outputs in one timeline.',
+      },
+      {
+        title: 'Ship',
+        detail: 'Launch to production with observability, rate limits, and on-call ready fallbacks.',
+      },
+    ];
+
     return (
       <div className="min-h-screen relative overflow-hidden px-6 py-10 text-white">
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
         <div className="aurora-veil" />
         <div className="absolute inset-0 floating-dots" />
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="flex items-center justify-between mb-10">
+        <div className="max-w-6xl mx-auto relative z-10 space-y-16">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/20 via-cyan-500/20 to-violet-500/30 flex items-center justify-center neon-border">
                 <Sparkles className="w-6 h-6 text-emerald-200" />
@@ -60,30 +75,32 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-12">
-            <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div className="space-y-7">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-emerald-200/80">
                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Live: Unified control plane for your AI stack
               </div>
-              <h2 className="text-4xl sm:text-5xl font-semibold leading-tight">
-                <span className="gradient-text">Modern, futuristic</span> orchestration for enterprise teams.
-              </h2>
-              <p className="text-lg text-white/70 leading-relaxed">
-                Nexus-AI brings every model, vector store, and document into one luminous workspace. Build chat experiences with
-                confident governance, sharp observability, and a design system built for the future.
-              </p>
+              <div className="space-y-4">
+                <h2 className="text-4xl sm:text-5xl font-semibold leading-tight">
+                  <span className="gradient-text">Modern, futuristic</span> orchestration for enterprise teams.
+                </h2>
+                <p className="text-lg text-white/70 leading-relaxed">
+                  Nexus-AI brings every model, vector store, and document into one luminous workspace. Build chat experiences with
+                  confident governance, sharp observability, and a design system built for the future.
+                </p>
+              </div>
 
               <div className="flex flex-wrap gap-4">
                 <a
                   href="/api/auth/login"
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 via-cyan-500 to-violet-500 font-semibold text-black shadow-[0_12px_50px_rgba(34,211,238,0.35)]"
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 via-cyan-500 to-violet-500 font-semibold text-black shadow-[0_12px_50px_rgba(34,211,238,0.35)] transition-transform hover:-translate-y-0.5"
                 >
                   Sign in with SSO
                 </a>
                 <Link
                   href="/pricing"
-                  className="px-6 py-3 rounded-xl border border-white/15 bg-white/5 hover:border-white/40 text-white flex items-center gap-2"
+                  className="px-6 py-3 rounded-xl border border-white/15 bg-white/5 hover:border-white/40 text-white flex items-center gap-2 transition-colors"
                 >
                   View pricing
                   <ArrowUpRight className="w-4 h-4" />
@@ -103,7 +120,7 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <div className="absolute -inset-6 bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-violet-600/10 blur-3xl" />
+              <div className="absolute -inset-10 bg-[radial-gradient(circle_at_top,_rgba(52,211,153,0.14)_0,_rgba(14,165,233,0.12)_40%,_rgba(124,58,237,0.08)_70%,_transparent_75%)] blur-3xl" />
               <div className="glass-card neon-border rounded-3xl p-8 relative z-10">
                 <div className="flex items-center justify-between mb-6">
                   <div>
@@ -114,7 +131,10 @@ export default function Home() {
                 </div>
                 <div className="space-y-4">
                   {[1, 2, 3].map((item) => (
-                    <div key={item} className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between">
+                    <div
+                      key={item}
+                      className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between hover:border-white/15 transition-colors"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400/30 via-cyan-400/30 to-violet-500/30 flex items-center justify-center">
                           <MessageSquare className="w-5 h-5 text-emerald-200" />
@@ -141,12 +161,37 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {featureCards.map((feature) => (
-              <div key={feature.title} className="glass-card rounded-2xl p-6 neon-border">
-                <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center mb-4">{feature.icon}</div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-white/60 text-sm leading-relaxed">{feature.description}</p>
+              <div
+                key={feature.title}
+                className="glass-card rounded-2xl p-6 neon-border relative overflow-hidden group"
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-violet-600/10 blur-3xl" />
+                <div className="relative">
+                  <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center mb-4">{feature.icon}</div>
+                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-white/60 text-sm leading-relaxed">{feature.description}</p>
+                </div>
               </div>
             ))}
+          </div>
+
+          <div className="glass-card neon-border rounded-3xl p-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            <div className="space-y-3">
+              <p className="text-sm uppercase tracking-[0.2em] text-emerald-200/70">Flow</p>
+              <h3 className="text-2xl font-semibold">From idea to production</h3>
+              <p className="text-white/70 text-sm leading-relaxed">
+                Curated runway for teams to plug in, orchestrate, and scale AI experiences with confidence.
+              </p>
+            </div>
+            <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {pathway.map((step) => (
+                <div key={step.title} className="rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
+                  <p className="text-sm uppercase tracking-[0.12em] text-emerald-200 mb-2">{step.title}</p>
+                  <p className="text-white/70 text-sm leading-relaxed">{step.detail}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -207,7 +252,7 @@ export default function Home() {
                   </div>
                   <ArrowUpRight className="w-5 h-5 text-white/60" />
                 </div>
-                <p className="text-white/65 text-sm leading-relaxed">
+                <p className="text-white/70 text-sm leading-relaxed">
                   Route requests across NVIDIA, DeepSeek, and OpenAI with adaptive guardrails.
                 </p>
                 <Link href="/chat" className="inline-flex items-center gap-2 text-emerald-200 text-sm">
@@ -229,7 +274,7 @@ export default function Home() {
                   </div>
                   <ArrowUpRight className="w-5 h-5 text-white/60" />
                 </div>
-                <p className="text-white/65 text-sm leading-relaxed">
+                <p className="text-white/70 text-sm leading-relaxed">
                   Manage documents, analytics, and agent configurations with precision.
                 </p>
                 <Link href="/admin/documents" className="inline-flex items-center gap-2 text-cyan-200 text-sm">
@@ -251,7 +296,7 @@ export default function Home() {
                   </div>
                   <ArrowUpRight className="w-5 h-5 text-white/60" />
                 </div>
-                <p className="text-white/65 text-sm leading-relaxed">
+                <p className="text-white/70 text-sm leading-relaxed">
                   Connect vector stores, data lakes, and analytics to keep conversations in sync.
                 </p>
                 <Link href="/admin/documents" className="inline-flex items-center gap-2 text-violet-200 text-sm">
