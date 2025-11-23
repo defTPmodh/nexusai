@@ -409,36 +409,37 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen flex overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950/60 to-black text-white relative">
+    <div className="min-h-screen flex overflow-hidden bg-gradient-to-br from-[#050b17] via-[#0a1226] to-[#05060f] text-white relative">
       <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 ml-64 flex flex-col relative overflow-hidden">
         {/* Ambient Background */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.35]"></div>
-        <div className="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 w-[30rem] h-[30rem] rounded-full bg-teal-400/10 blur-3xl" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.28]"></div>
+        <div className="absolute -top-24 -left-20 w-[26rem] h-[26rem] rounded-full bg-purple-500/10 blur-[120px]" />
+        <div className="absolute -bottom-16 -right-12 w-[32rem] h-[32rem] rounded-full bg-indigo-400/15 blur-[130px]" />
         <div className="aurora-layer" />
-        <div className="floating-orb w-40 h-40 -left-10 top-24" />
-        <div className="floating-orb blue w-48 h-48 right-10 bottom-10" />
+        <div className="floating-orb w-36 h-36 left-10 top-24" />
+        <div className="floating-orb blue w-44 h-44 right-6 bottom-12" />
 
         {/* Top Bar - Model Selection */}
-        <div className="relative z-10 glass-dark border-b border-white/5 px-6 py-5 backdrop-blur-md">
+        <div className="relative z-10 glass-dark border-b border-white/5">
+          <div className="max-w-6xl mx-auto w-full px-6 py-5">
           <div className="flex items-center justify-between flex-wrap gap-4 mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400/30 via-teal-400/30 to-cyan-400/30 flex items-center justify-center border border-emerald-300/20 shadow-lg shadow-emerald-500/10">
-                <Sparkles className="w-5 h-5 text-emerald-200" />
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-400/30 via-purple-400/30 to-cyan-400/25 flex items-center justify-center border border-indigo-300/20 shadow-lg shadow-indigo-500/10">
+                <Sparkles className="w-5 h-5 text-indigo-100" />
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-emerald-200/70">Nexus Chat</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-indigo-200/70">Nexus Chat</p>
                 <h2 className="text-xl font-semibold text-white">Create, compare, and ship ideas faster</h2>
               </div>
             </div>
             <div className="flex items-center gap-2 text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-2 backdrop-blur">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse" />
               <span>Live playground</span>
               {selectedModel && !multiModelMode && (
-                <span className="px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-100 border border-emerald-300/20 text-[11px]">
+                <span className="px-2 py-1 rounded-full bg-purple-500/15 text-purple-100 border border-purple-300/25 text-[11px]">
                   {models.find((m) => m.id === selectedModel)?.display_name || 'Model selected'}
                 </span>
               )}
@@ -550,31 +551,33 @@ export default function ChatPage() {
             </div>
           )}
         </div>
+      </div>
 
         {/* Experience strip */}
-        <div className="relative z-10 px-6 -mt-3 pb-6">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-            className="neon-border glass-card rounded-2xl px-5 py-4 shadow-xl shadow-emerald-500/5"
-          >
-            <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/25 via-teal-500/20 to-cyan-500/30 flex items-center justify-center border border-emerald-400/30 shadow-lg shadow-emerald-500/15 pulse-ring">
-                  <Rocket className="w-5 h-5 text-emerald-100" />
+        <div className="relative z-10 -mt-3 pb-6">
+          <div className="max-w-6xl mx-auto w-full px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+              className="neon-border glass-card rounded-2xl px-5 py-4 shadow-xl shadow-indigo-500/10 border border-white/10"
+            >
+              <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400/25 via-purple-500/25 to-cyan-400/30 flex items-center justify-center border border-indigo-300/25 shadow-lg shadow-indigo-500/15 pulse-ring">
+                    <Rocket className="w-5 h-5 text-indigo-100" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-indigo-200/70">Experience</p>
+                    <p className="text-base font-semibold text-white">Immersive, responsive, and aesthetic by default</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-emerald-200/70">Experience</p>
-                  <p className="text-base font-semibold text-white">Immersive, responsive, and aesthetic by default</p>
+                <div className="flex items-center gap-3 text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-2 backdrop-blur">
+                  <div className="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse" />
+                  <span>Realtime polish</span>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-2 backdrop-blur">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Realtime polish</span>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {[{
                 title: 'Multi-model space',
                 description: 'Flip into compare mode instantly with tactile toggles and silky scroll.',
@@ -600,9 +603,9 @@ export default function ChatPage() {
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div className="flex items-start gap-3 relative z-10">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center border ${item.active ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-100' : 'border-white/10 bg-white/5 text-white/70'}`}>
-                      <item.icon className="w-5 h-5" />
-                    </div>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center border ${item.active ? 'border-indigo-300/50 bg-indigo-500/15 text-indigo-100' : 'border-white/10 bg-white/5 text-white/70'}`}>
+                    <item.icon className="w-5 h-5" />
+                  </div>
                     <div className="space-y-1">
                       <p className="text-sm font-semibold text-white flex items-center gap-2">
                         {item.title}
@@ -611,7 +614,7 @@ export default function ChatPage() {
                             layout
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-100 border border-emerald-400/20"
+                            className="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-100 border border-purple-300/25"
                           >
                             Live
                           </motion.span>
@@ -625,6 +628,7 @@ export default function ChatPage() {
             </div>
           </motion.div>
         </div>
+      </div>
 
         {/* Messages Area - Column Layout for Multi-Model Mode */}
         {multiModelMode ? (
@@ -633,7 +637,7 @@ export default function ChatPage() {
               // Empty state for multi-model mode
               <div className="h-full flex items-center justify-center">
                 <div className="text-center max-w-2xl">
-                  <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-indigo-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <Bot className="w-10 h-10 text-white" />
                   </div>
                   <h2 className="text-3xl font-semibold text-white mb-3">Multi-Model Comparison</h2>
@@ -702,7 +706,7 @@ export default function ChatPage() {
                         {columnMessages.length === 0 ? (
                           <div className="h-full flex items-center justify-center">
                             <div className="text-center">
-                              <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 via-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                              <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 via-indigo-500/20 to-teal-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                                 <Bot className="w-8 h-8 text-green-300/50" />
                               </div>
                               <p className="text-green-200/50 text-sm">Waiting for response...</p>
@@ -719,7 +723,7 @@ export default function ChatPage() {
                                 className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                               >
                                 {msg.role === 'assistant' && (
-                                  <div className="w-8 h-8 bg-gradient-to-br from-green-500/30 to-emerald-500/30 rounded-full flex items-center justify-center flex-shrink-0 border border-green-400/30">
+                                  <div className="w-8 h-8 bg-gradient-to-br from-green-500/30 to-indigo-500/30 rounded-full flex items-center justify-center flex-shrink-0 border border-green-400/30">
                                     <Bot className="w-4 h-4 text-green-300" />
                                   </div>
                                 )}
@@ -729,7 +733,7 @@ export default function ChatPage() {
                                     className={`rounded-xl px-4 py-3 ${
                                       msg.role === 'user'
                                         ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white border border-gray-700'
-                                        : 'bg-gradient-to-br from-green-900/20 to-emerald-900/20 border border-green-500/20 text-green-100/90'
+                                        : 'bg-gradient-to-br from-green-900/20 to-indigo-900/20 border border-green-500/20 text-green-100/90'
                                     }`}
                                   >
                                     {msg.content.startsWith('![Generated Image](') ? (
@@ -785,10 +789,10 @@ export default function ChatPage() {
                                 animate={{ opacity: 1 }}
                                 className="flex gap-3 justify-start"
                               >
-                                <div className="w-8 h-8 bg-gradient-to-br from-green-500/30 to-emerald-500/30 rounded-full flex items-center justify-center flex-shrink-0 border border-green-400/30">
+                                <div className="w-8 h-8 bg-gradient-to-br from-green-500/30 to-indigo-500/30 rounded-full flex items-center justify-center flex-shrink-0 border border-green-400/30">
                                   <Bot className="w-4 h-4 text-green-300" />
                                 </div>
-                                <div className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 border border-green-500/20 rounded-xl px-4 py-3">
+                                <div className="bg-gradient-to-br from-green-900/20 to-indigo-900/20 border border-green-500/20 rounded-xl px-4 py-3">
                                   <div className="flex gap-2 items-center">
                                     <motion.div
                                       animate={{ scale: [1, 1.2, 1] }}
@@ -821,9 +825,10 @@ export default function ChatPage() {
           </div>
         ) : (
           // Regular single-model view
-          <div className="flex-1 overflow-y-auto px-6 py-8 relative z-10" style={{ paddingRight: '2rem' }}>
-            <div className="absolute left-10 top-6 bottom-6 w-[2px] bg-gradient-to-b from-emerald-500/30 via-white/10 to-transparent rounded-full pointer-events-none" />
-            <AnimatePresence>
+          <div className="flex-1 overflow-y-auto relative z-10" style={{ paddingRight: '2rem' }}>
+            <div className="max-w-6xl mx-auto w-full px-6 py-8 relative">
+              <div className="absolute left-2 sm:left-6 top-6 bottom-6 w-[2px] bg-gradient-to-b from-indigo-500/30 via-white/10 to-transparent rounded-full pointer-events-none" />
+              <AnimatePresence>
               {messages.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -831,7 +836,7 @@ export default function ChatPage() {
                   className="h-full flex items-center justify-center"
                 >
                   <div className="text-center max-w-2xl">
-                    <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-indigo-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
                       <Bot className="w-10 h-10 text-white" />
                     </div>
                     <h2 className="text-3xl font-semibold text-white mb-3">Start a conversation</h2>
@@ -876,9 +881,9 @@ export default function ChatPage() {
                         transition={{ delay: 0.2 }}
                         className="text-xs text-green-300/70 mb-6 px-2 flex items-center gap-3"
                       >
-                        <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                        <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-indigo-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
                         <span className="font-medium text-green-400">Comparing {modelResponses.length} models</span>
-                        <div className="flex-1 h-px bg-gradient-to-r from-green-500/30 via-emerald-500/30 to-transparent"></div>
+                        <div className="flex-1 h-px bg-gradient-to-r from-green-500/30 via-indigo-500/30 to-transparent"></div>
                       </motion.div>
                       <div className="flex gap-6 overflow-x-auto pb-4" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(34, 197, 94, 0.3) transparent', paddingRight: '1rem' }}>
                         {modelResponses.map((response, responseIdx) => (
@@ -897,16 +902,16 @@ export default function ChatPage() {
                             className="flex-shrink-0 w-[380px] glass-card border border-green-500/20 rounded-2xl p-6 hover:border-green-400/50 transition-all duration-300 shadow-lg hover:shadow-green-500/20 relative overflow-hidden group hover-lift"
                           >
                             {/* Animated gradient overlay on hover */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 via-emerald-500/0 to-teal-500/0 group-hover:from-green-500/10 group-hover:via-emerald-500/5 group-hover:to-teal-500/10 transition-all duration-500 pointer-events-none rounded-2xl"></div>
+                            <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 via-indigo-500/0 to-teal-500/0 group-hover:from-green-500/10 group-hover:via-indigo-500/5 group-hover:to-teal-500/10 transition-all duration-500 pointer-events-none rounded-2xl"></div>
                             
                             {/* Glow effect */}
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500/0 via-emerald-500/0 to-teal-500/0 group-hover:from-green-500/20 group-hover:via-emerald-500/10 group-hover:to-teal-500/20 blur-xl transition-all duration-500 rounded-2xl opacity-0 group-hover:opacity-100"></div>
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500/0 via-indigo-500/0 to-teal-500/0 group-hover:from-green-500/20 group-hover:via-indigo-500/10 group-hover:to-teal-500/20 blur-xl transition-all duration-500 rounded-2xl opacity-0 group-hover:opacity-100"></div>
                             
                             <div className="relative z-10">
                               {/* Model Header */}
                               <div className="flex items-center gap-4 mb-5">
                                 <motion.div 
-                                  className="w-12 h-12 bg-gradient-to-br from-green-500/30 via-emerald-500/30 to-teal-500/30 rounded-xl flex items-center justify-center border border-green-400/30 shadow-lg shadow-green-500/10"
+                                  className="w-12 h-12 bg-gradient-to-br from-green-500/30 via-indigo-500/30 to-teal-500/30 rounded-xl flex items-center justify-center border border-green-400/30 shadow-lg shadow-green-500/10"
                                   whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
                                   transition={{ duration: 0.5 }}
                                 >
@@ -930,7 +935,7 @@ export default function ChatPage() {
                                       transition={{ delay: 0.3 }}
                                       className="text-xs text-green-400 flex items-center gap-1.5"
                                     >
-                                      <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full shadow-lg shadow-green-400/50"></div>
+                                      <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-indigo-400 rounded-full shadow-lg shadow-green-400/50"></div>
                                       <span className="font-medium">Response received</span>
                                     </motion.div>
                                   )}
@@ -942,7 +947,7 @@ export default function ChatPage() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: responseIdx * 0.15 + 0.3 }}
-                                className={`glass-card border border-green-500/10 rounded-xl p-4 mb-4 bg-gradient-to-br from-green-900/10 to-emerald-900/10 ${
+                                className={`glass-card border border-green-500/10 rounded-xl p-4 mb-4 bg-gradient-to-br from-green-900/10 to-indigo-900/10 ${
                                   response.success === false ? 'border-red-500/30 bg-red-900/10' : ''
                                 }`}
                               >
@@ -1002,9 +1007,9 @@ export default function ChatPage() {
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: idx * 0.05 + 0.2, type: "spring", stiffness: 200 }}
-                      className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 via-teal-500/20 to-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0 border border-emerald-400/30 shadow-lg shadow-emerald-500/20"
+                      className="w-10 h-10 bg-gradient-to-br from-indigo-500/20 via-teal-500/20 to-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0 border border-indigo-400/30 shadow-lg shadow-indigo-500/20"
                     >
-                      <Bot className="w-5 h-5 text-emerald-100" />
+                      <Bot className="w-5 h-5 text-indigo-100" />
                     </motion.div>
                   )}
                   <motion.div
@@ -1017,8 +1022,8 @@ export default function ChatPage() {
                       whileHover={{ scale: 1.01 }}
                       className={`rounded-2xl px-5 py-4 relative overflow-hidden group neon-border ${
                         msg.role === 'user'
-                          ? 'bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 shadow-lg shadow-emerald-500/30 border border-emerald-100/50'
-                          : 'bg-white/5 backdrop-blur-lg border border-white/10 text-white/90 shadow-lg shadow-emerald-500/10 hover:border-emerald-400/30 transition-all duration-300'
+                          ? 'bg-gradient-to-br from-indigo-400 via-teal-400 to-cyan-400 text-slate-950 shadow-lg shadow-indigo-500/30 border border-indigo-100/50'
+                          : 'bg-white/5 backdrop-blur-lg border border-white/10 text-white/90 shadow-lg shadow-indigo-500/10 hover:border-indigo-400/30 transition-all duration-300'
                       }`}
                     >
                       {/* Shimmer effect for assistant messages */}
@@ -1092,7 +1097,7 @@ export default function ChatPage() {
                       initial={{ scale: 0, rotate: 180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: idx * 0.05 + 0.2, type: "spring", stiffness: 200 }}
-                      className="w-10 h-10 bg-gradient-to-br from-white/10 via-emerald-200/20 to-emerald-300/10 rounded-full flex items-center justify-center flex-shrink-0 border border-white/20 shadow-lg"
+                      className="w-10 h-10 bg-gradient-to-br from-white/10 via-indigo-200/20 to-indigo-300/10 rounded-full flex items-center justify-center flex-shrink-0 border border-white/20 shadow-lg"
                     >
                       <User className="w-5 h-5 text-white" />
                     </motion.div>
@@ -1109,7 +1114,7 @@ export default function ChatPage() {
               exit={{ opacity: 0, y: -20 }}
               className="flex gap-4 mb-6"
             >
-              <motion.div 
+              <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700"
@@ -1146,6 +1151,7 @@ export default function ChatPage() {
             </motion.div>
           )}
           <div ref={messagesEndRef} />
+        </div>
         </div>
         )}
 
@@ -1245,9 +1251,9 @@ export default function ChatPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="relative glass-card neon-border rounded-2xl px-4 py-5 flex items-end gap-3 focus-within:border-white/15 focus-within:shadow-lg focus-within:shadow-emerald-500/10 transition-all duration-300"
+              className="relative glass-card neon-border rounded-2xl px-4 py-5 flex items-end gap-3 focus-within:border-white/15 focus-within:shadow-lg focus-within:shadow-indigo-500/10 transition-all duration-300"
             >
-              <div className="absolute inset-x-4 top-3 h-0.5 bg-gradient-to-r from-emerald-400/40 via-cyan-400/40 to-white/30 rounded-full blur-sm opacity-70" />
+              <div className="absolute inset-x-4 top-3 h-0.5 bg-gradient-to-r from-indigo-400/40 via-cyan-400/40 to-white/30 rounded-full blur-sm opacity-70" />
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
@@ -1286,7 +1292,7 @@ export default function ChatPage() {
                   disabled={loading || (!multiModelMode && !imageMode && !selectedModel) || !input.trim()}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="relative p-2.5 bg-gradient-to-r from-emerald-500/25 via-cyan-500/20 to-white/10 text-white rounded-lg hover:from-emerald-500/35 hover:to-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-emerald-500/20 disabled:shadow-none border border-emerald-400/30 hover:border-emerald-300/40 backdrop-blur-sm shimmer-border overflow-hidden"
+                  className="relative p-2.5 bg-gradient-to-r from-indigo-500/25 via-cyan-500/20 to-white/10 text-white rounded-lg hover:from-indigo-500/35 hover:to-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-indigo-500/20 disabled:shadow-none border border-indigo-400/30 hover:border-indigo-300/40 backdrop-blur-sm shimmer-border overflow-hidden"
                 >
                   <motion.div
                     animate={{ rotate: loading ? 360 : 0 }}
