@@ -40,7 +40,7 @@ async function ensureDefaultModels(supabase: ReturnType<typeof getSupabaseAdmin>
   for (const model of DEFAULT_MODELS) {
     const { data: existingRows, error: existingError } = await supabase
       .from('llm_models')
-      .select('id, is_active')
+      .select('id, is_active, display_name')
       .eq('provider', model.provider)
       .eq('model_name', model.model_name)
       .limit(1);
