@@ -33,10 +33,16 @@ const OPENROUTER_MODELS: Record<string, string> = {
   'gemini-2.0-flash-exp:free': 'google/gemini-2.0-flash-exp:free',
   // DeepSeek V3.1
   'deepseek-v3.1': 'deepseek/deepseek-chat-v3.1',
+  // DeepSeek Chat V3.0324 (Free)
+  'deepseek-chat-v3-0324:free': 'deepseek/deepseek-chat-v3-0324:free',
   // OpenAI GPT-OSS-20B
   'gpt-oss-20b': 'openai/gpt-oss-20b',
+  // OpenAI GPT-OSS-20B (Free)
+  'gpt-oss-20b:free': 'openai/gpt-oss-20b:free',
   // Minimax M2 Free
   'minimax-m2:free': 'minimax/minimax-m2:free',
+  // xAI Grok 4.1 Fast (Free)
+  'grok-4.1-fast:free': 'x-ai/grok-4.1-fast:free',
 };
 
 export async function callLLM(
