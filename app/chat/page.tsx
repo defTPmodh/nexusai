@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { LLMModel } from '@/types';
-import { Send, Bot, User, Sparkles, Bookmark, Star, Settings as SettingsIcon, Wand2, Mic, Globe, Image as ImageIcon, Rocket, FileText, Plus } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Bookmark, Star, Settings as SettingsIcon, Wand2, Mic, Globe, Image as ImageIcon, Rocket, FileText, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
@@ -128,15 +128,23 @@ export default function ChatPage() {
     }
   }, [modelMessages, multiModelMode]);
 
-  // Enable shift+scroll for horizontal scrolling in multi-model mode
+  // Enable smooth horizontal scrolling for multi-model columns
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || !multiModelMode) return;
 
     const handleWheel = (e: WheelEvent) => {
-      if (e.shiftKey) {
+      const target = e.target as HTMLElement;
+      const insideColumn = target.closest('.multi-model-column');
+
+      // Preserve native vertical scroll inside each column
+      if (insideColumn) return;
+
+      // Convert vertical scroll to horizontal when hovering the lane
+      const horizontalDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (horizontalDelta !== 0) {
         e.preventDefault();
-        container.scrollLeft += e.deltaY;
+        container.scrollLeft += horizontalDelta;
       }
     };
 
@@ -543,19 +551,19 @@ export default function ChatPage() {
                 </div>
               </div>
             ) : (
-              <div 
+              <div
                 ref={scrollContainerRef}
-                className="h-full w-full multi-model-scroll" 
-                style={{ 
-                  overflowX: 'scroll', 
+                className="h-full w-full multi-model-scroll"
+                style={{
+                  overflowX: 'scroll',
                   overflowY: 'hidden',
                   WebkitOverflowScrolling: 'touch',
                   position: 'relative'
                 }}
               >
-                <div 
+                <div
                   className="flex h-full gap-4 px-4 py-4"
-                  style={{ 
+                  style={{
                     width: `${Array.from(enabledModels).length * 440}px`,
                     minWidth: `${Array.from(enabledModels).length * 440}px`,
                     paddingRight: '2rem',
@@ -568,14 +576,14 @@ export default function ChatPage() {
                   const columnMessages = modelMessages[modelId] || [];
                   const model = models.find(m => m.id === modelId);
                   if (!model) return null;
-                  
+
                   return (
                     <motion.div
                       key={modelId}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="flex-shrink-0 h-full flex flex-col glass-card border border-white/8 rounded-2xl overflow-hidden hover:border-white/12 transition-all duration-300"
+                      className="multi-model-column flex-shrink-0 h-full flex flex-col glass-card border border-white/8 rounded-2xl overflow-hidden hover:border-white/12 transition-all duration-300"
                       style={{ width: '420px', minWidth: '420px', maxWidth: '420px', flexShrink: 0, flexGrow: 0, boxSizing: 'border-box' }}
                     >
                       {/* Column Header */}
@@ -716,6 +724,26 @@ export default function ChatPage() {
                   );
                   })}
                 </div>
+
+                {Array.from(enabledModels).length > 3 && (
+                  <div className="absolute right-6 bottom-6 flex items-center gap-3 z-20 bg-black/40 border border-white/10 rounded-2xl px-3 py-2 backdrop-blur-md shadow-lg">
+                    <button
+                      type="button"
+                      onClick={() => scrollContainerRef.current?.scrollBy({ left: -460, behavior: 'smooth' })}
+                      className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <div className="text-xs text-white/60 font-medium">Scroll columns</div>
+                    <button
+                      type="button"
+                      onClick={() => scrollContainerRef.current?.scrollBy({ left: 460, behavior: 'smooth' })}
+                      className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white transition-colors"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
