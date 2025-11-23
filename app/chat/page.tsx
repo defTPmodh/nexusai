@@ -99,6 +99,12 @@ export default function ChatPage() {
   const [useRAG, setUseRAG] = useState(false);
   const [imageMode, setImageMode] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const quickPrompts = [
+    'Summarize the latest industry news in AI and ML.',
+    'Generate a concise project kickoff brief with milestones.',
+    'Draft a helpful onboarding message for a new teammate.',
+    'Create a customer-friendly explanation of our product in two paragraphs.',
+  ];
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const columnRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -408,14 +414,23 @@ export default function ChatPage() {
     }
   };
 
+  const handleQuickPrompt = (prompt: string) => {
+    setInput(prompt);
+    inputRef.current?.focus();
+  };
+
+  const displayName = user?.name || user?.email || 'Guest';
+
   return (
-    <div className="h-screen flex overflow-hidden">
+    <div className="h-screen flex overflow-hidden bg-slate-950">
       <Sidebar />
-      
+
       {/* Main Content */}
-      <div className="flex-1 ml-64 flex flex-col relative">
-        {/* Grid Background */}
-        <div className="absolute inset-0 bg-grid-pattern"></div>
+      <div className="flex-1 ml-64 flex flex-col relative overflow-hidden">
+        {/* Modern layered background */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-40"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.2),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.18),transparent_30%),radial-gradient(circle_at_70%_70%,rgba(14,165,233,0.12),transparent_32%)] blur-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/60"></div>
 
         {/* Top Bar - Model Selection */}
         <div className="relative z-10 glass-dark border-b border-white/5 px-6 py-4">
@@ -526,6 +541,55 @@ export default function ChatPage() {
           )}
         </div>
 
+        {/* Hero + status panel */}
+        <div className="relative z-10 px-6 pt-5 pb-4 flex flex-wrap gap-4 items-stretch">
+          <div className="flex-1 min-w-[260px] glass-card border border-white/10 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-emerald-500/5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-400/40 via-cyan-400/30 to-blue-500/30 border border-white/10 flex items-center justify-center text-white font-semibold">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.12em] text-white/60">Welcome back</p>
+                <p className="text-lg font-semibold text-white">{displayName}</p>
+              </div>
+            </div>
+            <p className="text-sm text-white/60 leading-relaxed">
+              Craft thoughtful prompts, compare multiple models, and switch into RAG or image generation without leaving the flow.
+            </p>
+            <div className="flex gap-2 mt-4 flex-wrap">
+              <span className="px-3 py-1 rounded-full text-xs border border-white/10 bg-white/5 text-white/70 flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5" /> Modernized chat canvas
+              </span>
+              <span className="px-3 py-1 rounded-full text-xs border border-white/10 bg-white/5 text-white/70 flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5" /> Adaptive modes
+              </span>
+            </div>
+          </div>
+
+          <div className="flex-1 min-w-[240px] grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="glass-card border border-white/10 rounded-2xl p-4 flex items-start gap-3 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-cyan-500/5">
+              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
+                <Rocket className="w-5 h-5 text-emerald-200" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-white">Session status</p>
+                <p className="text-xs text-white/60 mt-1">{sessionId ? 'Conversation in progress' : 'Ready for a fresh start'}</p>
+              </div>
+            </div>
+            <div className="glass-card border border-white/10 rounded-2xl p-4 flex items-start gap-3 bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-indigo-500/5">
+              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
+                <Wand2 className="w-5 h-5 text-blue-200" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-white">Active mode</p>
+                <p className="text-xs text-white/60 mt-1">
+                  {multiModelMode ? 'Comparing enabled models side by side' : imageMode ? 'Designing visuals with Image mode' : useRAG ? 'RAG with document context' : 'Single model conversation'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Messages Area - Column Layout for Multi-Model Mode */}
         {multiModelMode ? (
           <div className="flex-1 relative z-10" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
@@ -628,8 +692,8 @@ export default function ChatPage() {
                                     whileHover={{ scale: 1.01 }}
                                     className={`rounded-xl px-4 py-3 ${
                                       msg.role === 'user'
-                                        ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white border border-gray-700'
-                                        : 'bg-gradient-to-br from-green-900/20 to-emerald-900/20 border border-green-500/20 text-green-100/90'
+                                        ? 'bg-gradient-to-br from-emerald-500/20 via-cyan-500/15 to-sky-500/10 text-white border border-emerald-400/30 shadow-[0_10px_40px_-20px_rgba(16,185,129,0.6)] backdrop-blur'
+                                        : 'bg-gradient-to-br from-slate-900/80 via-slate-900/70 to-emerald-900/30 border border-emerald-500/20 text-green-100/90 shadow-[0_10px_40px_-24px_rgba(16,185,129,0.7)] backdrop-blur'
                                     }`}
                                   >
                                     {msg.content.startsWith('![Generated Image](') ? (
@@ -673,8 +737,8 @@ export default function ChatPage() {
                                   )}
                                 </div>
                                 {msg.role === 'user' && (
-                                  <div className="w-8 h-8 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700">
-                                    <User className="w-4 h-4 text-gray-400" />
+                                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-500/40 via-cyan-500/30 to-slate-900/80 rounded-full flex items-center justify-center flex-shrink-0 border border-emerald-300/40 shadow-sm">
+                                    <User className="w-4 h-4 text-white/80" />
                                   </div>
                                 )}
                               </motion.div>
@@ -737,6 +801,19 @@ export default function ChatPage() {
                     <p className="text-green-200/70 text-lg mb-8">
                       Select a model and ask me anything
                     </p>
+                    <div className="flex flex-wrap justify-center gap-3">
+                      {quickPrompts.map((prompt) => (
+                        <motion.button
+                          key={prompt}
+                          whileHover={{ y: -3, scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleQuickPrompt(prompt)}
+                          className="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-sm text-white/80 hover:border-white/20 hover:text-white/100 transition-colors duration-200 shadow-sm backdrop-blur"
+                        >
+                          {prompt}
+                        </motion.button>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -897,13 +974,13 @@ export default function ChatPage() {
                   className={`flex gap-4 mb-6 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {msg.role === 'assistant' && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: idx * 0.05 + 0.2, type: "spring", stiffness: 200 }}
-                      className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700 shadow-lg"
+                      className="w-10 h-10 bg-gradient-to-br from-emerald-500/40 via-cyan-500/30 to-slate-900/80 rounded-full flex items-center justify-center flex-shrink-0 border border-emerald-300/40 shadow-lg"
                     >
-                      <Bot className="w-5 h-5 text-gray-400" />
+                      <Bot className="w-5 h-5 text-white/80" />
                     </motion.div>
                   )}
                   <motion.div 
@@ -912,12 +989,12 @@ export default function ChatPage() {
                     transition={{ delay: idx * 0.05 + 0.1 }}
                     className={`max-w-2xl ${msg.role === 'user' ? 'order-2' : ''}`}
                   >
-                    <motion.div 
+                    <motion.div
                       whileHover={{ scale: 1.01 }}
                       className={`rounded-2xl px-5 py-4 relative overflow-hidden ${
                         msg.role === 'user'
-                          ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white border border-gray-700 shadow-lg'
-                          : 'bg-[#1a1a1a] border border-gray-800 text-gray-100 shadow-lg hover:border-green-500/50 transition-all duration-300'
+                          ? 'bg-gradient-to-br from-emerald-500/20 via-cyan-500/15 to-sky-500/10 text-white border border-emerald-400/30 shadow-[0_10px_50px_-22px_rgba(16,185,129,0.7)] backdrop-blur'
+                          : 'bg-gradient-to-br from-slate-950/90 via-slate-900/70 to-emerald-900/30 border border-emerald-500/25 text-gray-100 shadow-[0_10px_45px_-26px_rgba(16,185,129,0.65)] hover:border-emerald-400/50 transition-all duration-300 backdrop-blur'
                       }`}
                     >
                       {/* Shimmer effect for assistant messages */}
@@ -987,13 +1064,13 @@ export default function ChatPage() {
                     </motion.div>
                   </motion.div>
                   {msg.role === 'user' && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, rotate: 180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: idx * 0.05 + 0.2, type: "spring", stiffness: 200 }}
-                      className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700 shadow-lg"
+                      className="w-10 h-10 bg-gradient-to-br from-emerald-500/40 via-cyan-500/30 to-slate-900/80 rounded-full flex items-center justify-center flex-shrink-0 border border-emerald-300/40 shadow-lg"
                     >
-                      <User className="w-5 h-5 text-gray-400" />
+                      <User className="w-5 h-5 text-white/80" />
                     </motion.div>
                   )}
                 </motion.div>
@@ -1008,18 +1085,18 @@ export default function ChatPage() {
               exit={{ opacity: 0, y: -20 }}
               className="flex gap-4 mb-6"
             >
-              <motion.div 
+              <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700"
+                className="w-10 h-10 bg-gradient-to-br from-emerald-500/40 via-cyan-500/30 to-slate-900/80 rounded-full flex items-center justify-center flex-shrink-0 border border-emerald-300/40"
               >
                 <Bot className="w-5 h-5 text-green-400" />
               </motion.div>
-              <motion.div 
+              <motion.div
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                className="bg-[#1a1a1a] border border-gray-800 rounded-2xl px-6 py-4 shadow-lg"
+                className="bg-gradient-to-br from-slate-950/90 via-slate-900/80 to-emerald-900/30 border border-emerald-500/25 rounded-2xl px-6 py-4 shadow-lg"
               >
                 <div className="flex gap-2 items-center">
                   <motion.div
