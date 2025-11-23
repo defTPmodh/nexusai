@@ -72,10 +72,10 @@ export default function ChatPage() {
   const { user } = useUser();
   const [models, setModels] = useState<LLMModel[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('');
-  const [messages, setMessages] = useState<Array<{ 
-    role: 'user' | 'assistant'; 
-    content: string; 
-    piiDetected?: boolean; 
+  const [messages, setMessages] = useState<Array<{
+    role: 'user' | 'assistant';
+    content: string;
+    piiDetected?: boolean;
     cost?: number; 
     tokens?: number;
     modelName?: string;
@@ -95,6 +95,7 @@ export default function ChatPage() {
   const [enabledModels, setEnabledModels] = useState<Set<string>>(new Set()); // Models enabled for multi-chat
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showHero, setShowHero] = useState(true);
   const [multiModelMode, setMultiModelMode] = useState(false);
   const [useRAG, setUseRAG] = useState(false);
   const [imageMode, setImageMode] = useState(false);
@@ -121,6 +122,12 @@ export default function ChatPage() {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, multiModelMode]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      setShowHero(false);
+    }
+  }, [messages.length]);
 
   // Scroll each column to bottom when new messages arrive in multi-model mode
   useEffect(() => {
@@ -213,6 +220,7 @@ export default function ChatPage() {
     const userMessage = input;
     setInput('');
     setLoading(true);
+    setShowHero(false);
 
     const newMessage = { 
       role: 'user' as const, 
@@ -577,53 +585,64 @@ export default function ChatPage() {
         </div>
 
         {/* Hero + status panel */}
-        <div className="relative z-10 px-6 pt-5 pb-4 flex flex-wrap gap-4 items-stretch">
-          <div className="flex-1 min-w-[260px] glass-card border border-white/10 rounded-2xl p-4 backdrop-blur-md shadow-lg shadow-emerald-500/5">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-400/40 via-cyan-400/30 to-blue-500/30 border border-white/10 flex items-center justify-center text-white font-semibold">
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.12em] text-white/60">Welcome back</p>
-                <p className="text-lg font-semibold text-white">{displayName}</p>
-              </div>
-            </div>
-            <p className="text-sm text-white/60 leading-relaxed">
-              Craft thoughtful prompts, compare multiple models, and switch into RAG or image generation without leaving the flow.
-            </p>
-            <div className="flex gap-2 mt-4 flex-wrap">
-              <span className="px-3 py-1 rounded-full text-xs border border-white/10 bg-white/5 text-white/70 flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5" /> Modernized chat canvas
-              </span>
-              <span className="px-3 py-1 rounded-full text-xs border border-white/10 bg-white/5 text-white/70 flex items-center gap-2">
-                <Globe className="w-3.5 h-3.5" /> Adaptive modes
-              </span>
-            </div>
-          </div>
-
-          <div className="flex-1 min-w-[240px] grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="glass-card border border-white/10 rounded-2xl p-4 flex items-start gap-3 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-cyan-500/5">
-              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
-                <Rocket className="w-5 h-5 text-emerald-200" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-white">Session status</p>
-                <p className="text-xs text-white/60 mt-1">{sessionId ? 'Conversation in progress' : 'Ready for a fresh start'}</p>
-              </div>
-            </div>
-            <div className="glass-card border border-white/10 rounded-2xl p-4 flex items-start gap-3 bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-indigo-500/5">
-              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
-                <Wand2 className="w-5 h-5 text-blue-200" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-white">Active mode</p>
-                <p className="text-xs text-white/60 mt-1">
-                  {multiModelMode ? 'Comparing enabled models side by side' : imageMode ? 'Designing visuals with Image mode' : useRAG ? 'RAG with document context' : 'Single model conversation'}
+        <AnimatePresence>
+          {showHero && messages.length === 0 && (
+            <motion.div
+              key="hero"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="relative z-10 px-6 pt-5 pb-5 flex flex-wrap gap-5 xl:gap-6 items-stretch"
+            >
+              <div className="flex-1 min-w-[260px] glass-card border border-white/10 rounded-2xl p-4 lg:p-5 backdrop-blur-md shadow-lg shadow-emerald-500/5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-400/40 via-cyan-400/30 to-blue-500/30 border border-white/10 flex items-center justify-center text-white font-semibold">
+                    {displayName.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.12em] text-white/60">Welcome back</p>
+                    <p className="text-lg font-semibold text-white">{displayName}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  Craft thoughtful prompts, compare multiple models, and switch into RAG or image generation without leaving the flow.
                 </p>
+                <div className="flex gap-2 mt-4 flex-wrap">
+                  <span className="px-3 py-1 rounded-full text-xs border border-white/10 bg-white/5 text-white/70 flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5" /> Modernized chat canvas
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs border border-white/10 bg-white/5 text-white/70 flex items-center gap-2">
+                    <Globe className="w-3.5 h-3.5" /> Adaptive modes
+                  </span>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
+
+              <div className="flex-1 min-w-[240px] grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
+                <div className="glass-card border border-white/10 rounded-2xl p-4 lg:p-5 flex items-start gap-3 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-cyan-500/5">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
+                    <Rocket className="w-5 h-5 text-emerald-200" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-white">Session status</p>
+                    <p className="text-xs text-white/60 mt-1">{sessionId ? 'Conversation in progress' : 'Ready for a fresh start'}</p>
+                  </div>
+                </div>
+                <div className="glass-card border border-white/10 rounded-2xl p-4 lg:p-5 flex items-start gap-3 bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-indigo-500/5">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
+                    <Wand2 className="w-5 h-5 text-blue-200" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-white">Active mode</p>
+                    <p className="text-xs text-white/60 mt-1">
+                      {multiModelMode ? 'Comparing enabled models side by side' : imageMode ? 'Designing visuals with Image mode' : useRAG ? 'RAG with document context' : 'Single model conversation'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Messages Area - Column Layout for Multi-Model Mode */}
         {multiModelMode ? (
