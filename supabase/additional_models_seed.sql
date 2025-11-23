@@ -17,7 +17,6 @@ BEGIN
     CHECK (provider IN ('openai', 'deepseek', 'minimax', 'google', 'xai'));
 END $$;
 
--- Step 2: Insert or update models
 INSERT INTO llm_models (
     provider,
     model_name,
@@ -27,9 +26,8 @@ INSERT INTO llm_models (
     max_tokens,
     is_active
 ) VALUES
-    ('xai', 'grok-4.1-fast:free', 'xAI Grok-4.1 Fast (Free)', 0, 0, 32768, true),
-    ('deepseek', 'deepseek-chat-v3-0324:free', 'DeepSeek Chat V3.0324 (Free)', 0, 0, 32768, true),
-    ('openai', 'gpt-oss-20b:free', 'OpenAI GPT-OSS-20B (Free)', 0, 0, 4096, true),
+    ('xai', 'grok-4.1-fast:free', 'xAI Grok-4.1 Fast', 0, 0, 32768, true),
+    ('openai', 'gpt-oss-20b:free', 'OpenAI GPT-OSS-20B', 0, 0, 4096, true),
     ('minimax', 'minimax-m2:free', 'Minimax M2', 0, 0, 32768, true)
 ON CONFLICT (provider, model_name)
 DO UPDATE SET
@@ -43,7 +41,6 @@ DO UPDATE SET
 INSERT INTO model_permissions (model_id, role, can_use)
 SELECT id, 'employee', true FROM llm_models WHERE (provider, model_name) IN (
     ('xai', 'grok-4.1-fast:free'),
-    ('deepseek', 'deepseek-chat-v3-0324:free'),
     ('openai', 'gpt-oss-20b:free'),
     ('minimax', 'minimax-m2:free')
 )
@@ -52,7 +49,6 @@ ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 INSERT INTO model_permissions (model_id, role, can_use)
 SELECT id, 'manager', true FROM llm_models WHERE (provider, model_name) IN (
     ('xai', 'grok-4.1-fast:free'),
-    ('deepseek', 'deepseek-chat-v3-0324:free'),
     ('openai', 'gpt-oss-20b:free'),
     ('minimax', 'minimax-m2:free')
 )
@@ -61,7 +57,6 @@ ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 INSERT INTO model_permissions (model_id, role, can_use)
 SELECT id, 'admin', true FROM llm_models WHERE (provider, model_name) IN (
     ('xai', 'grok-4.1-fast:free'),
-    ('deepseek', 'deepseek-chat-v3-0324:free'),
     ('openai', 'gpt-oss-20b:free'),
     ('minimax', 'minimax-m2:free')
 )
@@ -78,7 +73,6 @@ FROM llm_models lm
 LEFT JOIN model_permissions mp ON mp.model_id = lm.id AND mp.can_use = true
 WHERE (lm.provider, lm.model_name) IN (
     ('xai', 'grok-4.1-fast:free'),
-    ('deepseek', 'deepseek-chat-v3-0324:free'),
     ('openai', 'gpt-oss-20b:free'),
     ('minimax', 'minimax-m2:free')
 )

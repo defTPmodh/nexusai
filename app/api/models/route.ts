@@ -4,41 +4,9 @@ import { getSupabaseAdmin } from '@/lib/supabase/client';
 
 const DEFAULT_MODELS = [
   {
-    provider: 'google',
-    model_name: 'gemini-2.0-flash-exp:free',
-    display_name: 'Google Gemini 2.0 Flash Exp (Free)',
-    cost_per_1k_input_tokens: 0,
-    cost_per_1k_output_tokens: 0,
-    max_tokens: 8192,
-  },
-  {
-    provider: 'deepseek',
-    model_name: 'deepseek-v3.1',
-    display_name: 'DeepSeek V3.1',
-    cost_per_1k_input_tokens: 0.00014,
-    cost_per_1k_output_tokens: 0.00056,
-    max_tokens: 16384,
-  },
-  {
-    provider: 'deepseek',
-    model_name: 'deepseek-chat-v3-0324:free',
-    display_name: 'DeepSeek Chat V3.0324 (Free)',
-    cost_per_1k_input_tokens: 0,
-    cost_per_1k_output_tokens: 0,
-    max_tokens: 32768,
-  },
-  {
-    provider: 'openai',
-    model_name: 'gpt-oss-20b',
-    display_name: 'OpenAI GPT-OSS-20B',
-    cost_per_1k_input_tokens: 0.0005,
-    cost_per_1k_output_tokens: 0.0015,
-    max_tokens: 4096,
-  },
-  {
     provider: 'openai',
     model_name: 'gpt-oss-20b:free',
-    display_name: 'OpenAI GPT-OSS-20B (Free)',
+    display_name: 'OpenAI GPT-OSS-20B',
     cost_per_1k_input_tokens: 0,
     cost_per_1k_output_tokens: 0,
     max_tokens: 4096,
@@ -54,12 +22,19 @@ const DEFAULT_MODELS = [
   {
     provider: 'xai',
     model_name: 'grok-4.1-fast:free',
-    display_name: 'xAI Grok-4.1 Fast (Free)',
+    display_name: 'xAI Grok-4.1 Fast',
     cost_per_1k_input_tokens: 0,
     cost_per_1k_output_tokens: 0,
     max_tokens: 32768,
   },
 ] as const;
+
+const DISABLED_MODELS = [
+  { provider: 'google', model_name: 'gemini-2.0-flash-exp:free' },
+  { provider: 'deepseek', model_name: 'deepseek-chat-v3-0324:free' },
+  { provider: 'deepseek', model_name: 'deepseek-v3.1' },
+  { provider: 'openai', model_name: 'gpt-oss-20b' },
+];
 
 async function ensureDefaultModels(supabase: ReturnType<typeof getSupabaseAdmin>) {
   for (const model of DEFAULT_MODELS) {
@@ -100,13 +75,29 @@ async function ensureDefaultModels(supabase: ReturnType<typeof getSupabaseAdmin>
     } else if (!existing.is_active) {
       const { error: activateError } = await supabase
         .from('llm_models')
-        .update({ is_active: true })
+        .update({ is_active: true, display_name: model.display_name })
         .eq('id', modelId);
 
       if (activateError) {
         console.error('Models API - Failed to activate model:', model.model_name, activateError.message);
       } else if (process.env.NODE_ENV === 'development') {
         console.log('Models API - Reactivated model:', model.model_name);
+      }
+    } else {
+      const updates: Record<string, any> = {};
+      if (existing.display_name !== model.display_name) {
+        updates.display_name = model.display_name;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        const { error: updateError } = await supabase
+          .from('llm_models')
+          .update(updates)
+          .eq('id', modelId);
+
+        if (updateError) {
+          console.error('Models API - Failed to update model metadata:', model.model_name, updateError.message);
+        }
       }
     }
 
@@ -124,6 +115,18 @@ async function ensureDefaultModels(supabase: ReturnType<typeof getSupabaseAdmin>
       if (permissionError) {
         console.error('Models API - Failed to upsert permission:', model.model_name, role, permissionError.message);
       }
+    }
+  }
+
+  for (const toDisable of DISABLED_MODELS) {
+    const { error: disableError } = await supabase
+      .from('llm_models')
+      .update({ is_active: false })
+      .eq('provider', toDisable.provider)
+      .eq('model_name', toDisable.model_name);
+
+    if (disableError) {
+      console.error('Models API - Failed to disable model:', `${toDisable.provider}/${toDisable.model_name}`, disableError.message);
     }
   }
 }

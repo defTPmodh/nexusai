@@ -29,14 +29,6 @@ const openrouterClient = new OpenAI({
 // Note: Remove :free suffix if you want to use paid models or configure privacy settings
 // For free models, configure privacy at: https://openrouter.ai/settings/privacy
 const OPENROUTER_MODELS: Record<string, string> = {
-  // Google Gemini 2.0 Flash Exp (Free)
-  'gemini-2.0-flash-exp:free': 'google/gemini-2.0-flash-exp:free',
-  // DeepSeek V3.1
-  'deepseek-v3.1': 'deepseek/deepseek-chat-v3.1',
-  // DeepSeek Chat V3.0324 (Free)
-  'deepseek-chat-v3-0324:free': 'deepseek/deepseek-chat-v3-0324:free',
-  // OpenAI GPT-OSS-20B
-  'gpt-oss-20b': 'openai/gpt-oss-20b',
   // OpenAI GPT-OSS-20B (Free)
   'gpt-oss-20b:free': 'openai/gpt-oss-20b:free',
   // Minimax M2 Free
