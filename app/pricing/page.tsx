@@ -19,7 +19,7 @@ export default function PricingPage() {
       period: 'forever',
       description: 'Perfect for trying out Nexus-AI',
       features: [
-        '25,000 tokens/month',
+        '100,000 tokens/month',
         'Basic chat with AI models',
         'RAG document upload (10 docs)',
         'Image generation',
@@ -37,7 +37,7 @@ export default function PricingPage() {
       period: 'per user/month',
       description: 'Best for growing teams',
       features: [
-        '250,000 tokens/month',
+        '1,000,000 tokens/month',
         'All AI models',
         'Unlimited document uploads',
         'Priority support',
@@ -88,7 +88,7 @@ export default function PricingPage() {
           >
             <h1 className="text-4xl font-bold text-white mb-4">Choose Your Plan</h1>
             <p className="text-gray-400 text-lg">
-              Start free, upgrade when you need more. Premium plans unlock unlimited tokens and team collaboration.
+              Start free, upgrade when you need more. Premium plans unlock 1M tokens and team collaboration.
             </p>
           </motion.div>
         </div>
@@ -220,7 +220,7 @@ export default function PricingPage() {
             <div className="space-y-6">
               <div className="glass-card border border-purple-500/20 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-white mb-2">What happens if I exceed my token limit?</h3>
-                <p className="text-gray-400">Free plan users will need to wait until the next billing cycle or upgrade to Premium for unlimited tokens.</p>
+                <p className="text-gray-400">Free plan users will need to wait until the next billing cycle or upgrade to Premium for a 1M token limit.</p>
               </div>
               <div className="glass-card border border-purple-500/20 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-white mb-2">Can I change plans later?</h3>
