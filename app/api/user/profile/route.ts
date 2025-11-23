@@ -62,7 +62,7 @@ export async function PUT(request: NextRequest) {
     const auth0Id = session.user.sub;
 
     const body = await request.json();
-    const { name, phone, company, department, position, bio } = body;
+    const { name, phone, company, department, position, bio, preferences, avatar_url } = body;
 
     // Get user
     const { data: user } = await supabase
@@ -85,6 +85,8 @@ export async function PUT(request: NextRequest) {
         department: department || null,
         position: position || null,
         bio: bio || null,
+        avatar_url: avatar_url || null,
+        preferences: preferences || {},
         updated_at: new Date().toISOString(),
       })
       .eq('id', user.id)
