@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { LLMModel } from '@/types';
 import { Send, Bot, User, Sparkles, Bookmark, Star, Settings as SettingsIcon, Wand2, Mic, Globe, Image as ImageIcon, Rocket, FileText, Plus } from 'lucide-react';
@@ -632,11 +633,19 @@ export default function ChatPage() {
                                     }`}
                                   >
                                     {msg.content.startsWith('![Generated Image](') ? (
-                                      <img
-                                        src={msg.content.match(/\((.+)\)/)?.[1] || ''}
-                                        alt="Generated"
-                                        className="rounded-lg max-w-full h-auto"
-                                      />
+                                      (() => {
+                                        const imageUrl = msg.content.match(/\((.+)\)/)?.[1];
+                                        if (!imageUrl) return null;
+                                        return (
+                                          <Image
+                                            src={imageUrl}
+                                            alt="Generated"
+                                            width={800}
+                                            height={600}
+                                            className="rounded-lg max-w-full h-auto"
+                                          />
+                                        );
+                                      })()
                                     ) : (
                                       <div className="text-sm leading-relaxed">
                                         {renderMessageContent(msg.content)}
@@ -933,14 +942,24 @@ export default function ChatPage() {
                           transition={{ delay: idx * 0.05 + 0.3 }}
                           className="relative z-10 mt-2"
                         >
-                          <img
-                            src={msg.content.match(/\((.+)\)/)?.[1] || ''}
-                            alt="Generated image"
-                            className="rounded-lg max-w-full h-auto shadow-lg border border-gray-700"
-                            onError={(e) => {
-                              e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzFhMWExYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM2YjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZSBsb2FkIGVycm9yPC90ZXh0Pjwvc3ZnPg==';
-                            }}
-                          />
+                          {(() => {
+                            const imageUrl = msg.content.match(/\((.+)\)/)?.[1];
+                            if (!imageUrl) return null;
+                            return (
+                              <Image
+                                src={imageUrl}
+                                alt="Generated image"
+                                width={1024}
+                                height={768}
+                                className="rounded-lg max-w-full h-auto shadow-lg border border-gray-700"
+                                onError={(e) => {
+                                  const target = e.currentTarget as HTMLImageElement;
+                                  target.src =
+                                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzFhMWExYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM2YjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZSBsb2FkIGVycm9yPC90ZXh0Pjwvc3ZnPg==';
+                                }}
+                              />
+                            );
+                          })()}
                         </motion.div>
                       ) : (
                         <motion.div 

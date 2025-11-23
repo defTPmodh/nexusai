@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Users, UserPlus, Mail, Crown, Shield, User as UserIcon, Trash2, Copy, Check, DollarSign, TrendingUp, LogOut, ArrowUp } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
@@ -49,22 +49,7 @@ export default function TeamPage() {
   const [teamName, setTeamName] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      fetchTeamData();
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (team && members.length > 0) {
-      const currentUserRole = members.find(m => m.user.email === user?.email)?.role || 'member';
-      if (currentUserRole === 'owner') {
-        fetchSpending();
-      }
-    }
-  }, [team, members, user]);
-
-  const fetchSpending = async () => {
+  const fetchSpending = useCallback(async () => {
     if (!team) return;
     setLoadingSpending(true);
     try {
@@ -78,9 +63,9 @@ export default function TeamPage() {
     } finally {
       setLoadingSpending(false);
     }
-  };
+  }, [team]);
 
-  const fetchTeamData = async () => {
+  const fetchTeamData = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch team info
@@ -110,7 +95,22 @@ export default function TeamPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchTeamData();
+    }
+  }, [user, fetchTeamData]);
+
+  useEffect(() => {
+    if (team && members.length > 0) {
+      const currentUserRole = members.find(m => m.user.email === user?.email)?.role || 'member';
+      if (currentUserRole === 'owner') {
+        fetchSpending();
+      }
+    }
+  }, [team, members, user, fetchSpending]);
 
 
   const handleRemoveMember = async (memberId: string) => {
