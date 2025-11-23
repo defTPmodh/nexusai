@@ -15,9 +15,11 @@ export interface LLMConfig {
   maxTokens?: number;
 }
 
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+
 // Initialize OpenRouter client (unified gateway for all models)
 const openrouterClient = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY,
+  apiKey: OPENROUTER_API_KEY,
   baseURL: 'https://openrouter.ai/api/v1',
   defaultHeaders: {
     'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
@@ -47,6 +49,12 @@ export async function callLLM(
   const retryDelay = 2000; // 2 seconds
 
   try {
+    if (!OPENROUTER_API_KEY) {
+      throw new Error(
+        'OPENROUTER_API_KEY is required because all requests use OpenRouter. Set it in your environment variables.'
+      );
+    }
+
     // All models route through OpenRouter
     const openrouterModel = OPENROUTER_MODELS[config.model] || config.model;
 
