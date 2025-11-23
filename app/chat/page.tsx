@@ -419,6 +419,39 @@ export default function ChatPage() {
     inputRef.current?.focus();
   };
 
+  const handleModeToggle = (mode: 'multi' | 'rag' | 'image') => {
+    if (mode === 'multi') {
+      const newMode = !multiModelMode;
+      setMultiModelMode(newMode);
+      setImageMode(false);
+      setUseRAG(false);
+      if (!newMode) {
+        setModelMessages({});
+        setAvailableModels([]);
+      } else {
+        setModelMessages({});
+      }
+      return;
+    }
+
+    if (mode === 'rag') {
+      const newMode = !useRAG;
+      setUseRAG(newMode);
+      setImageMode(false);
+      setMultiModelMode(false);
+      setModelMessages({});
+      setAvailableModels([]);
+      return;
+    }
+
+    const newImageMode = !imageMode;
+    setImageMode(newImageMode);
+    setMultiModelMode(false);
+    setUseRAG(false);
+    setModelMessages({});
+    setAvailableModels([]);
+  };
+
   const displayName = user?.name || user?.email || 'Guest';
 
   return (
@@ -431,6 +464,8 @@ export default function ChatPage() {
         <div className="absolute inset-0 bg-grid-pattern opacity-40"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.2),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.18),transparent_30%),radial-gradient(circle_at_70%_70%,rgba(14,165,233,0.12),transparent_32%)] blur-3xl"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/60"></div>
+        <div className="absolute -left-24 top-1/3 w-[360px] h-[360px] rounded-full bg-[conic-gradient(from_120deg_at_50%_50%,rgba(16,185,129,0.25),rgba(59,130,246,0.25),rgba(59,130,246,0.05),transparent_65%)] blur-3xl opacity-50"></div>
+        <div className="absolute -right-20 -top-10 w-[300px] h-[300px] bg-[radial-gradient(circle_at_50%_50%,rgba(226,232,240,0.08),transparent_55%)] blur-2xl"></div>
 
         {/* Top Bar - Model Selection */}
         <div className="relative z-10 glass-dark border-b border-white/5 px-6 py-4">
@@ -793,26 +828,59 @@ export default function ChatPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="h-full flex items-center justify-center"
                 >
-                  <div className="text-center max-w-2xl">
-                    <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                      <Bot className="w-10 h-10 text-white" />
+                  <div className="text-center max-w-4xl space-y-8">
+                    <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-200 text-xs uppercase tracking-[0.18em]">Modern chat surface</div>
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-24 h-24 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/25">
+                        <Bot className="w-12 h-12 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-3xl font-semibold text-white">Start a conversation</h2>
+                        <p className="text-green-200/70 text-lg mt-2">
+                          Pick a mode, drop in a thought, and watch responses flow with the refreshed layout.
+                        </p>
+                      </div>
                     </div>
-                    <h2 className="text-3xl font-semibold text-white mb-3">Start a conversation</h2>
-                    <p className="text-green-200/70 text-lg mb-8">
-                      Select a model and ask me anything
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-3">
-                      {quickPrompts.map((prompt) => (
-                        <motion.button
-                          key={prompt}
-                          whileHover={{ y: -3, scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => handleQuickPrompt(prompt)}
-                          className="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-sm text-white/80 hover:border-white/20 hover:text-white/100 transition-colors duration-200 shadow-sm backdrop-blur"
-                        >
-                          {prompt}
-                        </motion.button>
-                      ))}
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                      <div className="glass-card border border-white/10 rounded-2xl p-4">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-white mb-3">
+                          <Sparkles className="w-4 h-4 text-emerald-200" /> Guided flows
+                        </div>
+                        <div className="space-y-2 text-sm text-white/70">
+                          <p>• Multi-model: compare Gemini vs other providers instantly.</p>
+                          <p>• RAG: pull grounded answers from your uploaded docs.</p>
+                          <p>• Image lab: sketch visuals with descriptive prompts.</p>
+                        </div>
+                      </div>
+                      <div className="glass-card border border-white/10 rounded-2xl p-4">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-white mb-3">
+                          <Bookmark className="w-4 h-4 text-emerald-200" /> Quick picks
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {quickPrompts.slice(0, 3).map((prompt) => (
+                            <motion.button
+                              key={prompt}
+                              whileHover={{ y: -2, scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => handleQuickPrompt(prompt)}
+                              className="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-white/80 hover:border-white/20 hover:text-white/100 transition-colors duration-200"
+                            >
+                              {prompt}
+                            </motion.button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="glass-card border border-white/10 rounded-2xl p-4">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-white mb-3">
+                          <Star className="w-4 h-4 text-emerald-200" /> Shortcuts
+                        </div>
+                        <div className="space-y-2 text-sm text-white/70">
+                          <p>• <span className="text-white/90 font-semibold">Enter</span> to send, <span className="text-white/90 font-semibold">Shift</span> + <span className="text-white/90 font-semibold">Enter</span> for new lines.</p>
+                          <p>• Toggle multi-model or RAG below the composer.</p>
+                          <p>• Scroll horizontally with <span className="text-white/90 font-semibold">Shift</span> in compare view.</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -1127,97 +1195,63 @@ export default function ChatPage() {
 
         {/* Chat Input Area */}
         <div className="relative z-10 px-6 py-6 bg-[#0f0f0f] border-t border-gray-800">
-          {/* Action Buttons Above Input */}
-          <div className="flex justify-center gap-3 mb-4">
-            <motion.button
-              onClick={() => {
-                const newMode = !multiModelMode;
-                setMultiModelMode(newMode);
-                setImageMode(false);
-                setUseRAG(false);
-                // Clear model messages when disabling multi-model mode
-                if (!newMode) {
-                  setModelMessages({});
-                  setAvailableModels([]);
-                }
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`px-5 py-2.5 border rounded-full text-sm transition-all duration-300 flex items-center gap-2 relative overflow-hidden ${
-                multiModelMode
-                  ? 'bg-white/10 border-white/20 text-white/90 shadow-sm backdrop-blur-sm'
-                  : 'glass-card border-white/8 text-white/60 hover:bg-white/5 hover:border-white/12 hover:text-white/80'
-              }`}
-            >
-              {multiModelMode && (
-                <motion.div
-                  layoutId="activeIndicator"
-                  className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent"
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                />
-              )}
-              <motion.div
-                animate={{ rotate: multiModelMode ? 360 : 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <FileText className="w-4 h-4 relative z-10" />
-              </motion.div>
-              <span className="relative z-10 font-medium">
-                Multi-Model {multiModelMode && (
-                  <motion.span
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="text-white/70"
+          {/* Mode Dock */}
+          <div className="max-w-5xl mx-auto mb-5">
+            <div className="glass-card border border-white/8 rounded-2xl px-4 py-4 sm:py-5 backdrop-blur-lg shadow-lg shadow-emerald-500/5">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                {[
+                  { key: 'multi', label: 'Multi-Model', desc: 'Compare providers side-by-side', active: multiModelMode, icon: Globe },
+                  { key: 'rag', label: 'RAG', desc: 'Ground responses in your docs', active: useRAG, icon: FileText },
+                  { key: 'image', label: 'Image Lab', desc: 'Turn prompts into visuals', active: imageMode, icon: ImageIcon },
+                ].map((mode) => (
+                  <motion.button
+                    key={mode.key}
+                    onClick={() => handleModeToggle(mode.key as 'multi' | 'rag' | 'image')}
+                    whileHover={{ y: -2, scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`group flex-1 min-w-[180px] sm:min-w-[200px] px-4 py-3 rounded-xl text-left border transition-all duration-300 relative overflow-hidden ${
+                      mode.active
+                        ? 'bg-gradient-to-r from-emerald-500/20 via-cyan-500/10 to-blue-500/10 border-emerald-300/40 shadow-lg shadow-emerald-500/15'
+                        : 'bg-white/5 border-white/8 hover:border-white/16 hover:bg-white/8 text-white/80'
+                    }`}
                   >
-                    (Active)
-                  </motion.span>
-                )}
-              </span>
-            </motion.button>
-            <motion.button
-              onClick={() => {
-                setUseRAG(!useRAG);
-                setImageMode(false);
-                setMultiModelMode(false);
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`px-5 py-2.5 border rounded-full text-sm transition-all duration-300 flex items-center gap-2 relative overflow-hidden ${
-                useRAG
-                  ? 'bg-white/10 border-white/20 text-white/90 shadow-sm backdrop-blur-sm'
-                  : 'glass-card border-white/8 text-white/60 hover:bg-white/5 hover:border-white/12 hover:text-white/80'
-              }`}
-            >
-              {useRAG && (
-                <motion.div
-                  layoutId="ragIndicator"
-                  className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent"
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                />
-              )}
-              <motion.div
-                animate={{ rotate: useRAG ? 360 : 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <FileText className="w-4 h-4 relative z-10" />
-              </motion.div>
-              <span className="relative z-10 font-medium">
-                RAG {useRAG && (
-                  <motion.span
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="text-white/70"
-                  >
-                    (Active)
-                  </motion.span>
-                )}
-              </span>
-            </motion.button>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center border ${mode.active ? 'border-emerald-200/60 bg-emerald-500/20' : 'border-white/10 bg-white/5'} shadow-inner shadow-black/20`}>
+                        <mode.icon className={`w-4 h-4 ${mode.active ? 'text-white' : 'text-white/70'}`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                          {mode.label}
+                          {mode.active && <span className="px-2 py-0.5 text-[10px] rounded-full bg-white/15 border border-white/15 uppercase tracking-wide">On</span>}
+                        </div>
+                        <p className="text-xs text-white/60 mt-0.5 line-clamp-1">{mode.desc}</p>
+                      </div>
+                      <motion.div
+                        animate={{ rotate: mode.active ? 0 : 90, scale: mode.active ? 1.05 : 1 }}
+                        className={`w-2.5 h-2.5 rounded-full ${mode.active ? 'bg-emerald-300 shadow shadow-emerald-400/40' : 'bg-white/30'}`}
+                      />
+                    </div>
+                    {mode.active && (
+                      <motion.div
+                        layoutId={`mode-${mode.key}`}
+                        className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(16,185,129,0.18),transparent_55%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.18),transparent_55%)] opacity-70 pointer-events-none"
+                        transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                      />
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-white/60">
+                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-2">⚡ Tap a mode to auto-tune the composer.</span>
+                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-2">⌘ + Enter to send · Shift + Enter for new lines</span>
+                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-2">Models stay synced when switching modes.</span>
+              </div>
+            </div>
           </div>
 
           {/* Input Field */}
           <div className="max-w-4xl mx-auto">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -1272,23 +1306,6 @@ export default function ChatPage() {
                 </motion.button>
               </div>
             </motion.div>
-
-            {/* Action Buttons Below Input */}
-            <div className="flex justify-center gap-3 mt-4">
-              <motion.button
-                onClick={() => {
-                  alert('Image generation is not available at this time. This feature is coming soon.');
-                }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                disabled
-                className="px-4 py-2 border rounded-full text-sm transition-all duration-300 flex items-center gap-2 bg-gray-900 border-gray-800 text-gray-500 cursor-not-allowed opacity-50"
-                title="Image generation coming soon"
-              >
-                <ImageIcon className="w-4 h-4" />
-                Generate Image (Coming Soon)
-              </motion.button>
-            </div>
           </div>
         </div>
       </div>
