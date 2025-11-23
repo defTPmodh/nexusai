@@ -135,10 +135,24 @@ export default function ChatPage() {
 
     const handleWheel = (e: WheelEvent) => {
       const target = e.target as HTMLElement;
-      const insideColumn = target.closest('.multi-model-column');
+      const scrollArea = target.closest('.multi-model-column-scroll') as HTMLElement | null;
 
-      // Preserve native vertical scroll inside each column
-      if (insideColumn) return;
+      if (scrollArea) {
+        const canScrollVertically = scrollArea.scrollHeight > scrollArea.clientHeight;
+        const atTop = scrollArea.scrollTop <= 0;
+        const atBottom = scrollArea.scrollTop + scrollArea.clientHeight >= scrollArea.scrollHeight - 1;
+
+        // Allow vertical scrolling inside the column when there's room
+        if (canScrollVertically && !atTop && !atBottom) return;
+
+        // When the column can't scroll further, translate vertical wheel to horizontal lane movement
+        const horizontalDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (horizontalDelta !== 0) {
+          e.preventDefault();
+          container.scrollLeft += horizontalDelta;
+        }
+        return;
+      }
 
       // Convert vertical scroll to horizontal when hovering the lane
       const horizontalDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
@@ -602,9 +616,9 @@ export default function ChatPage() {
                       </div>
                       
                       {/* Scrollable Messages Container */}
-                      <div 
+                      <div
                         ref={(el) => { columnRefs.current[modelId] = el; }}
-                        className="flex-1 overflow-y-auto px-4 py-4 space-y-4"
+                        className="multi-model-column-scroll flex-1 overflow-y-auto px-4 py-4 space-y-4"
                         style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(34, 197, 94, 0.3) transparent' }}
                       >
                         {columnMessages.length === 0 ? (
