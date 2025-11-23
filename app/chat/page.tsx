@@ -104,6 +104,37 @@ export default function ChatPage() {
   const columnRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  const statusCards = [
+    {
+      title: 'Session mode',
+      description: 'Compare multiple models or switch into RAG / image.',
+      status: multiModelMode ? 'Multi-model active' : 'Single model',
+      accent: 'from-emerald-400/25 via-teal-400/15 to-cyan-400/15',
+      icon: Sparkles,
+    },
+    {
+      title: 'Profile & storage',
+      description: 'Keep chats private — we don\'t store your messages.',
+      status: 'Ephemeral',
+      accent: 'from-sky-400/20 via-blue-500/20 to-indigo-400/15',
+      icon: Bookmark,
+    },
+    {
+      title: 'Session status',
+      description: loading ? 'Crafting the next response...' : 'Ready for your prompt.',
+      status: loading ? 'Live' : 'Idle',
+      accent: 'from-green-400/18 via-emerald-500/15 to-cyan-500/10',
+      icon: Rocket,
+    },
+    {
+      title: 'Active profile',
+      description: user?.name || 'Guest mode — sign in for continuity.',
+      status: selectedModel ? models.find((m) => m.id === selectedModel)?.display_name : 'Model pending',
+      accent: 'from-indigo-400/20 via-purple-400/15 to-sky-400/15',
+      icon: Star,
+    },
+  ];
+
   useEffect(() => {
     if (user) {
       fetchModels();
@@ -409,226 +440,175 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen flex overflow-hidden bg-gradient-to-br from-[#050b17] via-[#0a1226] to-[#05060f] text-white relative">
+    <div className="min-h-screen flex overflow-hidden bg-gradient-to-br from-[#050912] via-[#0a1321] to-[#050912] text-white relative">
       <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 ml-64 flex flex-col relative overflow-hidden">
         {/* Ambient Background */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.28]"></div>
-        <div className="absolute -top-24 -left-20 w-[26rem] h-[26rem] rounded-full bg-purple-500/10 blur-[120px]" />
-        <div className="absolute -bottom-16 -right-12 w-[32rem] h-[32rem] rounded-full bg-indigo-400/15 blur-[130px]" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.18]"></div>
+        <div className="absolute -top-28 -left-16 w-[28rem] h-[28rem] rounded-full bg-cyan-500/12 blur-[140px]" />
+        <div className="absolute -bottom-10 -right-24 w-[30rem] h-[30rem] rounded-full bg-emerald-400/12 blur-[150px]" />
         <div className="aurora-layer" />
-        <div className="floating-orb w-36 h-36 left-10 top-24" />
-        <div className="floating-orb blue w-44 h-44 right-6 bottom-12" />
+        <div className="floating-orb w-32 h-32 left-16 top-28 opacity-70" />
+        <div className="floating-orb blue w-40 h-40 right-10 bottom-10 opacity-70" />
 
         {/* Top Bar - Model Selection */}
         <div className="relative z-10 glass-dark border-b border-white/5">
-          <div className="max-w-6xl mx-auto w-full px-6 py-5">
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-400/30 via-purple-400/30 to-cyan-400/25 flex items-center justify-center border border-indigo-300/20 shadow-lg shadow-indigo-500/10">
-                <Sparkles className="w-5 h-5 text-indigo-100" />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-indigo-200/70">Nexus Chat</p>
-                <h2 className="text-xl font-semibold text-white">Create, compare, and ship ideas faster</h2>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-2 backdrop-blur">
-              <div className="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse" />
-              <span>Live playground</span>
-              {selectedModel && !multiModelMode && (
-                <span className="px-2 py-1 rounded-full bg-purple-500/15 text-purple-100 border border-purple-300/25 text-[11px]">
-                  {models.find((m) => m.id === selectedModel)?.display_name || 'Model selected'}
-                </span>
-              )}
-            </div>
-          </div>
-          {multiModelMode ? (
-            <div className="flex items-center gap-3 overflow-x-auto">
-              <div className="flex items-center gap-3 min-w-max">
-                {models.map((model) => {
-                  const isEnabled = enabledModels.has(model.id);
-                  const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
-                  return (
-                    <motion.button
-                      key={model.id}
-                      onClick={() => toggleModel(model.id)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
-                        isEnabled
-                          ? isGemini
-                            ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
-                            : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
-                          : isGemini
-                            ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8 opacity-80'
-                            : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal opacity-70'
-                      }`}
-                    >
-                      {isGemini && (
-                        <motion.div
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                          className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-blue-400/80 shadow-sm' : 'bg-blue-500/40'}`}
-                        />
-                      )}
-                      <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
-                        {model.display_name}
-                      </div>
-                      {!isGemini && (
-                        <div className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-white/60' : 'bg-white/30'}`} />
-                      )}
-                      {isEnabled && (
-                        <motion.div
-                          layoutId={`toggle-${model.id}`}
-                          className={`absolute inset-0 rounded-xl -z-10 ${
-                            isGemini
-                              ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
-                              : 'bg-gradient-to-r from-white/5 to-white/3'
-                          }`}
-                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                        />
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-4 overflow-x-auto">
-              <div className="flex items-center gap-4 min-w-max">
-                {models.map((model) => {
-                  const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
-                  return (
-                    <motion.button
-                      key={model.id}
-                      onClick={() => setSelectedModel(model.id)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
-                        selectedModel === model.id 
-                          ? isGemini
-                            ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
-                            : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
-                          : isGemini
-                            ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8'
-                            : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal'
-                      }`}
-                    >
-                      {isGemini && (
-                        <motion.div
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                          className="w-1.5 h-1.5 rounded-full bg-blue-400/80 shadow-sm"
-                        />
-                      )}
-                      <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
-                        {model.display_name}
-                      </div>
-                      {selectedModel === model.id && (
-                        <motion.div
-                          layoutId="selectedIndicator"
-                          className={`absolute inset-0 rounded-xl -z-10 ${
-                            isGemini
-                              ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
-                              : 'bg-gradient-to-r from-white/5 to-white/3'
-                          }`}
-                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                        />
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-              <div className="ml-auto flex items-center gap-3 flex-shrink-0">
-                <SettingsIcon className="w-5 h-5 text-white/50 hover:text-white/80 cursor-pointer transition-colors duration-300" />
-                <div className="w-8 h-8 bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                  <User className="w-4 h-4 text-white/70" />
+          <div className="max-w-6xl mx-auto w-full px-6 py-6 space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400/25 via-emerald-400/25 to-indigo-400/20 flex items-center justify-center border border-cyan-300/20 shadow-lg shadow-cyan-500/10">
+                  <Sparkles className="w-5 h-5 text-cyan-100" />
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-cyan-200/70">Playground</p>
+                  <h2 className="text-xl font-semibold text-white">Sleek, modern, and ready to compare</h2>
                 </div>
               </div>
+              <div className="flex items-center gap-2 text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-2 backdrop-blur">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Live</span>
+                {selectedModel && !multiModelMode && (
+                  <span className="px-2 py-1 rounded-full bg-cyan-500/15 text-cyan-100 border border-cyan-300/25 text-[11px]">
+                    {models.find((m) => m.id === selectedModel)?.display_name || 'Model selected'}
+                  </span>
+                )}
+              </div>
             </div>
-          )}
-        </div>
-      </div>
 
-        {/* Experience strip */}
-        <div className="relative z-10 -mt-3 pb-6">
-          <div className="max-w-6xl mx-auto w-full px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-              className="neon-border glass-card rounded-2xl px-5 py-4 shadow-xl shadow-indigo-500/10 border border-white/10"
-            >
-              <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400/25 via-purple-500/25 to-cyan-400/30 flex items-center justify-center border border-indigo-300/25 shadow-lg shadow-indigo-500/15 pulse-ring">
-                    <Rocket className="w-5 h-5 text-indigo-100" />
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-indigo-200/70">Experience</p>
-                    <p className="text-base font-semibold text-white">Immersive, responsive, and aesthetic by default</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-2 backdrop-blur">
-                  <div className="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse" />
-                  <span>Realtime polish</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[{
-                title: 'Multi-model space',
-                description: 'Flip into compare mode instantly with tactile toggles and silky scroll.',
-                icon: Globe,
-                active: multiModelMode,
-              }, {
-                title: 'RAG context',
-                description: 'Stay grounded with contextual answers and visible guardrails.',
-                icon: FileText,
-                active: useRAG,
-              }, {
-                title: 'Creative launch',
-                description: 'Ride playful gradients, micro-interactions, and cinematic glows.',
-                icon: Wand2,
-                active: true,
-              }].map((item, idx) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05 + 0.05, type: 'spring', stiffness: 120 }}
-                  className="glass-card rounded-xl px-4 py-3 border border-white/10 hover:border-white/15 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group"
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+              {statusCards.map((card) => (
+                <div
+                  key={card.title}
+                  className="glass-card rounded-xl px-4 py-3 border border-white/10 hover:border-cyan-300/20 transition-all duration-300 relative overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="flex items-start gap-3 relative z-10">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center border ${item.active ? 'border-indigo-300/50 bg-indigo-500/15 text-indigo-100' : 'border-white/10 bg-white/5 text-white/70'}`}>
-                    <item.icon className="w-5 h-5" />
-                  </div>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${card.accent} opacity-80`} />
+                  <div className="relative flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-cyan-100">
+                      <card.icon className="w-5 h-5" />
+                    </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-semibold text-white flex items-center gap-2">
-                        {item.title}
-                        {item.active && (
-                          <motion.span
-                            layout
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-100 border border-purple-300/25"
-                          >
-                            Live
-                          </motion.span>
-                        )}
-                      </p>
-                      <p className="text-xs text-white/70 leading-relaxed">{item.description}</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-semibold text-white">{card.title}</p>
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-black/30 border border-white/10 text-emerald-100">
+                          {card.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-white/70 leading-relaxed">{card.description}</p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
-          </motion.div>
+
+            {multiModelMode ? (
+              <div className="flex items-center gap-3 overflow-x-auto">
+                <div className="flex items-center gap-3 min-w-max">
+                  {models.map((model) => {
+                    const isEnabled = enabledModels.has(model.id);
+                    const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
+                    return (
+                      <motion.button
+                        key={model.id}
+                        onClick={() => toggleModel(model.id)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
+                          isEnabled
+                            ? isGemini
+                              ? 'bg-gradient-to-r from-cyan-500/25 to-emerald-500/25 border border-cyan-400/30 shadow-md shadow-cyan-500/10 text-white font-medium backdrop-blur-sm'
+                              : 'bg-gradient-to-r from-white/8 via-white/5 to-white/3 border border-white/12 shadow-sm text-white/90 font-medium backdrop-blur-sm'
+                            : isGemini
+                              ? 'glass-card border border-cyan-500/18 hover:border-cyan-400/30 text-cyan-200/80 hover:text-cyan-100 font-normal bg-gradient-to-r from-cyan-500/8 to-emerald-500/8 opacity-90'
+                              : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal opacity-80'
+                        }`}
+                      >
+                        {isGemini && (
+                          <motion.div
+                            animate={{ scale: [1, 1.05, 1] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                            className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-cyan-300/90 shadow-sm' : 'bg-cyan-500/50'}`}
+                          />
+                        )}
+                        <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
+                          {model.display_name}
+                        </div>
+                        {!isGemini && (
+                          <div className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-white/70' : 'bg-white/30'}`} />
+                        )}
+                        {isEnabled && (
+                          <motion.div
+                            layoutId={`toggle-${model.id}`}
+                            className={`absolute inset-0 rounded-xl -z-10 ${
+                              isGemini
+                                ? 'bg-gradient-to-r from-cyan-500/12 to-emerald-500/12'
+                                : 'bg-gradient-to-r from-white/6 to-white/3'
+                            }`}
+                            transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                          />
+                        )}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4 overflow-x-auto">
+                <div className="flex items-center gap-4 min-w-max">
+                  {models.map((model) => {
+                    const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
+                    return (
+                      <motion.button
+                        key={model.id}
+                        onClick={() => setSelectedModel(model.id)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
+                          selectedModel === model.id
+                            ? isGemini
+                              ? 'bg-gradient-to-r from-cyan-500/25 to-emerald-500/25 border border-cyan-400/30 shadow-md shadow-cyan-500/10 text-white font-medium backdrop-blur-sm'
+                              : 'bg-gradient-to-r from-white/8 via-white/5 to-white/3 border border-white/12 shadow-sm text-white/90 font-medium backdrop-blur-sm'
+                            : isGemini
+                              ? 'glass-card border border-cyan-500/18 hover:border-cyan-400/30 text-cyan-200/80 hover:text-cyan-100 font-normal bg-gradient-to-r from-cyan-500/8 to-emerald-500/8'
+                              : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal'
+                        }`}
+                      >
+                        {isGemini && (
+                          <motion.div
+                            animate={{ scale: [1, 1.05, 1] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                            className="w-1.5 h-1.5 rounded-full bg-cyan-300/90 shadow-sm"
+                          />
+                        )}
+                        <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
+                          {model.display_name}
+                        </div>
+                        {selectedModel === model.id && (
+                          <motion.div
+                            layoutId="selectedIndicator"
+                            className={`absolute inset-0 rounded-xl -z-10 ${
+                              isGemini
+                                ? 'bg-gradient-to-r from-cyan-500/12 to-emerald-500/12'
+                                : 'bg-gradient-to-r from-white/6 to-white/3'
+                            }`}
+                            transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                          />
+                        )}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+                <div className="ml-auto flex items-center gap-3 flex-shrink-0">
+                  <SettingsIcon className="w-5 h-5 text-white/50 hover:text-white/80 cursor-pointer transition-colors duration-300" />
+                  <div className="w-9 h-9 bg-gradient-to-br from-white/8 to-white/4 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <User className="w-4 h-4 text-white/70" />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
         {/* Messages Area - Column Layout for Multi-Model Mode */}
         {multiModelMode ? (
@@ -1251,9 +1231,9 @@ export default function ChatPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="relative glass-card neon-border rounded-2xl px-4 py-5 flex items-end gap-3 focus-within:border-white/15 focus-within:shadow-lg focus-within:shadow-indigo-500/10 transition-all duration-300"
+              className="relative glass-card rounded-2xl px-4 py-5 flex items-end gap-3 focus-within:border-cyan-300/30 focus-within:shadow-lg focus-within:shadow-cyan-500/20 transition-all duration-300"
             >
-              <div className="absolute inset-x-4 top-3 h-0.5 bg-gradient-to-r from-indigo-400/40 via-cyan-400/40 to-white/30 rounded-full blur-sm opacity-70" />
+              <div className="absolute inset-x-4 top-3 h-0.5 bg-gradient-to-r from-cyan-400/50 via-emerald-300/50 to-white/30 rounded-full blur-sm opacity-80" />
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
@@ -1292,7 +1272,7 @@ export default function ChatPage() {
                   disabled={loading || (!multiModelMode && !imageMode && !selectedModel) || !input.trim()}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="relative p-2.5 bg-gradient-to-r from-indigo-500/25 via-cyan-500/20 to-white/10 text-white rounded-lg hover:from-indigo-500/35 hover:to-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-indigo-500/20 disabled:shadow-none border border-indigo-400/30 hover:border-indigo-300/40 backdrop-blur-sm shimmer-border overflow-hidden"
+                  className="relative p-2.5 bg-gradient-to-r from-cyan-500/25 via-emerald-500/20 to-white/10 text-white rounded-lg hover:from-cyan-500/35 hover:to-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-cyan-500/20 disabled:shadow-none border border-cyan-400/30 hover:border-cyan-300/40 backdrop-blur-sm shimmer-border overflow-hidden"
                 >
                   <motion.div
                     animate={{ rotate: loading ? 360 : 0 }}
