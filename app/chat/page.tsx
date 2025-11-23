@@ -123,11 +123,19 @@ export default function ChatPage() {
     }
   }, [messages, multiModelMode]);
 
+  // Hide the hero when a conversation already exists (e.g., on revisit or persisted state)
   useEffect(() => {
-    if (messages.length > 0) {
+    if (showHero && messages.length > 0) {
       setShowHero(false);
     }
-  }, [messages.length]);
+  }, [messages.length, showHero]);
+
+  // Collapse the hero once the user starts composing to create more breathing room
+  useEffect(() => {
+    if (showHero && input.trim().length > 0) {
+      setShowHero(false);
+    }
+  }, [input, showHero]);
 
   // Scroll each column to bottom when new messages arrive in multi-model mode
   useEffect(() => {
@@ -589,11 +597,12 @@ export default function ChatPage() {
           {showHero && messages.length === 0 && (
             <motion.div
               key="hero"
+              layout
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="relative z-10 px-6 pt-5 pb-5 flex flex-wrap gap-5 xl:gap-6 items-stretch"
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="relative z-10 px-6 pt-6 pb-6 grid grid-cols-1 xl:grid-cols-[1.1fr_1fr] gap-6 items-stretch"
             >
               <div className="flex-1 min-w-[260px] glass-card border border-white/10 rounded-2xl p-4 lg:p-5 backdrop-blur-md shadow-lg shadow-emerald-500/5">
                 <div className="flex items-center gap-3 mb-3">
