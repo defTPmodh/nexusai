@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MessageSquare, Search, ChevronRight, Settings, Sparkles, Plus, Zap, History, FileText, BarChart3, Bot, X, Users, CreditCard, User, Shield } from 'lucide-react';
+import { MessageSquare, ChevronRight, Settings, Sparkles, Plus, Zap, History, FileText, BarChart3, Bot, X, Users, CreditCard, User, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Sidebar() {
@@ -40,6 +40,18 @@ export default function Sidebar() {
   }, [user]);
 
   const usagePercentage = usage.limit && usage.limit > 0 ? (usage.used / usage.limit) * 100 : 0;
+  const isAdmin = Boolean(
+    team?.role === 'admin' ||
+    team?.role === 'owner' ||
+    team?.is_admin ||
+    team?.permissions?.admin === true
+  );
+
+  const quickLinks = [
+    { href: '/chat', label: 'Ask anything', icon: Sparkles },
+    { href: '/profile', label: 'Your workspace', icon: User },
+    { href: '/admin/documents', label: 'Knowledge base', icon: FileText, admin: true },
+  ];
 
   if (!sidebarOpen) {
     return (
@@ -70,56 +82,93 @@ export default function Sidebar() {
       initial={{ x: -300 }}
       animate={{ x: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="w-72 glass-dark border-r border-purple-500/20 flex flex-col h-screen fixed left-0 top-0 z-40 shadow-2xl"
+      className="w-[19rem] max-w-[19rem] bg-gradient-to-b from-[#0f0b20] via-[#0c0a1a] to-[#06050f] border-r border-purple-500/15 flex flex-col h-screen fixed left-0 top-0 z-40 shadow-2xl"
     >
       {/* Logo */}
-      <div className="p-6 border-b border-purple-500/20 bg-gradient-to-r from-purple-900/20 to-indigo-900/20">
+      <div className="p-6 border-b border-purple-500/15 bg-gradient-to-r from-purple-900/30 via-indigo-900/20 to-cyan-900/20">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <motion.div
-              whileHover={{ rotate: 360, scale: 1.1 }}
+              whileHover={{ rotate: 360, scale: 1.05 }}
               transition={{ duration: 0.6 }}
-              className="w-10 h-10 bg-gradient-to-br from-purple-500 via-indigo-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg glow-purple"
+              className="w-11 h-11 bg-gradient-to-br from-purple-500 via-indigo-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl ring-2 ring-purple-500/30"
             >
               <Sparkles className="w-6 h-6 text-white" />
             </motion.div>
-            <span className="gradient-text font-bold text-xl">Nexus-AI</span>
+            <div className="leading-tight">
+              <span className="gradient-text font-bold text-xl block">Nexus-AI</span>
+              <span className="text-[11px] text-purple-200/70 tracking-wide">Adaptive copilots</span>
+            </div>
           </Link>
           <motion.button
             whileHover={{ scale: 1.1, rotate: 90 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setSidebarOpen(false)}
-            className="p-1.5 hover:bg-purple-500/20 rounded-lg transition-colors"
+            className="p-2 hover:bg-purple-500/15 rounded-xl transition-colors border border-purple-500/10"
           >
-            <X className="w-4 h-4 text-purple-300" />
+            <X className="w-4 h-4 text-purple-200" />
           </motion.button>
+        </div>
+
+        <div className="mt-4 flex gap-2">
+          <span className="px-2.5 py-1 text-[11px] uppercase tracking-[0.15em] text-purple-100 bg-purple-500/20 rounded-full border border-purple-500/20">
+            Beta
+          </span>
+          <span className="px-2.5 py-1 text-[11px] text-cyan-100 bg-cyan-500/15 rounded-full border border-cyan-500/20 flex items-center gap-1">
+            <Zap className="w-3 h-3" /> Live
+          </span>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4">
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => window.location.href = '/chat'}
-          className="w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500 text-white py-3.5 px-4 rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-200 flex items-center gap-2 glow-purple"
+          className="w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500 text-white py-3.5 px-4 rounded-2xl font-semibold shadow-lg shadow-purple-700/40 hover:shadow-purple-500/50 transition-all duration-200 flex items-center justify-between"
         >
-          <Plus className="w-5 h-5" />
-          New Chat
+          <div className="flex items-center gap-3">
+            <Plus className="w-5 h-5" />
+            <span>Start a new chat</span>
+          </div>
+          <span className="text-xs bg-white/20 px-2 py-1 rounded-full font-medium">⌘ + N</span>
         </motion.button>
 
-        <div className="mt-6 space-y-1">
+        <div className="grid grid-cols-2 gap-3">
+          {quickLinks.map((item) => {
+            if (item.admin && !isAdmin) return null;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group rounded-xl border border-purple-500/15 bg-white/5 backdrop-blur-sm p-3 hover:border-cyan-500/40 transition-all duration-200 shadow-inner shadow-black/20"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="p-2 rounded-lg bg-gradient-to-br from-purple-500/20 via-indigo-500/20 to-cyan-500/20 text-cyan-100 ring-1 ring-purple-500/20 group-hover:ring-cyan-500/30 transition">
+                    <Icon className="w-4 h-4" />
+                  </span>
+                  <div className="text-sm font-medium text-purple-50 group-hover:text-white">{item.label}</div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="rounded-2xl border border-purple-500/15 bg-white/5 backdrop-blur-sm p-4 shadow-inner shadow-black/20">
           <button
             onClick={() => setRecentChatsOpen(!recentChatsOpen)}
-            className="w-full flex items-center justify-between px-3 py-2.5 text-purple-300 hover:text-white hover:bg-purple-500/20 rounded-lg transition-all duration-200 group"
+            className="w-full flex items-center justify-between text-purple-100 hover:text-white transition-colors"
           >
             <div className="flex items-center gap-2">
-              <History className="w-4 h-4 group-hover:text-cyan-400 transition-colors" />
-              <span className="text-sm font-medium">Recent Chats</span>
+              <History className="w-4 h-4 text-cyan-300" />
+              <span className="text-sm font-semibold">Recent chats</span>
             </div>
             <motion.div
               animate={{ rotate: recentChatsOpen ? 90 : 0 }}
               transition={{ duration: 0.2 }}
+              className="text-purple-200"
             >
               <ChevronRight className="w-4 h-4" />
             </motion.div>
@@ -131,59 +180,49 @@ export default function Sidebar() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="ml-6 mt-2 space-y-1"
+                className="mt-3 space-y-2"
               >
                 <Link
                   href="/chat"
-                  className="block px-3 py-2 text-sm text-purple-300/70 hover:text-cyan-400 hover:bg-purple-500/10 rounded-lg transition-colors"
+                  className="flex items-center justify-between px-3 py-2 text-sm text-purple-200/80 hover:text-white hover:bg-purple-500/10 rounded-xl transition-colors"
                 >
-                  Chat Session
+                  Chat interface
+                  <span className="text-[11px] px-2 py-1 rounded-full bg-purple-500/15 border border-purple-500/20 text-purple-100">Today</span>
                 </Link>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-purple-500/20">
-          <div className="text-xs text-purple-300/60 uppercase tracking-wider mb-2 px-3 font-semibold">Today</div>
-          <div className="space-y-1">
-            <Link
-              href="/chat"
-              className={`block px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${
-                pathname === '/chat'
-                  ? 'bg-gradient-to-r from-purple-500/30 to-indigo-500/30 text-white border border-purple-400/50 shadow-lg shadow-purple-500/20'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-500/10'
-              }`}
-            >
-              Chat Interface
-            </Link>
-          </div>
-        </div>
-
-        {/* Navigation Links */}
-        <div className="mt-6 pt-6 border-t border-purple-500/20">
-          <div className="text-xs text-purple-300/60 uppercase tracking-wider mb-2 px-3 font-semibold">Navigation</div>
-          <div className="space-y-1">
+        <div className="pt-2">
+          <div className="text-xs text-purple-200/70 uppercase tracking-[0.12em] mb-3 px-1 font-semibold">Navigate</div>
+          <div className="space-y-2">
             {navItems.map((item) => {
-              if (item.admin && !pathname?.startsWith('/admin')) {
+              if (item.admin && !isAdmin) {
                 return null;
               }
               if (item.show === false) {
                 return null;
               }
               const Icon = item.icon;
+              const active = item.active || pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                    item.active
-                      ? 'bg-gradient-to-r from-purple-500/30 to-indigo-500/30 text-white border border-purple-400/50 shadow-lg shadow-purple-500/20'
-                      : 'text-purple-300/70 hover:text-white hover:bg-purple-500/10 hover:border-purple-500/20 border border-transparent'
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl border transition-all duration-200 bg-white/5 backdrop-blur-sm ${
+                    active
+                      ? 'border-cyan-500/60 text-white shadow-lg shadow-cyan-500/20'
+                      : 'border-purple-500/10 text-purple-200/80 hover:border-cyan-500/30 hover:text-white'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <div className="flex items-center gap-3">
+                    <span className={`p-2 rounded-lg ring-1 ${active ? 'bg-cyan-500/15 ring-cyan-400/60 text-cyan-100' : 'bg-purple-500/10 ring-purple-500/20 text-purple-100/90'}`}>
+                      <Icon className="w-4 h-4" />
+                    </span>
+                    <span className="text-sm font-medium">{item.label}</span>
+                  </div>
+                  {active && <span className="text-[10px] uppercase tracking-[0.18em] text-cyan-200">Active</span>}
                 </Link>
               );
             })}
@@ -192,12 +231,12 @@ export default function Sidebar() {
       </div>
 
       {/* Account Status */}
-      <div className="p-4 border-t border-purple-500/20 space-y-3">
+      <div className="p-5 border-t border-purple-500/20 space-y-3 bg-white/5 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="glass-card bg-gradient-to-br from-purple-900/40 via-indigo-900/40 to-cyan-900/40 rounded-xl p-4 border border-purple-500/30 shadow-lg"
+          className="bg-gradient-to-br from-purple-900/40 via-indigo-900/40 to-cyan-900/40 rounded-2xl p-4 border border-purple-500/30 shadow-lg"
         >
           <div className="flex items-center justify-between mb-2">
             <div className="text-xs text-purple-200 font-medium capitalize">
@@ -229,13 +268,14 @@ export default function Sidebar() {
               </div>
             </div>
           )}
-          <div className="text-xs text-purple-300/70">
+          <div className="text-xs text-purple-100/80 flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
             {usage.unlimited ? 'Unlimited tokens' : usagePercentage < 1 ? 'Just getting started' : `${Math.round(usagePercentage)}% used`}
           </div>
           {usage.plan === 'free' && (
             <Link
               href="/pricing"
-              className="mt-3 block text-center text-xs gradient-text-cyan hover:scale-105 transition-transform"
+              className="mt-3 block text-center text-xs text-cyan-100 hover:text-white hover:scale-105 transition-transform"
             >
               Upgrade to Premium →
             </Link>
@@ -244,7 +284,7 @@ export default function Sidebar() {
 
         <Link
           href="/admin/documents"
-          className="block w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500 text-white py-3 px-4 rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-200 flex items-center justify-center gap-2 glow-purple"
+          className="block w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500 text-white py-3 px-4 rounded-2xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <Zap className="w-4 h-4" />
           Admin Panel
@@ -252,10 +292,10 @@ export default function Sidebar() {
       </div>
 
       {/* Settings */}
-      <div className="p-4 border-t border-purple-500/20">
+      <div className="p-5 border-t border-purple-500/20 bg-[#06050f]/80 backdrop-blur">
         <a
           href="/api/auth/logout"
-          className="flex items-center gap-3 px-3 py-2.5 text-purple-300/70 hover:text-white hover:bg-purple-500/10 rounded-lg transition-all duration-200 group border border-transparent hover:border-purple-500/20"
+          className="flex items-center gap-3 px-3 py-2.5 text-purple-200/80 hover:text-white hover:bg-purple-500/10 rounded-xl transition-all duration-200 group border border-purple-500/10 hover:border-cyan-500/30"
         >
           <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
           <span className="text-sm font-medium">Settings</span>
