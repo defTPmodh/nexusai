@@ -167,32 +167,42 @@ export async function GET(request: NextRequest) {
       user = newUser;
     }
 
-    // Get models available for this role
-    const { data: models, error } = await supabase
+    // Get model IDs this role can use (avoid relying on PostgREST relationships)
+    const { data: permissions, error: permissionsError } = await supabase
       .from('model_permissions')
-      .select(
-        `
-        can_use,
-        llm_models (*)
-      `
-      )
+      .select('model_id')
       .eq('role', user.role)
       .eq('can_use', true);
 
-    if (error) {
-      console.error('Models API - Permission query error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (permissionsError) {
+      console.error('Models API - Permission query error:', permissionsError);
+      return NextResponse.json({ error: permissionsError.message }, { status: 500 });
     }
 
-    // Filter to only return active models
-    const availableModels = (models || [])
-      .map((m: any) => m.llm_models)
-      .filter((m: any) => m && m.is_active);
+    const allowedModelIds = (permissions || []).map((p: any) => p.model_id).filter(Boolean);
+
+    if (allowedModelIds.length === 0) {
+      return NextResponse.json([]);
+    }
+
+    // Pull the actual models by ID so we always respect is_active
+    const { data: models, error: modelsError } = await supabase
+      .from('llm_models')
+      .select('*')
+      .in('id', allowedModelIds)
+      .eq('is_active', true);
+
+    if (modelsError) {
+      console.error('Models API - Model fetch error:', modelsError);
+      return NextResponse.json({ error: modelsError.message }, { status: 500 });
+    }
+
+    const availableModels = Array.isArray(models) ? models : [];
 
     // Debug logging
     if (process.env.NODE_ENV === 'development') {
       console.log('Models API - User role:', user.role);
-      console.log('Models API - Found permissions:', models?.length || 0);
+      console.log('Models API - Allowed model IDs:', allowedModelIds);
       console.log('Models API - Available models:', availableModels.length);
       console.log('Models API - Model IDs:', availableModels.map((m: any) => ({ id: m.id, name: m.display_name, provider: m.provider })));
       
