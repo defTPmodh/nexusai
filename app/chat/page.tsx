@@ -409,16 +409,38 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="h-screen flex overflow-hidden">
+    <div className="min-h-screen flex overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950/60 to-black text-white">
       <Sidebar />
-      
+
       {/* Main Content */}
       <div className="flex-1 ml-64 flex flex-col relative">
-        {/* Grid Background */}
-        <div className="absolute inset-0 bg-grid-pattern"></div>
+        {/* Ambient Background */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-50"></div>
+        <div className="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-[30rem] h-[30rem] rounded-full bg-teal-400/10 blur-3xl" />
 
         {/* Top Bar - Model Selection */}
-        <div className="relative z-10 glass-dark border-b border-white/5 px-6 py-4">
+        <div className="relative z-10 glass-dark border-b border-white/5 px-6 py-5 backdrop-blur-md">
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400/30 via-teal-400/30 to-cyan-400/30 flex items-center justify-center border border-emerald-300/20 shadow-lg shadow-emerald-500/10">
+                <Sparkles className="w-5 h-5 text-emerald-200" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-emerald-200/70">Nexus Chat</p>
+                <h2 className="text-xl font-semibold text-white">Create, compare, and ship ideas faster</h2>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-2 backdrop-blur">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Live playground</span>
+              {selectedModel && !multiModelMode && (
+                <span className="px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-100 border border-emerald-300/20 text-[11px]">
+                  {models.find((m) => m.id === selectedModel)?.display_name || 'Model selected'}
+                </span>
+              )}
+            </div>
+          </div>
           {multiModelMode ? (
             <div className="flex items-center gap-3 overflow-x-auto">
               <div className="flex items-center gap-3 min-w-max">
@@ -897,27 +919,27 @@ export default function ChatPage() {
                   className={`flex gap-4 mb-6 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {msg.role === 'assistant' && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: idx * 0.05 + 0.2, type: "spring", stiffness: 200 }}
-                      className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700 shadow-lg"
+                      className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 via-teal-500/20 to-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0 border border-emerald-400/30 shadow-lg shadow-emerald-500/20"
                     >
-                      <Bot className="w-5 h-5 text-gray-400" />
+                      <Bot className="w-5 h-5 text-emerald-100" />
                     </motion.div>
                   )}
-                  <motion.div 
+                  <motion.div
                     initial={{ x: msg.role === 'user' ? 20 : -20 }}
                     animate={{ x: 0 }}
                     transition={{ delay: idx * 0.05 + 0.1 }}
                     className={`max-w-2xl ${msg.role === 'user' ? 'order-2' : ''}`}
                   >
-                    <motion.div 
+                    <motion.div
                       whileHover={{ scale: 1.01 }}
-                      className={`rounded-2xl px-5 py-4 relative overflow-hidden ${
+                      className={`rounded-2xl px-5 py-4 relative overflow-hidden group ${
                         msg.role === 'user'
-                          ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white border border-gray-700 shadow-lg'
-                          : 'bg-[#1a1a1a] border border-gray-800 text-gray-100 shadow-lg hover:border-green-500/50 transition-all duration-300'
+                          ? 'bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 shadow-lg shadow-emerald-500/30 border border-emerald-100/50'
+                          : 'bg-white/5 backdrop-blur-lg border border-white/10 text-white/90 shadow-lg shadow-emerald-500/10 hover:border-emerald-400/30 transition-all duration-300'
                       }`}
                     >
                       {/* Shimmer effect for assistant messages */}
@@ -987,13 +1009,13 @@ export default function ChatPage() {
                     </motion.div>
                   </motion.div>
                   {msg.role === 'user' && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, rotate: 180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: idx * 0.05 + 0.2, type: "spring", stiffness: 200 }}
-                      className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700 shadow-lg"
+                      className="w-10 h-10 bg-gradient-to-br from-white/10 via-emerald-200/20 to-emerald-300/10 rounded-full flex items-center justify-center flex-shrink-0 border border-white/20 shadow-lg"
                     >
-                      <User className="w-5 h-5 text-gray-400" />
+                      <User className="w-5 h-5 text-white" />
                     </motion.div>
                   )}
                 </motion.div>
