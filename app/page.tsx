@@ -254,12 +254,12 @@ export default function Home() {
               </div>
               <a
                 href="https://github.com/defTPmodh"
-                className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-purple-100/70 hover:text-purple-100 transition"
+                className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-purple-100/80 hover:border-purple-400/40 hover:text-purple-100 transition"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Visit defTPmodh on GitHub"
               >
-                <Github className="w-4 h-4" />
+                <Github className="w-5 h-5" strokeWidth={1.75} />
               </a>
             </footer>
           </div>
