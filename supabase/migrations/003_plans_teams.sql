@@ -108,8 +108,8 @@ CREATE TRIGGER trigger_update_team_member_count
 
 -- Insert default plans
     INSERT INTO plans (name, display_name, price_per_user_monthly, currency, token_limit, max_team_members, features) VALUES
-      ('free', 'Free Plan', 0, 'AED', 25000, 1, '{"rag": true, "chat": true, "documents": 10}'::jsonb),
-      ('premium', 'Premium Plan', 19.99, 'AED', 250000, 100, '{"rag": true, "chat": true, "documents": -1, "priority_support": true, "advanced_analytics": true}'::jsonb),
+      ('free', 'Free Plan', 0, 'AED', 100000, 1, '{"rag": true, "chat": true, "documents": 10}'::jsonb),
+      ('premium', 'Premium Plan', 19.99, 'AED', 2500000, 100, '{"rag": true, "chat": true, "documents": -1, "priority_support": true, "advanced_analytics": true}'::jsonb),
       ('enterprise', 'Enterprise Plan', NULL, 'AED', NULL, NULL, '{"rag": true, "chat": true, "documents": -1, "priority_support": true, "advanced_analytics": true, "custom_integrations": true, "dedicated_support": true}'::jsonb)
 ON CONFLICT (name) DO UPDATE SET
   token_limit = EXCLUDED.token_limit,

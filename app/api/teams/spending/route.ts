@@ -87,14 +87,14 @@ export async function GET(request: NextRequest) {
       const planTokenLimit = user?.plan?.token_limit;
       
       // Calculate credit limit:
-      // - Owners always get 1,000,000 credits (regardless of plan)
-      // - Premium plan members get 1,000,000 credits
-      // - Free plan members get 100,000 credits (or plan's token_limit if set)
-      let creditLimit = 100000; // Default to free plan limit
+      // - Owners always get 250k credits (regardless of plan)
+      // - Premium plan members get 250k credits
+      // - Free plan members get 25k credits (or plan's token_limit if set)
+      let creditLimit = 25000; // Default to free plan limit
       if (isOwner) {
-        creditLimit = 1000000; // Owners get 1M regardless of plan
+        creditLimit = 250000; // Owners get 250k regardless of plan
       } else if (planName === 'premium') {
-        creditLimit = 1000000; // Premium members get 1M
+        creditLimit = 250000; // Premium members get 250k
       } else if (planTokenLimit !== null && planTokenLimit !== undefined) {
         creditLimit = planTokenLimit; // Use plan's token limit if set
       }
