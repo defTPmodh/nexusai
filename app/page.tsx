@@ -224,6 +224,21 @@ export default function Home() {
                 </div>
               </div>
             </section>
+            <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-purple-100/60">
+              <div className="flex items-center gap-2">
+                <span>© {new Date().getFullYear()} Nexus AI. All rights reserved.</span>
+                <span className="text-[10px] text-purple-100/50">Built and developed by Tanish Modh.</span>
+              </div>
+              <a
+                href="https://github.com/TanishModh"
+                className="inline-flex items-center gap-2 text-purple-100/70 hover:text-purple-100 transition"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Shield className="w-3 h-3" />
+                github.com/TanishModh
+              </a>
+            </footer>
           </div>
         </div>
       </div>
