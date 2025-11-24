@@ -2,6 +2,135 @@ import { getSession } from '@auth0/nextjs-auth0';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase/client';
 
+const DEFAULT_MODELS = [
+  {
+    provider: 'openai',
+    model_name: 'gpt-oss-20b:free',
+    display_name: 'OpenAI GPT-OSS-20B',
+    cost_per_1k_input_tokens: 0,
+    cost_per_1k_output_tokens: 0,
+    max_tokens: 4096,
+  },
+  {
+    provider: 'minimax',
+    model_name: 'minimax-m2:free',
+    display_name: 'Minimax M2',
+    cost_per_1k_input_tokens: 0,
+    cost_per_1k_output_tokens: 0,
+    max_tokens: 32768,
+  },
+  {
+    provider: 'xai',
+    model_name: 'grok-4.1-fast:free',
+    display_name: 'xAI Grok-4.1 Fast',
+    cost_per_1k_input_tokens: 0,
+    cost_per_1k_output_tokens: 0,
+    max_tokens: 32768,
+  },
+] as const;
+
+const DISABLED_MODELS = [
+  { provider: 'google', model_name: 'gemini-2.0-flash-exp:free' },
+  { provider: 'deepseek', model_name: 'deepseek-chat-v3-0324:free' },
+  { provider: 'deepseek', model_name: 'deepseek-v3.1' },
+  { provider: 'openai', model_name: 'gpt-oss-20b' },
+];
+
+async function ensureDefaultModels(supabase: ReturnType<typeof getSupabaseAdmin>) {
+  for (const model of DEFAULT_MODELS) {
+    const { data: existingRows, error: existingError } = await supabase
+      .from('llm_models')
+      .select('id, is_active, display_name')
+      .eq('provider', model.provider)
+      .eq('model_name', model.model_name)
+      .limit(1);
+
+    if (existingError) {
+      console.error('Models API - Error checking model:', model.model_name, existingError.message);
+      continue;
+    }
+
+    const existing = existingRows?.[0];
+    let modelId = existing?.id;
+
+    if (!existing) {
+      const { data: inserted, error: insertError } = await supabase
+        .from('llm_models')
+        .insert({
+          ...model,
+          is_active: true,
+        })
+        .select('id')
+        .single();
+
+      if (insertError) {
+        console.error('Models API - Failed to insert model:', model.model_name, insertError.message);
+        continue;
+      }
+
+      modelId = inserted?.id;
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Models API - Inserted missing model:', model.model_name);
+      }
+    } else if (!existing.is_active) {
+      const { error: activateError } = await supabase
+        .from('llm_models')
+        .update({ is_active: true, display_name: model.display_name })
+        .eq('id', modelId);
+
+      if (activateError) {
+        console.error('Models API - Failed to activate model:', model.model_name, activateError.message);
+      } else if (process.env.NODE_ENV === 'development') {
+        console.log('Models API - Reactivated model:', model.model_name);
+      }
+    } else {
+      const updates: Record<string, any> = {};
+      if (existing.display_name !== model.display_name) {
+        updates.display_name = model.display_name;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        const { error: updateError } = await supabase
+          .from('llm_models')
+          .update(updates)
+          .eq('id', modelId);
+
+        if (updateError) {
+          console.error('Models API - Failed to update model metadata:', model.model_name, updateError.message);
+        }
+      }
+    }
+
+    if (!modelId) continue;
+
+    // Ensure permissions for all roles
+    for (const role of ['employee', 'manager', 'admin']) {
+      const { error: permissionError } = await supabase
+        .from('model_permissions')
+        .upsert(
+          { model_id: modelId, role, can_use: true },
+          { onConflict: 'model_id,role' }
+        );
+
+      if (permissionError) {
+        console.error('Models API - Failed to upsert permission:', model.model_name, role, permissionError.message);
+      }
+    }
+  }
+
+  for (const toDisable of DISABLED_MODELS) {
+    const { error: disableError } = await supabase
+      .from('llm_models')
+      .update({ is_active: false })
+      .eq('provider', toDisable.provider)
+      .eq('model_name', toDisable.model_name);
+
+    if (disableError) {
+      console.error('Models API - Failed to disable model:', `${toDisable.provider}/${toDisable.model_name}`, disableError.message);
+    }
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -10,6 +139,9 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = getSupabaseAdmin();
+
+    // Self-heal: ensure key models exist (older databases might be missing new providers)
+    await ensureDefaultModels(supabase);
 
     // Get user role, create if doesn't exist
     let { data: user } = await supabase
@@ -38,32 +170,42 @@ export async function GET(request: NextRequest) {
       user = newUser;
     }
 
-    // Get models available for this role
-    const { data: models, error } = await supabase
+    // Get model IDs this role can use (avoid relying on PostgREST relationships)
+    const { data: permissions, error: permissionsError } = await supabase
       .from('model_permissions')
-      .select(
-        `
-        can_use,
-        llm_models (*)
-      `
-      )
+      .select('model_id')
       .eq('role', user.role)
       .eq('can_use', true);
 
-    if (error) {
-      console.error('Models API - Permission query error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (permissionsError) {
+      console.error('Models API - Permission query error:', permissionsError);
+      return NextResponse.json({ error: permissionsError.message }, { status: 500 });
     }
 
-    // Filter to only return active models
-    const availableModels = (models || [])
-      .map((m: any) => m.llm_models)
-      .filter((m: any) => m && m.is_active);
+    const allowedModelIds = (permissions || []).map((p: any) => p.model_id).filter(Boolean);
+
+    if (allowedModelIds.length === 0) {
+      return NextResponse.json([]);
+    }
+
+    // Pull the actual models by ID so we always respect is_active
+    const { data: models, error: modelsError } = await supabase
+      .from('llm_models')
+      .select('*')
+      .in('id', allowedModelIds)
+      .eq('is_active', true);
+
+    if (modelsError) {
+      console.error('Models API - Model fetch error:', modelsError);
+      return NextResponse.json({ error: modelsError.message }, { status: 500 });
+    }
+
+    const availableModels = Array.isArray(models) ? models : [];
 
     // Debug logging
     if (process.env.NODE_ENV === 'development') {
       console.log('Models API - User role:', user.role);
-      console.log('Models API - Found permissions:', models?.length || 0);
+      console.log('Models API - Allowed model IDs:', allowedModelIds);
       console.log('Models API - Available models:', availableModels.length);
       console.log('Models API - Model IDs:', availableModels.map((m: any) => ({ id: m.id, name: m.display_name, provider: m.provider })));
       

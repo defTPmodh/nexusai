@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { LLMModel } from '@/types';
 import { Send, Bot, User, Sparkles, Bookmark, Star, Settings as SettingsIcon, Wand2, Mic, Globe, Image as ImageIcon, Rocket, FileText, Plus } from 'lucide-react';
@@ -102,6 +103,7 @@ export default function ChatPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const columnRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const displayName = user?.name || user?.email?.split('@')[0] || 'Explorer';
 
   useEffect(() => {
     if (user) {
@@ -408,121 +410,201 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="h-screen flex overflow-hidden">
+    <div className="min-h-screen flex overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950/60 to-black text-white">
       <Sidebar />
-      
-      {/* Main Content */}
-      <div className="flex-1 ml-64 flex flex-col relative">
-        {/* Grid Background */}
-        <div className="absolute inset-0 bg-grid-pattern"></div>
 
-        {/* Top Bar - Model Selection */}
-        <div className="relative z-10 glass-dark border-b border-white/5 px-6 py-4">
-          {multiModelMode ? (
-            <div className="flex items-center gap-3 overflow-x-auto">
-              <div className="flex items-center gap-3 min-w-max">
-                {models.map((model) => {
-                  const isEnabled = enabledModels.has(model.id);
-                  const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
-                  return (
-                    <motion.button
-                      key={model.id}
-                      onClick={() => toggleModel(model.id)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
-                        isEnabled
-                          ? isGemini
-                            ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
-                            : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
-                          : isGemini
-                            ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8 opacity-80'
-                            : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal opacity-70'
-                      }`}
+      {/* Main Content */}
+      <div className="flex-1 ml-64 flex flex-col relative overflow-x-hidden">
+        {/* Ambient Background */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-50"></div>
+        <div className="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-[30rem] h-[30rem] rounded-full bg-teal-400/10 blur-3xl" />
+
+        {/* Top Bar - Modern welcome and model selection */}
+        <div className="relative z-10 px-6 pt-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_20px_120px_-50px_rgba(16,185,129,0.45)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/15 via-cyan-500/10 to-purple-700/20" />
+            <div
+              className="absolute inset-0 opacity-40"
+              style={{
+                backgroundImage: `linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)`,
+                backgroundSize: '60px 60px'
+              }}
+            />
+            <div className="absolute -right-24 -top-24 w-64 h-64 bg-emerald-400/20 blur-3xl rounded-full" />
+            <div className="absolute -left-10 bottom-6 w-72 h-72 bg-purple-500/10 blur-3xl rounded-full" />
+            <div className="relative px-6 sm:px-8 py-8 space-y-6">
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div className="space-y-3">
+                  <p className="text-xs uppercase tracking-[0.24em] text-emerald-200/70 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Nexus Chat
+                  </p>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h2 className="text-3xl font-semibold text-white">Welcome back, {displayName}</h2>
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 140, damping: 16 }}
+                      className="px-3 py-1.5 rounded-full text-xs bg-white/10 border border-white/15 text-white/80 backdrop-blur"
                     >
-                      {isGemini && (
-                        <motion.div
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                          className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-blue-400/80 shadow-sm' : 'bg-blue-500/40'}`}
-                        />
-                      )}
-                      <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
-                        {model.display_name}
-                      </div>
-                      {!isGemini && (
-                        <div className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-white/60' : 'bg-white/30'}`} />
-                      )}
-                      {isEnabled && (
-                        <motion.div
-                          layoutId={`toggle-${model.id}`}
-                          className={`absolute inset-0 rounded-xl -z-10 ${
-                            isGemini
-                              ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
-                              : 'bg-gradient-to-r from-white/5 to-white/3'
-                          }`}
-                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                        />
-                      )}
-                    </motion.button>
-                  );
-                })}
+                      Sleek workspace ready
+                    </motion.span>
+                  </div>
+                  <p className="text-gray-300 max-w-3xl">
+                    Craft conversations with a refined interface inspired by your profile space. Effortlessly switch models,
+                    compare ideas, and keep your creative flow uninterrupted.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/70">Conversational OS</span>
+                    <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-xs text-emerald-100 flex items-center gap-1">
+                      <Globe className="w-3 h-3" /> Live playground
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/70 flex items-center gap-1">
+                      <Star className="w-3 h-3 text-amber-300" /> Intuitive journey
+                    </span>
+                  </div>
+                </div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, rotate: -4 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 120, damping: 18 }}
+                  className="relative"
+                >
+                  <div className="absolute inset-0 blur-xl bg-gradient-to-br from-emerald-400/40 via-cyan-500/30 to-violet-500/30" />
+                  <div className="relative h-16 w-16 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                    <Wand2 className="w-7 h-7" />
+                  </div>
+                </motion.div>
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-4 overflow-x-auto">
-              <div className="flex items-center gap-4 min-w-max">
-                {models.map((model) => {
-                  const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
-                  return (
-                    <motion.button
-                      key={model.id}
-                      onClick={() => setSelectedModel(model.id)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
-                        selectedModel === model.id 
-                          ? isGemini
-                            ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
-                            : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
-                          : isGemini
-                            ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8'
-                            : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal'
-                      }`}
-                    >
-                      {isGemini && (
-                        <motion.div
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                          className="w-1.5 h-1.5 rounded-full bg-blue-400/80 shadow-sm"
-                        />
-                      )}
-                      <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
-                        {model.display_name}
-                      </div>
-                      {selectedModel === model.id && (
-                        <motion.div
-                          layoutId="selectedIndicator"
-                          className={`absolute inset-0 rounded-xl -z-10 ${
-                            isGemini
-                              ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
-                              : 'bg-gradient-to-r from-white/5 to-white/3'
-                          }`}
-                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                        />
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-              <div className="ml-auto flex items-center gap-3 flex-shrink-0">
-                <SettingsIcon className="w-5 h-5 text-white/50 hover:text-white/80 cursor-pointer transition-colors duration-300" />
-                <div className="w-8 h-8 bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                  <User className="w-4 h-4 text-white/70" />
+
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/70 backdrop-blur">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Live workspace</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/70 backdrop-blur">
+                  <Globe className="w-4 h-4 text-emerald-200" />
+                  <span>
+                    {selectedModel && !multiModelMode
+                      ? `Primary model: ${models.find((m) => m.id === selectedModel)?.display_name || 'Model selected'}`
+                      : multiModelMode
+                        ? 'Comparing multiple models'
+                        : 'Select a model to begin'}
+                  </span>
                 </div>
               </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
+                {multiModelMode ? (
+                  <div className="flex items-center gap-3 overflow-x-auto">
+                    <div className="flex items-center gap-3 min-w-max">
+                      {models.map((model) => {
+                        const isEnabled = enabledModels.has(model.id);
+                        const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
+                        return (
+                          <motion.button
+                            key={model.id}
+                            onClick={() => toggleModel(model.id)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
+                              isEnabled
+                                ? isGemini
+                                  ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
+                                  : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
+                                : isGemini
+                                  ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8 opacity-80'
+                                  : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal opacity-70'
+                            }`}
+                          >
+                            {isGemini && (
+                              <motion.div
+                                animate={{ scale: [1, 1.05, 1] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                                className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-blue-400/80 shadow-sm' : 'bg-blue-500/40'}`}
+                              />
+                            )}
+                            <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
+                              {model.display_name}
+                            </div>
+                            {!isGemini && (
+                              <div className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-white/60' : 'bg-white/30'}`} />
+                            )}
+                            {isEnabled && (
+                              <motion.div
+                                layoutId={`toggle-${model.id}`}
+                                className={`absolute inset-0 rounded-xl -z-10 ${
+                                  isGemini
+                                    ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
+                                    : 'bg-gradient-to-r from-white/5 to-white/3'
+                                }`}
+                                transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                              />
+                            )}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-4 overflow-x-auto">
+                    <div className="flex items-center gap-4 min-w-max">
+                      {models.map((model) => {
+                        const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
+                        return (
+                          <motion.button
+                            key={model.id}
+                            onClick={() => setSelectedModel(model.id)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
+                              selectedModel === model.id
+                                ? isGemini
+                                  ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
+                                  : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
+                                : isGemini
+                                  ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8'
+                                  : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal'
+                            }`}
+                          >
+                            {isGemini && (
+                              <motion.div
+                                animate={{ scale: [1, 1.05, 1] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                                className="w-1.5 h-1.5 rounded-full bg-blue-400/80 shadow-sm"
+                              />
+                            )}
+                            <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
+                              {model.display_name}
+                            </div>
+                            {selectedModel === model.id && (
+                              <motion.div
+                                layoutId="selectedIndicator"
+                                className={`absolute inset-0 rounded-xl -z-10 ${
+                                  isGemini
+                                    ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
+                                    : 'bg-gradient-to-r from-white/5 to-white/3'
+                                }`}
+                                transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                              />
+                            )}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                    <div className="ml-auto flex items-center gap-3 flex-shrink-0">
+                      <SettingsIcon className="w-5 h-5 text-white/50 hover:text-white/80 cursor-pointer transition-colors duration-300" />
+                      <div className="w-8 h-8 bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <User className="w-4 h-4 text-white/70" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Messages Area - Column Layout for Multi-Model Mode */}
@@ -542,27 +624,28 @@ export default function ChatPage() {
                 </div>
               </div>
             ) : (
-              <div 
-                ref={scrollContainerRef}
-                className="h-full w-full multi-model-scroll" 
-                style={{ 
-                  overflowX: 'scroll', 
-                  overflowY: 'hidden',
-                  WebkitOverflowScrolling: 'touch',
-                  position: 'relative'
-                }}
-              >
-                <div 
-                  className="flex h-full gap-4 px-4 py-4"
-                  style={{ 
-                    width: `${Array.from(enabledModels).length * 440}px`,
-                    minWidth: `${Array.from(enabledModels).length * 440}px`,
-                    paddingRight: '2rem',
-                    flexShrink: 0,
-                    display: 'flex',
-                    boxSizing: 'border-box'
+              <div className="w-full overflow-hidden">
+                <div
+                  ref={scrollContainerRef}
+                  className="h-full w-full multi-model-scroll"
+                  style={{
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    WebkitOverflowScrolling: 'touch',
+                    position: 'relative'
                   }}
                 >
+                  <div
+                    className="flex h-full gap-4 px-4 py-4"
+                    style={{
+                      width: `${Array.from(enabledModels).length * 440}px`,
+                      minWidth: `${Array.from(enabledModels).length * 440}px`,
+                      paddingRight: '2rem',
+                      flexShrink: 0,
+                      display: 'flex',
+                      boxSizing: 'border-box'
+                    }}
+                  >
                   {Array.from(enabledModels).map((modelId, idx) => {
                   const columnMessages = modelMessages[modelId] || [];
                   const model = models.find(m => m.id === modelId);
@@ -632,11 +715,19 @@ export default function ChatPage() {
                                     }`}
                                   >
                                     {msg.content.startsWith('![Generated Image](') ? (
-                                      <img
-                                        src={msg.content.match(/\((.+)\)/)?.[1] || ''}
-                                        alt="Generated"
-                                        className="rounded-lg max-w-full h-auto"
-                                      />
+                                      (() => {
+                                        const imageUrl = msg.content.match(/\((.+)\)/)?.[1];
+                                        if (!imageUrl) return null;
+                                        return (
+                                          <Image
+                                            src={imageUrl}
+                                            alt="Generated"
+                                            width={800}
+                                            height={600}
+                                            className="rounded-lg max-w-full h-auto"
+                                          />
+                                        );
+                                      })()
                                     ) : (
                                       <div className="text-sm leading-relaxed">
                                         {renderMessageContent(msg.content)}
@@ -706,6 +797,7 @@ export default function ChatPage() {
                     </motion.div>
                   );
                   })}
+                  </div>
                 </div>
               </div>
             )}
@@ -713,6 +805,7 @@ export default function ChatPage() {
         ) : (
           // Regular single-model view
           <div className="flex-1 overflow-y-auto px-6 py-8 relative z-10" style={{ paddingRight: '2rem' }}>
+            <div className="max-w-5xl mx-auto w-full">
             <AnimatePresence>
               {messages.length === 0 && (
                 <motion.div
@@ -720,14 +813,51 @@ export default function ChatPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="h-full flex items-center justify-center"
                 >
-                  <div className="text-center max-w-2xl">
-                    <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                      <Bot className="w-10 h-10 text-white" />
+                  <div className="relative max-w-3xl w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-emerald-900/20 to-black/60 backdrop-blur-xl p-10 text-left shadow-[0_30px_120px_-60px_rgba(16,185,129,0.45)]">
+                    <div className="absolute inset-0 pointer-events-none" style={{
+                      backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+                      backgroundSize: '70px 70px'
+                    }} />
+                    <div className="absolute -right-24 -top-24 w-72 h-72 bg-emerald-500/15 blur-3xl rounded-full" />
+                    <div className="absolute -left-10 bottom-0 w-72 h-72 bg-cyan-500/15 blur-3xl rounded-full" />
+                    <div className="relative space-y-4">
+                      <p className="text-xs uppercase tracking-[0.24em] text-emerald-200/70 flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" /> Welcome
+                      </p>
+                      <h2 className="text-3xl font-semibold text-white">Welcome, {displayName}</h2>
+                      <p className="text-white/70 text-lg max-w-2xl">
+                        Choose a model above and start crafting your next idea. Keep things sleek with single-model focus or slide into multi-model explorations.
+                      </p>
+                      <div className="grid sm:grid-cols-3 gap-4 pt-2">
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-200">
+                            <Rocket className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-white font-medium">Start fast</p>
+                            <p className="text-xs text-white/60">Pick your preferred model and drop a prompt to begin.</p>
+                          </div>
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center text-cyan-200">
+                            <FileText className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-white font-medium">Richer context</p>
+                            <p className="text-xs text-white/60">Toggle RAG for document-aware answers when you need precision.</p>
+                          </div>
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-400/30 flex items-center justify-center text-purple-200">
+                            <Sparkles className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-white font-medium">Multi-model views</p>
+                            <p className="text-xs text-white/60">Flip on multi-model to compare replies side by side.</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <h2 className="text-3xl font-semibold text-white mb-3">Start a conversation</h2>
-                    <p className="text-green-200/70 text-lg mb-8">
-                      Select a model and ask me anything
-                    </p>
                   </div>
                 </motion.div>
               )}
@@ -888,27 +1018,27 @@ export default function ChatPage() {
                   className={`flex gap-4 mb-6 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {msg.role === 'assistant' && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: idx * 0.05 + 0.2, type: "spring", stiffness: 200 }}
-                      className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700 shadow-lg"
+                      className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 via-teal-500/20 to-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0 border border-emerald-400/30 shadow-lg shadow-emerald-500/20"
                     >
-                      <Bot className="w-5 h-5 text-gray-400" />
+                      <Bot className="w-5 h-5 text-emerald-100" />
                     </motion.div>
                   )}
-                  <motion.div 
+                  <motion.div
                     initial={{ x: msg.role === 'user' ? 20 : -20 }}
                     animate={{ x: 0 }}
                     transition={{ delay: idx * 0.05 + 0.1 }}
                     className={`max-w-2xl ${msg.role === 'user' ? 'order-2' : ''}`}
                   >
-                    <motion.div 
+                    <motion.div
                       whileHover={{ scale: 1.01 }}
-                      className={`rounded-2xl px-5 py-4 relative overflow-hidden ${
+                      className={`rounded-2xl px-5 py-4 relative overflow-hidden group ${
                         msg.role === 'user'
-                          ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white border border-gray-700 shadow-lg'
-                          : 'bg-[#1a1a1a] border border-gray-800 text-gray-100 shadow-lg hover:border-green-500/50 transition-all duration-300'
+                          ? 'bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 shadow-lg shadow-emerald-500/30 border border-emerald-100/50'
+                          : 'bg-white/5 backdrop-blur-lg border border-white/10 text-white/90 shadow-lg shadow-emerald-500/10 hover:border-emerald-400/30 transition-all duration-300'
                       }`}
                     >
                       {/* Shimmer effect for assistant messages */}
@@ -933,14 +1063,24 @@ export default function ChatPage() {
                           transition={{ delay: idx * 0.05 + 0.3 }}
                           className="relative z-10 mt-2"
                         >
-                          <img
-                            src={msg.content.match(/\((.+)\)/)?.[1] || ''}
-                            alt="Generated image"
-                            className="rounded-lg max-w-full h-auto shadow-lg border border-gray-700"
-                            onError={(e) => {
-                              e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzFhMWExYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM2YjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZSBsb2FkIGVycm9yPC90ZXh0Pjwvc3ZnPg==';
-                            }}
-                          />
+                          {(() => {
+                            const imageUrl = msg.content.match(/\((.+)\)/)?.[1];
+                            if (!imageUrl) return null;
+                            return (
+                              <Image
+                                src={imageUrl}
+                                alt="Generated image"
+                                width={1024}
+                                height={768}
+                                className="rounded-lg max-w-full h-auto shadow-lg border border-gray-700"
+                                onError={(e) => {
+                                  const target = e.currentTarget as HTMLImageElement;
+                                  target.src =
+                                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzFhMWExYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM2YjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZSBsb2FkIGVycm9yPC90ZXh0Pjwvc3ZnPg==';
+                                }}
+                              />
+                            );
+                          })()}
                         </motion.div>
                       ) : (
                         <motion.div 
@@ -968,13 +1108,13 @@ export default function ChatPage() {
                     </motion.div>
                   </motion.div>
                   {msg.role === 'user' && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, rotate: 180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: idx * 0.05 + 0.2, type: "spring", stiffness: 200 }}
-                      className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700 shadow-lg"
+                      className="w-10 h-10 bg-gradient-to-br from-white/10 via-emerald-200/20 to-emerald-300/10 rounded-full flex items-center justify-center flex-shrink-0 border border-white/20 shadow-lg"
                     >
-                      <User className="w-5 h-5 text-gray-400" />
+                      <User className="w-5 h-5 text-white" />
                     </motion.div>
                   )}
                 </motion.div>
@@ -982,7 +1122,7 @@ export default function ChatPage() {
             })}
           </AnimatePresence>
           
-          {loading && (
+            {loading && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1025,12 +1165,14 @@ export default function ChatPage() {
               </motion.div>
             </motion.div>
           )}
-          <div ref={messagesEndRef} />
-        </div>
+            <div ref={messagesEndRef} />
+            </div>
+          </div>
         )}
 
         {/* Chat Input Area */}
         <div className="relative z-10 px-6 py-6 bg-[#0f0f0f] border-t border-gray-800">
+          <div className="max-w-5xl mx-auto w-full">
           {/* Action Buttons Above Input */}
           <div className="flex justify-center gap-3 mb-4">
             <motion.button
@@ -1120,8 +1262,8 @@ export default function ChatPage() {
           </div>
 
           {/* Input Field */}
-          <div className="max-w-4xl mx-auto">
-            <motion.div 
+          <div className="max-w-4xl w-full mx-auto">
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -1194,6 +1336,8 @@ export default function ChatPage() {
               </motion.button>
             </div>
           </div>
+          </div>
+        </div>
         </div>
       </div>
     </div>

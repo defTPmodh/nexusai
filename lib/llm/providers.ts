@@ -15,9 +15,11 @@ export interface LLMConfig {
   maxTokens?: number;
 }
 
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+
 // Initialize OpenRouter client (unified gateway for all models)
 const openrouterClient = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY,
+  apiKey: OPENROUTER_API_KEY,
   baseURL: 'https://openrouter.ai/api/v1',
   defaultHeaders: {
     'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
@@ -29,14 +31,12 @@ const openrouterClient = new OpenAI({
 // Note: Remove :free suffix if you want to use paid models or configure privacy settings
 // For free models, configure privacy at: https://openrouter.ai/settings/privacy
 const OPENROUTER_MODELS: Record<string, string> = {
-  // Google Gemini 2.0 Flash Exp (Free)
-  'gemini-2.0-flash-exp:free': 'google/gemini-2.0-flash-exp:free',
-  // DeepSeek V3.1
-  'deepseek-v3.1': 'deepseek/deepseek-chat-v3.1',
-  // OpenAI GPT-OSS-20B
-  'gpt-oss-20b': 'openai/gpt-oss-20b',
+  // OpenAI GPT-OSS-20B (Free)
+  'gpt-oss-20b:free': 'openai/gpt-oss-20b:free',
   // Minimax M2 Free
   'minimax-m2:free': 'minimax/minimax-m2:free',
+  // xAI Grok 4.1 Fast (Free)
+  'grok-4.1-fast:free': 'x-ai/grok-4.1-fast:free',
 };
 
 export async function callLLM(
@@ -49,6 +49,12 @@ export async function callLLM(
   const retryDelay = 2000; // 2 seconds
 
   try {
+    if (!OPENROUTER_API_KEY) {
+      throw new Error(
+        'OPENROUTER_API_KEY is required because all requests use OpenRouter. Set it in your environment variables.'
+      );
+    }
+
     // All models route through OpenRouter
     const openrouterModel = OPENROUTER_MODELS[config.model] || config.model;
 

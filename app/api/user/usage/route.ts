@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (userError || !user) {
-      return NextResponse.json({ used: 0, limit: 25000, plan: 'free', unlimited: false });
+      return NextResponse.json({ used: 0, limit: 100000, plan: 'free', unlimited: false });
     }
 
     // Get user's individual plan if exists
@@ -65,17 +65,17 @@ export async function GET(request: NextRequest) {
     const planName = plan?.name || 'free';
     
     // Calculate token limit:
-    // - Premium plan members get 250k credits each
-    // - Team owners get 250k credits (regardless of plan)
-    // - Otherwise use plan limit or default to 25k (free)
-    let tokenLimit = 25000; // Default to free plan limit
-    
+    // - Premium plan members get 1,000,000 credits each
+    // - Team owners get 1,000,000 credits (regardless of plan)
+    // - Otherwise use plan limit or default to 100,000 (free)
+    let tokenLimit = 100000; // Default to free plan limit
+
     if (planName === 'premium') {
-      tokenLimit = 250000; // Premium members get 250k credits
+      tokenLimit = 1000000; // Premium members get 1M credits
     } else if (isOwner) {
-      tokenLimit = 250000; // Owners get 250k credits regardless of plan
+      tokenLimit = 1000000; // Owners get 1M credits regardless of plan
     } else if (plan?.token_limit !== null) {
-      tokenLimit = plan.token_limit || 25000;
+      tokenLimit = plan.token_limit || 100000;
     }
 
     // Get total tokens used (individual usage only - each member has their own 250k limit)

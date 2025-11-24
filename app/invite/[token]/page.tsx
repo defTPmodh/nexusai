@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Loader, Users, Mail } from 'lucide-react';
@@ -15,11 +15,7 @@ export default function InvitePage({ params }: { params: { token: string } }) {
   const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchInvitation();
-  }, [params.token]);
-
-  const fetchInvitation = async () => {
+  const fetchInvitation = useCallback(async () => {
     try {
       const res = await fetch(`/api/invite/${params.token}`);
       const data = await res.json();
@@ -35,7 +31,11 @@ export default function InvitePage({ params }: { params: { token: string } }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.token]);
+
+  useEffect(() => {
+    fetchInvitation();
+  }, [fetchInvitation]);
 
   const handleAccept = async () => {
     if (!user) {
