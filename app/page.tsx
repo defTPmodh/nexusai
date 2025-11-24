@@ -3,14 +3,15 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
 import {
+  Activity,
   ArrowRight,
-  BarChart3,
-  Clock,
-  Cpu,
+  Github,
   Grid,
   MessageSquare,
   Rocket,
+  Route,
   Shield,
+  ShieldCheck,
   Sparkles,
   Wand2,
   Zap,
@@ -71,10 +72,10 @@ export default function Home() {
 
                 <div className="space-y-4">
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-                    Build cinematic AI experiences without slowing down.
+                    The Enterprise AI Orchestration Layer for High-Scale Applications.
                   </h1>
                   <p className="text-lg text-purple-100/70 max-w-3xl">
-                    Nexus-AI ships with motion-ready React bits, shimmering gradients, and enterprise-grade guardrails so your teams can orchestrate multiple models and data sources with elegance.
+                    Nexus AI connects and manages your LLM workflow—from XAI and Minimax M2 to OpenAI—providing intelligent routing, compliance, and real-time observability your teams need to scale trusted applications.
                   </p>
                 </div>
 
@@ -90,13 +91,28 @@ export default function Home() {
                     href="/pricing"
                     className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm text-purple-100/80 transition hover:border-purple-400/40"
                   >
-                    Explore pricing
-                    <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs">New</span>
+                    Schedule a Technical Deep Dive
                   </Link>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {[{ label: 'Adaptive routing', detail: 'Blend DeepSeek, OpenAI, NVIDIA.', icon: Cpu }, { label: 'Compliance-first', detail: 'SSO, SCIM, audit trails.', icon: Shield }, { label: 'Live visibility', detail: 'Usage, latency, trust.', icon: BarChart3 }].map((item) => (
+                  {[
+                    {
+                      label: 'Intelligent Model Routing',
+                      detail: 'Optimize cost while balancing DeepSeek, OpenAI, NVIDIA.',
+                      icon: Route,
+                    },
+                    {
+                      label: 'Enterprise Compliance & Auditing',
+                      detail: 'Mitigate risk with SSO, SCIM, and audit trails.',
+                      icon: ShieldCheck,
+                    },
+                    {
+                      label: 'Real-Time Observability',
+                      detail: 'Faster debugging with live usage, latency, trust.',
+                      icon: Activity,
+                    },
+                  ].map((item) => (
                     <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-purple-500/10 backdrop-blur">
                       <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
                         <item.icon className="w-5 h-5" />
@@ -121,7 +137,7 @@ export default function Home() {
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <p className="text-xs uppercase tracking-wide text-purple-100/60">Live workspace</p>
-                        <p className="text-xl font-semibold">Orchestration Pulse</p>
+                        <p className="text-xl font-semibold">Live AI Performance & Trust</p>
                       </div>
                       <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-purple-500/60 to-cyan-400/60 flex items-center justify-center">
                         <Wand2 className="w-5 h-5" />
@@ -143,14 +159,17 @@ export default function Home() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      {[{ title: 'Conversational routing', copy: 'NVIDIA + OpenAI + DeepSeek', icon: MessageSquare }, { title: 'Observability', copy: 'Live traces & usage', icon: Clock }].map((item) => (
+                      {[
+                        { title: 'Intelligent routing', copy: 'Adaptive multi-model failover.', icon: Route },
+                        { title: 'Real-time transparency', copy: 'Traces, compliance, live signals.', icon: ShieldCheck },
+                      ].map((item) => (
                         <div key={item.title} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
                           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400/30 to-purple-500/40">
                             <item.icon className="w-5 h-5" />
                           </div>
                           <div>
                             <p className="text-sm text-purple-100/70">{item.title}</p>
-                            <p className="text-lg font-semibold">{item.copy}</p>
+                            <p className="text-sm font-semibold leading-snug">{item.copy}</p>
                           </div>
                         </div>
                       ))}
@@ -205,6 +224,44 @@ export default function Home() {
                 </div>
               </div>
             </section>
+            <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-purple-100/60">
+              <div className="flex flex-wrap items-center gap-2">
+                <span>© {new Date().getFullYear()} Nexus AI. All rights reserved.</span>
+                <div className="flex items-center gap-2 text-[11px] text-purple-100/70">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1">
+                    <svg
+                      aria-hidden
+                      viewBox="0 0 256 256"
+                      className="h-3.5 w-3.5"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="128" cy="128" r="24" fill="#61DAFB" />
+                      <ellipse cx="128" cy="128" rx="80" ry="32" stroke="#61DAFB" strokeWidth="12" />
+                      <ellipse cx="128" cy="128" rx="32" ry="80" stroke="#61DAFB" strokeWidth="12" transform="rotate(60 128 128)" />
+                      <ellipse cx="128" cy="128" rx="32" ry="80" stroke="#61DAFB" strokeWidth="12" transform="rotate(120 128 128)" />
+                    </svg>
+                    Built with React
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1">
+                    <svg aria-hidden viewBox="0 0 256 256" className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M128 32L16 224h224L128 32Z" fill="currentColor" />
+                    </svg>
+                    Deployed on Vercel
+                  </span>
+                </div>
+                <span className="text-[10px] text-purple-100/50">Built and developed by Tanish Modh.</span>
+              </div>
+              <a
+                href="https://github.com/defTPmodh"
+                className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-purple-100/80 hover:border-purple-400/40 hover:text-purple-100 transition"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Visit defTPmodh on GitHub"
+              >
+                <Github className="w-5 h-5" strokeWidth={1.75} />
+              </a>
+            </footer>
           </div>
         </div>
       </div>
