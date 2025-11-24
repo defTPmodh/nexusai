@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {
   Activity,
   ArrowRight,
+  Github,
   Grid,
   MessageSquare,
   Rocket,
@@ -252,13 +253,13 @@ export default function Home() {
                 <span className="text-[10px] text-purple-100/50">Built and developed by Tanish Modh.</span>
               </div>
               <a
-                href="https://github.com/TanishModh"
-                className="inline-flex items-center gap-2 text-purple-100/70 hover:text-purple-100 transition"
+                href="https://github.com/defTPmodh"
+                className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-purple-100/70 hover:text-purple-100 transition"
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Visit defTPmodh on GitHub"
               >
-                <Shield className="w-3 h-3" />
-                github.com/TanishModh
+                <Github className="w-4 h-4" />
               </a>
             </footer>
           </div>
