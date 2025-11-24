@@ -103,6 +103,7 @@ export default function ChatPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const columnRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const displayName = user?.name || user?.email?.split('@')[0] || 'Explorer';
 
   useEffect(() => {
     if (user) {
@@ -413,139 +414,197 @@ export default function ChatPage() {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 flex flex-col relative">
+      <div className="flex-1 ml-64 flex flex-col relative overflow-x-hidden">
         {/* Ambient Background */}
         <div className="absolute inset-0 bg-grid-pattern opacity-50"></div>
         <div className="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl" />
         <div className="absolute -bottom-24 -right-24 w-[30rem] h-[30rem] rounded-full bg-teal-400/10 blur-3xl" />
 
-        {/* Top Bar - Model Selection */}
-        <div className="relative z-10 glass-dark border-b border-white/5 px-6 py-5 backdrop-blur-md">
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400/30 via-teal-400/30 to-cyan-400/30 flex items-center justify-center border border-emerald-300/20 shadow-lg shadow-emerald-500/10">
-                <Sparkles className="w-5 h-5 text-emerald-200" />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-emerald-200/70">Nexus Chat</p>
-                <h2 className="text-xl font-semibold text-white">Create, compare, and ship ideas faster</h2>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-2 backdrop-blur">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Live playground</span>
-              {selectedModel && !multiModelMode && (
-                <span className="px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-100 border border-emerald-300/20 text-[11px]">
-                  {models.find((m) => m.id === selectedModel)?.display_name || 'Model selected'}
-                </span>
-              )}
-            </div>
-          </div>
-          {multiModelMode ? (
-            <div className="flex items-center gap-3 overflow-x-auto">
-              <div className="flex items-center gap-3 min-w-max">
-                {models.map((model) => {
-                  const isEnabled = enabledModels.has(model.id);
-                  const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
-                  return (
-                    <motion.button
-                      key={model.id}
-                      onClick={() => toggleModel(model.id)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
-                        isEnabled
-                          ? isGemini
-                            ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
-                            : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
-                          : isGemini
-                            ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8 opacity-80'
-                            : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal opacity-70'
-                      }`}
+        {/* Top Bar - Modern welcome and model selection */}
+        <div className="relative z-10 px-6 pt-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_20px_120px_-50px_rgba(16,185,129,0.45)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/15 via-cyan-500/10 to-purple-700/20" />
+            <div
+              className="absolute inset-0 opacity-40"
+              style={{
+                backgroundImage: `linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)`,
+                backgroundSize: '60px 60px'
+              }}
+            />
+            <div className="absolute -right-24 -top-24 w-64 h-64 bg-emerald-400/20 blur-3xl rounded-full" />
+            <div className="absolute -left-10 bottom-6 w-72 h-72 bg-purple-500/10 blur-3xl rounded-full" />
+            <div className="relative px-6 sm:px-8 py-8 space-y-6">
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div className="space-y-3">
+                  <p className="text-xs uppercase tracking-[0.24em] text-emerald-200/70 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Nexus Chat
+                  </p>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h2 className="text-3xl font-semibold text-white">Welcome back, {displayName}</h2>
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 140, damping: 16 }}
+                      className="px-3 py-1.5 rounded-full text-xs bg-white/10 border border-white/15 text-white/80 backdrop-blur"
                     >
-                      {isGemini && (
-                        <motion.div
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                          className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-blue-400/80 shadow-sm' : 'bg-blue-500/40'}`}
-                        />
-                      )}
-                      <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
-                        {model.display_name}
-                      </div>
-                      {!isGemini && (
-                        <div className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-white/60' : 'bg-white/30'}`} />
-                      )}
-                      {isEnabled && (
-                        <motion.div
-                          layoutId={`toggle-${model.id}`}
-                          className={`absolute inset-0 rounded-xl -z-10 ${
-                            isGemini
-                              ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
-                              : 'bg-gradient-to-r from-white/5 to-white/3'
-                          }`}
-                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                        />
-                      )}
-                    </motion.button>
-                  );
-                })}
+                      Sleek workspace ready
+                    </motion.span>
+                  </div>
+                  <p className="text-gray-300 max-w-3xl">
+                    Craft conversations with a refined interface inspired by your profile space. Effortlessly switch models,
+                    compare ideas, and keep your creative flow uninterrupted.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/70">Conversational OS</span>
+                    <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-xs text-emerald-100 flex items-center gap-1">
+                      <Globe className="w-3 h-3" /> Live playground
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/70 flex items-center gap-1">
+                      <Star className="w-3 h-3 text-amber-300" /> Intuitive journey
+                    </span>
+                  </div>
+                </div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, rotate: -4 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 120, damping: 18 }}
+                  className="relative"
+                >
+                  <div className="absolute inset-0 blur-xl bg-gradient-to-br from-emerald-400/40 via-cyan-500/30 to-violet-500/30" />
+                  <div className="relative h-16 w-16 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                    <Wand2 className="w-7 h-7" />
+                  </div>
+                </motion.div>
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-4 overflow-x-auto">
-              <div className="flex items-center gap-4 min-w-max">
-                {models.map((model) => {
-                  const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
-                  return (
-                    <motion.button
-                      key={model.id}
-                      onClick={() => setSelectedModel(model.id)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
-                        selectedModel === model.id 
-                          ? isGemini
-                            ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
-                            : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
-                          : isGemini
-                            ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8'
-                            : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal'
-                      }`}
-                    >
-                      {isGemini && (
-                        <motion.div
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                          className="w-1.5 h-1.5 rounded-full bg-blue-400/80 shadow-sm"
-                        />
-                      )}
-                      <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
-                        {model.display_name}
-                      </div>
-                      {selectedModel === model.id && (
-                        <motion.div
-                          layoutId="selectedIndicator"
-                          className={`absolute inset-0 rounded-xl -z-10 ${
-                            isGemini
-                              ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
-                              : 'bg-gradient-to-r from-white/5 to-white/3'
-                          }`}
-                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                        />
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-              <div className="ml-auto flex items-center gap-3 flex-shrink-0">
-                <SettingsIcon className="w-5 h-5 text-white/50 hover:text-white/80 cursor-pointer transition-colors duration-300" />
-                <div className="w-8 h-8 bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                  <User className="w-4 h-4 text-white/70" />
+
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/70 backdrop-blur">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Live workspace</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/70 backdrop-blur">
+                  <Globe className="w-4 h-4 text-emerald-200" />
+                  <span>
+                    {selectedModel && !multiModelMode
+                      ? `Primary model: ${models.find((m) => m.id === selectedModel)?.display_name || 'Model selected'}`
+                      : multiModelMode
+                        ? 'Comparing multiple models'
+                        : 'Select a model to begin'}
+                  </span>
                 </div>
               </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
+                {multiModelMode ? (
+                  <div className="flex items-center gap-3 overflow-x-auto">
+                    <div className="flex items-center gap-3 min-w-max">
+                      {models.map((model) => {
+                        const isEnabled = enabledModels.has(model.id);
+                        const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
+                        return (
+                          <motion.button
+                            key={model.id}
+                            onClick={() => toggleModel(model.id)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
+                              isEnabled
+                                ? isGemini
+                                  ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
+                                  : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
+                                : isGemini
+                                  ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8 opacity-80'
+                                  : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal opacity-70'
+                            }`}
+                          >
+                            {isGemini && (
+                              <motion.div
+                                animate={{ scale: [1, 1.05, 1] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                                className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-blue-400/80 shadow-sm' : 'bg-blue-500/40'}`}
+                              />
+                            )}
+                            <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
+                              {model.display_name}
+                            </div>
+                            {!isGemini && (
+                              <div className={`w-1.5 h-1.5 rounded-full ${isEnabled ? 'bg-white/60' : 'bg-white/30'}`} />
+                            )}
+                            {isEnabled && (
+                              <motion.div
+                                layoutId={`toggle-${model.id}`}
+                                className={`absolute inset-0 rounded-xl -z-10 ${
+                                  isGemini
+                                    ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
+                                    : 'bg-gradient-to-r from-white/5 to-white/3'
+                                }`}
+                                transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                              />
+                            )}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-4 overflow-x-auto">
+                    <div className="flex items-center gap-4 min-w-max">
+                      {models.map((model) => {
+                        const isGemini = model.provider === 'google' && model.model_name.includes('gemini');
+                        return (
+                          <motion.button
+                            key={model.id}
+                            onClick={() => setSelectedModel(model.id)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`relative px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 ${
+                              selectedModel === model.id
+                                ? isGemini
+                                  ? 'bg-gradient-to-r from-blue-500/25 to-cyan-500/25 border border-blue-400/30 shadow-md shadow-blue-500/10 text-white font-medium backdrop-blur-sm'
+                                  : 'bg-gradient-to-r from-white/10 to-white/5 border border-white/10 shadow-sm text-white/90 font-medium backdrop-blur-sm'
+                                : isGemini
+                                  ? 'glass-card border border-blue-500/20 hover:border-blue-400/30 text-blue-200/80 hover:text-blue-100 font-normal bg-gradient-to-r from-blue-500/8 to-cyan-500/8'
+                                  : 'glass-card border border-white/8 hover:border-white/12 text-white/60 hover:text-white/80 font-normal'
+                            }`}
+                          >
+                            {isGemini && (
+                              <motion.div
+                                animate={{ scale: [1, 1.05, 1] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                                className="w-1.5 h-1.5 rounded-full bg-blue-400/80 shadow-sm"
+                              />
+                            )}
+                            <div className={`text-sm whitespace-nowrap ${isGemini ? 'font-medium' : 'font-normal'}`}>
+                              {model.display_name}
+                            </div>
+                            {selectedModel === model.id && (
+                              <motion.div
+                                layoutId="selectedIndicator"
+                                className={`absolute inset-0 rounded-xl -z-10 ${
+                                  isGemini
+                                    ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10'
+                                    : 'bg-gradient-to-r from-white/5 to-white/3'
+                                }`}
+                                transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                              />
+                            )}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                    <div className="ml-auto flex items-center gap-3 flex-shrink-0">
+                      <SettingsIcon className="w-5 h-5 text-white/50 hover:text-white/80 cursor-pointer transition-colors duration-300" />
+                      <div className="w-8 h-8 bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <User className="w-4 h-4 text-white/70" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Messages Area - Column Layout for Multi-Model Mode */}
@@ -565,27 +624,28 @@ export default function ChatPage() {
                 </div>
               </div>
             ) : (
-              <div 
-                ref={scrollContainerRef}
-                className="h-full w-full multi-model-scroll" 
-                style={{ 
-                  overflowX: 'scroll', 
-                  overflowY: 'hidden',
-                  WebkitOverflowScrolling: 'touch',
-                  position: 'relative'
-                }}
-              >
-                <div 
-                  className="flex h-full gap-4 px-4 py-4"
-                  style={{ 
-                    width: `${Array.from(enabledModels).length * 440}px`,
-                    minWidth: `${Array.from(enabledModels).length * 440}px`,
-                    paddingRight: '2rem',
-                    flexShrink: 0,
-                    display: 'flex',
-                    boxSizing: 'border-box'
+              <div className="w-full overflow-hidden">
+                <div
+                  ref={scrollContainerRef}
+                  className="h-full w-full multi-model-scroll"
+                  style={{
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    WebkitOverflowScrolling: 'touch',
+                    position: 'relative'
                   }}
                 >
+                  <div
+                    className="flex h-full gap-4 px-4 py-4"
+                    style={{
+                      width: `${Array.from(enabledModels).length * 440}px`,
+                      minWidth: `${Array.from(enabledModels).length * 440}px`,
+                      paddingRight: '2rem',
+                      flexShrink: 0,
+                      display: 'flex',
+                      boxSizing: 'border-box'
+                    }}
+                  >
                   {Array.from(enabledModels).map((modelId, idx) => {
                   const columnMessages = modelMessages[modelId] || [];
                   const model = models.find(m => m.id === modelId);
@@ -737,6 +797,7 @@ export default function ChatPage() {
                     </motion.div>
                   );
                   })}
+                  </div>
                 </div>
               </div>
             )}
@@ -744,6 +805,7 @@ export default function ChatPage() {
         ) : (
           // Regular single-model view
           <div className="flex-1 overflow-y-auto px-6 py-8 relative z-10" style={{ paddingRight: '2rem' }}>
+            <div className="max-w-5xl mx-auto w-full">
             <AnimatePresence>
               {messages.length === 0 && (
                 <motion.div
@@ -751,14 +813,51 @@ export default function ChatPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="h-full flex items-center justify-center"
                 >
-                  <div className="text-center max-w-2xl">
-                    <div className="w-20 h-20 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                      <Bot className="w-10 h-10 text-white" />
+                  <div className="relative max-w-3xl w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-emerald-900/20 to-black/60 backdrop-blur-xl p-10 text-left shadow-[0_30px_120px_-60px_rgba(16,185,129,0.45)]">
+                    <div className="absolute inset-0 pointer-events-none" style={{
+                      backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+                      backgroundSize: '70px 70px'
+                    }} />
+                    <div className="absolute -right-24 -top-24 w-72 h-72 bg-emerald-500/15 blur-3xl rounded-full" />
+                    <div className="absolute -left-10 bottom-0 w-72 h-72 bg-cyan-500/15 blur-3xl rounded-full" />
+                    <div className="relative space-y-4">
+                      <p className="text-xs uppercase tracking-[0.24em] text-emerald-200/70 flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" /> Welcome
+                      </p>
+                      <h2 className="text-3xl font-semibold text-white">Welcome, {displayName}</h2>
+                      <p className="text-white/70 text-lg max-w-2xl">
+                        Choose a model above and start crafting your next idea. Keep things sleek with single-model focus or slide into multi-model explorations.
+                      </p>
+                      <div className="grid sm:grid-cols-3 gap-4 pt-2">
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-200">
+                            <Rocket className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-white font-medium">Start fast</p>
+                            <p className="text-xs text-white/60">Pick your preferred model and drop a prompt to begin.</p>
+                          </div>
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center text-cyan-200">
+                            <FileText className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-white font-medium">Richer context</p>
+                            <p className="text-xs text-white/60">Toggle RAG for document-aware answers when you need precision.</p>
+                          </div>
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-400/30 flex items-center justify-center text-purple-200">
+                            <Sparkles className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-white font-medium">Multi-model views</p>
+                            <p className="text-xs text-white/60">Flip on multi-model to compare replies side by side.</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <h2 className="text-3xl font-semibold text-white mb-3">Start a conversation</h2>
-                    <p className="text-green-200/70 text-lg mb-8">
-                      Select a model and ask me anything
-                    </p>
                   </div>
                 </motion.div>
               )}
@@ -1023,7 +1122,7 @@ export default function ChatPage() {
             })}
           </AnimatePresence>
           
-          {loading && (
+            {loading && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1066,12 +1165,14 @@ export default function ChatPage() {
               </motion.div>
             </motion.div>
           )}
-          <div ref={messagesEndRef} />
-        </div>
+            <div ref={messagesEndRef} />
+            </div>
+          </div>
         )}
 
         {/* Chat Input Area */}
         <div className="relative z-10 px-6 py-6 bg-[#0f0f0f] border-t border-gray-800">
+          <div className="max-w-5xl mx-auto w-full">
           {/* Action Buttons Above Input */}
           <div className="flex justify-center gap-3 mb-4">
             <motion.button
@@ -1161,8 +1262,8 @@ export default function ChatPage() {
           </div>
 
           {/* Input Field */}
-          <div className="max-w-4xl mx-auto">
-            <motion.div 
+          <div className="max-w-4xl w-full mx-auto">
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -1235,6 +1336,8 @@ export default function ChatPage() {
               </motion.button>
             </div>
           </div>
+          </div>
+        </div>
         </div>
       </div>
     </div>
