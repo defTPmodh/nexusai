@@ -223,9 +223,32 @@ export default function Home() {
                 </div>
               </div>
             </section>
-            <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-purple-100/60">
-              <div className="flex items-center gap-2">
+            <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-purple-100/60">
+              <div className="flex flex-wrap items-center gap-2">
                 <span>© {new Date().getFullYear()} Nexus AI. All rights reserved.</span>
+                <div className="flex items-center gap-2 text-[11px] text-purple-100/70">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1">
+                    <svg
+                      aria-hidden
+                      viewBox="0 0 256 256"
+                      className="h-3.5 w-3.5"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="128" cy="128" r="24" fill="#61DAFB" />
+                      <ellipse cx="128" cy="128" rx="80" ry="32" stroke="#61DAFB" strokeWidth="12" />
+                      <ellipse cx="128" cy="128" rx="32" ry="80" stroke="#61DAFB" strokeWidth="12" transform="rotate(60 128 128)" />
+                      <ellipse cx="128" cy="128" rx="32" ry="80" stroke="#61DAFB" strokeWidth="12" transform="rotate(120 128 128)" />
+                    </svg>
+                    Built with React
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1">
+                    <svg aria-hidden viewBox="0 0 256 256" className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M128 32L16 224h224L128 32Z" fill="currentColor" />
+                    </svg>
+                    Deployed on Vercel
+                  </span>
+                </div>
                 <span className="text-[10px] text-purple-100/50">Built and developed by Tanish Modh.</span>
               </div>
               <a
