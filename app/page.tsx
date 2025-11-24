@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Grid,
   MessageSquare,
-  Radar,
   Rocket,
   Route,
   Shield,
@@ -160,8 +159,8 @@ export default function Home() {
 
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { title: 'Intelligent routing control', copy: 'Resilient multi-model fallback & load balance', icon: Route },
-                        { title: 'Real-time transparency', copy: 'Live traces, compliance, usage signals', icon: Radar },
+                        { title: 'Intelligent routing', copy: 'Adaptive multi-model failover.', icon: Route },
+                        { title: 'Real-time transparency', copy: 'Traces, compliance, live signals.', icon: ShieldCheck },
                       ].map((item) => (
                         <div key={item.title} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
                           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400/30 to-purple-500/40">
@@ -169,7 +168,7 @@ export default function Home() {
                           </div>
                           <div>
                             <p className="text-sm text-purple-100/70">{item.title}</p>
-                            <p className="text-lg font-semibold">{item.copy}</p>
+                            <p className="text-sm font-semibold leading-snug">{item.copy}</p>
                           </div>
                         </div>
                       ))}
