@@ -3,14 +3,15 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
 import {
+  Activity,
   ArrowRight,
-  BarChart3,
-  Clock,
-  Cpu,
   Grid,
   MessageSquare,
+  Radar,
   Rocket,
+  Route,
   Shield,
+  ShieldCheck,
   Sparkles,
   Wand2,
   Zap,
@@ -96,9 +97,21 @@ export default function Home() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {[
-                    { label: 'Intelligent Model Routing', detail: 'Optimize cost while balancing DeepSeek, OpenAI, NVIDIA.', icon: Cpu },
-                    { label: 'Enterprise Compliance & Auditing', detail: 'Mitigate risk with SSO, SCIM, and audit trails.', icon: Shield },
-                    { label: 'Real-Time Observability', detail: 'Faster debugging with live usage, latency, trust.', icon: BarChart3 },
+                    {
+                      label: 'Intelligent Model Routing',
+                      detail: 'Optimize cost while balancing DeepSeek, OpenAI, NVIDIA.',
+                      icon: Route,
+                    },
+                    {
+                      label: 'Enterprise Compliance & Auditing',
+                      detail: 'Mitigate risk with SSO, SCIM, and audit trails.',
+                      icon: ShieldCheck,
+                    },
+                    {
+                      label: 'Real-Time Observability',
+                      detail: 'Faster debugging with live usage, latency, trust.',
+                      icon: Activity,
+                    },
                   ].map((item) => (
                     <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-purple-500/10 backdrop-blur">
                       <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
@@ -147,8 +160,8 @@ export default function Home() {
 
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { title: 'Intelligent routing control', copy: 'Resilient multi-model fallback & load balance', icon: MessageSquare },
-                        { title: 'Real-time transparency', copy: 'Live traces, compliance, usage signals', icon: Clock },
+                        { title: 'Intelligent routing control', copy: 'Resilient multi-model fallback & load balance', icon: Route },
+                        { title: 'Real-time transparency', copy: 'Live traces, compliance, usage signals', icon: Radar },
                       ].map((item) => (
                         <div key={item.title} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
                           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400/30 to-purple-500/40">
