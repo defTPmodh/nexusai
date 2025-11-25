@@ -204,20 +204,6 @@ nexusai/
 3. Delete agents
 4. **Visual Builder**: Full React Flow implementation available (see `planning.md` for specifications)
 
-### Agent Execution
-
-Agents can be executed via API:
-
-```bash
-POST /api/agents/execute
-{
-  "agentId": "uuid",
-  "input": {
-    "user_input": "Draft a compliance report for new product",
-    "user_id": "uuid"
-  }
-}
-```
 
 Response includes:
 - Execution ID
@@ -366,14 +352,6 @@ See `supabase/migrations/001_initial_schema.sql` for complete schema.
 - Agent workflow templates
 - A/B testing for different models
 - Fine-tuning management
-
-## Support
-
-For issues and questions:
-- Check `planning.md` for detailed specifications
-- Review API error messages in browser console
-- Check Supabase logs for database errors
-- Verify Auth0 configuration
 
 ## License
 
