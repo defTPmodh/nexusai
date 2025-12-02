@@ -3,7 +3,6 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
 import {
-  Activity,
   ArrowRight,
   Gauge,
   Github,
@@ -16,15 +15,16 @@ import {
   ShieldCheck,
   Sparkles,
   Wand2,
+  Workflow,
   Zap,
 } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import { motion } from 'framer-motion';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 
-const headingFont = Plus_Jakarta_Sans({
+const headingFont = Manrope({
   subsets: ['latin'],
-  weight: ['600', '700'],
+  weight: ['600', '700', '800'],
   variable: '--font-heading',
 });
 
@@ -109,43 +109,43 @@ export default function Home() {
   if (!user) {
     const experienceCards = [
       {
-        title: 'Adaptive orchestration',
-        copy: 'Blend DeepSeek, OpenAI, NVIDIA, and custom models with live guardrails.',
+        title: 'Executive-grade governance',
+        copy: 'Granular policies, approvals, and live audit trails mapped to your risk posture.',
+        icon: ShieldCheck,
+      },
+      {
+        title: 'Data lineage clarity',
+        copy: 'Every retrieval, transform, and model hop is traced for compliance reviews.',
         icon: Route,
       },
       {
-        title: 'Observable by design',
-        copy: 'Latency ribbons, drift alerts, and lineage trails shipped out of the box.',
-        icon: Activity,
-      },
-      {
-        title: 'Governance that scales',
-        copy: 'SSO, SCIM, auditability, and privacy layers to ship safely across teams.',
-        icon: ShieldCheck,
+        title: 'Financial accountability',
+        copy: 'Spend, savings, and ROI surfaced per product line for the C-suite.',
+        icon: Gauge,
       },
     ];
 
     const signalMetrics = [
-      { label: 'Latency median', value: '62 ms', accent: 'from-emerald-400/60 to-cyan-400/60' },
-      { label: 'Orchestration saves', value: '38%', accent: 'from-purple-400/60 to-pink-400/60' },
+      { label: 'TCO Reduction via Adaptive Routing', value: '38%', accent: 'from-purple-400/70 to-pink-400/70' },
+      { label: 'PII Compliance & Safety Score', value: '99.7%', accent: 'from-cyan-300/80 to-indigo-400/80' },
+      { label: 'Median Response Time', value: '62 ms', accent: 'from-emerald-400/60 to-cyan-400/60' },
       { label: 'Models online', value: '11', accent: 'from-amber-300/70 to-orange-400/60' },
-      { label: 'Trust index', value: '99.7%', accent: 'from-cyan-300/70 to-indigo-400/60' },
     ];
 
     const runway = [
       {
-        title: 'Wire your data',
-        detail: 'Connect lakes, APIs, and vector stores with adaptive syncs.',
+        title: 'Securely Ground Your AI (RAG)',
+        detail: 'Connect lakes, APIs, and vector stores with governed retrieval and masking.',
         icon: PanelsTopLeft,
       },
       {
-        title: 'Compose the brain',
-        detail: 'Route prompts through policies, evals, and optimizers.',
+        title: 'Design Your Zero-Risk Workflows',
+        detail: 'Route prompts through approvals, policies, evals, and role-aware optimizers.',
         icon: Sparkles,
       },
       {
-        title: 'Ship with confidence',
-        detail: 'Real-time observability, multi-tenant isolation, and rollout rails.',
+        title: 'Full Auditability and Isolation',
+        detail: 'Real-time observability, multi-tenant isolation, and immutable evidence trails.',
         icon: Gauge,
       },
     ];
@@ -181,40 +181,42 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 className="space-y-6"
               >
-                <div className={`flex flex-wrap items-center gap-3 text-[13px] uppercase tracking-[0.25em] text-purple-100/70 ${headingFont.className}`}>
+                <div className={`flex flex-wrap items-center gap-3 text-[12px] uppercase tracking-[0.22em] text-purple-100/70 ${headingFont.className}`}>
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-60" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-300" />
                     </span>
-                    Adaptive AI autopilot
+                    Enterprise command layer
                   </span>
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                    <Sparkles className="w-4 h-4" /> Kinetic guardrails in motion
+                    <Sparkles className="w-4 h-4" /> Risk, governance, ROI
                   </span>
                 </div>
 
-                <div className="space-y-3">
-                  <h1 className={`${headingFont.className} text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] tracking-tight`}>
-                    A luminous runway for adaptive AI
+                <div className="space-y-4">
+                  <h1
+                    className={`${headingFont.className} text-4xl sm:text-5xl lg:text-[54px] font-semibold leading-[1.02] tracking-tight`}
+                  >
+                    The AI Control Room: Zero-Risk Governance and Guaranteed Compliance for Enterprise AI
                   </h1>
                   <p className="text-lg text-purple-100/80 max-w-3xl leading-relaxed">
-                    Nexus AI choreographs models, data, and policies into cinematic experiences. Compose orchestrations, preview trust telemetry, and launch adaptive products that feel born in-house.
+                    Nexus AI gives CIOs and CFOs a live cockpit to enforce policy, prove compliance, and quantify ROI across every AI product—without slowing teams down.
                   </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
                   <motion.a
-                    href="/api/auth/login"
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 px-6 py-3 text-sm font-semibold shadow-lg shadow-purple-500/30 transition hover:shadow-purple-400/40"
+                    href="/contact"
+                    whileHover={{ scale: 1.03, y: -2 }}
+                    className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 px-7 py-3.5 text-sm font-semibold shadow-lg shadow-emerald-400/30 transition hover:shadow-emerald-300/40"
                   >
-                    Launch the workspace
+                    Request Your AI Risk & ROI Projection
                     <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </motion.a>
                   <Link
                     href="/pricing"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm text-purple-100/80 transition hover:border-purple-400/40"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/0 px-5 py-2.5 text-sm text-purple-100/80 transition hover:border-purple-400/40"
                   >
                     Schedule a Technical Deep Dive
                   </Link>
@@ -276,11 +278,14 @@ export default function Home() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      {signalMetrics.map((metric) => (
-                        <div key={metric.label} className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-white/10 p-4 shadow-inner shadow-purple-500/10">
-                          <div className={`mb-3 h-12 w-12 rounded-2xl bg-gradient-to-br ${metric.accent}`} />
-                          <p className="text-xs text-purple-100/60">{metric.label}</p>
-                          <p className="text-xl font-semibold">{metric.value}</p>
+                      {signalMetrics.map((metric, index) => (
+                        <div
+                          key={metric.label}
+                          className={`rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-white/10 p-4 shadow-inner shadow-purple-500/10 ${index < 2 ? 'ring-2 ring-purple-400/40' : ''}`}
+                        >
+                          <div className={`mb-4 h-12 w-12 rounded-2xl bg-gradient-to-br ${metric.accent}`} />
+                          <p className="text-[11px] uppercase tracking-wide text-purple-100/60">{metric.label}</p>
+                          <p className={`${headingFont.className} ${index < 2 ? 'text-3xl' : 'text-xl'} font-semibold`}>{metric.value}</p>
                         </div>
                       ))}
                     </div>
@@ -323,19 +328,35 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {[{ title: 'Launch-ready', desc: 'Heroes, CTA ribbons, and stat tapes that pulse with your signals.', icon: Rocket }, { title: 'Trust by default', desc: 'Enterprise guardrails, audit trails, and private tenancy baked in.', icon: Shield }, { title: 'Adaptive insights', desc: 'Heatmaps, routing loops, and latency ribbons tuned for observability.', icon: Zap }].map((card) => (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {[
+                    {
+                      title: 'Accelerated Time-to-Market',
+                      desc: 'Pre-built templates for audited deployment.',
+                      icon: Workflow,
+                    },
+                    {
+                      title: 'Guaranteed Data Security (PII Guardrails)',
+                      desc: 'Enterprise guardrails, audit trails, and private tenancy baked in.',
+                      icon: ShieldCheck,
+                    },
+                    {
+                      title: 'Automated Cost Optimization',
+                      desc: 'Real-time routing loops and latency monitoring to always use the cheapest model.',
+                      icon: Gauge,
+                    },
+                  ].map((card) => (
                     <motion.div
                       key={card.title}
-                      whileHover={{ y: -8, scale: 1.02 }}
-                      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg"
+                      whileHover={{ y: -10, scale: 1.03 }}
+                      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl"
                     >
                       <motion.div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-purple-500/10" variants={pulseLine} animate="animate" />
-                      <div className="relative z-10 space-y-3">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
+                      <div className="relative z-10 space-y-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
                           <card.icon className="w-5 h-5" />
                         </div>
-                        <h3 className={`${headingFont.className} text-lg font-semibold`}>{card.title}</h3>
+                        <h3 className={`${headingFont.className} text-lg font-semibold leading-tight`}>{card.title}</h3>
                         <p className="text-sm text-purple-100/70 leading-relaxed">{card.desc}</p>
                       </div>
                     </motion.div>
@@ -369,11 +390,13 @@ export default function Home() {
                 <div className="space-y-4">
                   <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-2 text-xs text-purple-100/70">
                     <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                    Built for enterprise-grade AI launches
+                    Enterprise acceleration, verified
                   </div>
-                  <h2 className={`${headingFont.className} text-3xl sm:text-4xl font-semibold leading-tight`}>A motion-rich canvas that narrates your AI vision</h2>
+                  <h2 className={`${headingFont.className} text-3xl sm:text-4xl font-semibold leading-tight`}>
+                    Build, Govern, and Ship Your AI Products Faster.
+                  </h2>
                   <p className="text-purple-100/80 leading-relaxed max-w-2xl">
-                    Nexus AI gives you immersive surfaces to spotlight orchestration blueprints, trust telemetry, and adaptive guardrails. Every animation is tuned to the product story—live signals, gradient choreography, and interactive pathways that feel purpose-built for your stack.
+                    Nexus AI keeps leadership in the loop with transparent guardrails, deterministic approvals, and rollout playbooks—so every AI initiative ships faster while staying compliant.
                   </p>
                   <div className="flex flex-wrap gap-3">
                     <Link
