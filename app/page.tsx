@@ -20,9 +20,9 @@ import {
 } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import { motion } from 'framer-motion';
-import { Space_Grotesk } from 'next/font/google';
+import { Sora } from 'next/font/google';
 
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
+const headingFont = Sora({ subsets: ['latin'], weight: ['600', '700'], variable: '--font-heading' });
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -117,7 +117,7 @@ export default function Home() {
     ];
 
     return (
-      <div className={`${spaceGrotesk.className} relative min-h-screen overflow-hidden bg-gradient-to-b from-[#05050c] via-[#080814] to-[#05050c] text-white`}>
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#05050c] via-[#080814] to-[#05050c] text-white">
         <div className="absolute inset-0 opacity-80" aria-hidden>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(139,92,246,0.18),transparent_38%),radial-gradient(circle_at_80%_0%,rgba(6,182,212,0.16),transparent_34%),radial-gradient(circle_at_50%_80%,rgba(99,102,241,0.12),transparent_40%)]" />
           <motion.div
@@ -156,8 +156,8 @@ export default function Home() {
                 </div>
 
                 <div className="space-y-4">
-                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight">
-                    The neural runway for teams building audacious AI products.
+                  <h1 className={`${headingFont.className} text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight`}>
+                    The neural runway for teams building audacious AI products
                   </h1>
                   <p className="text-lg text-purple-100/80 max-w-3xl leading-relaxed">
                     Nexus AI stitches every LLM, dataset, and policy into one expressive canvas. Design orchestrations, route intelligently, and watch real-time trust signals before you ever ship to millions of users.
@@ -191,7 +191,7 @@ export default function Home() {
                       <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
                         <item.icon className="w-5 h-5" />
                       </div>
-                      <p className="text-sm font-semibold">{item.title}</p>
+                      <p className={`${headingFont.className} text-sm font-semibold`}>{item.title}</p>
                       <p className="text-xs text-purple-100/70 leading-relaxed">{item.copy}</p>
                     </motion.div>
                   ))}
@@ -211,7 +211,7 @@ export default function Home() {
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <p className="text-xs uppercase tracking-wide text-purple-100/60">Live workspace</p>
-                        <p className="text-xl font-semibold">Dynamic AI Control Room</p>
+                        <p className={`${headingFont.className} text-xl font-semibold`}>Dynamic AI Control Room</p>
                       </div>
                       <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-purple-500/60 to-cyan-400/60 flex items-center justify-center">
                         <Wand2 className="w-5 h-5" />
@@ -234,7 +234,7 @@ export default function Home() {
                           <Route className="w-5 h-5" />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold">Adaptive routing mesh</p>
+                          <p className={`${headingFont.className} text-sm font-semibold`}>Adaptive routing mesh</p>
                           <p className="text-xs text-purple-100/70">Smart traffic shaping with eval-aware policies and safe fallbacks.</p>
                         </div>
                       </div>
@@ -262,7 +262,7 @@ export default function Home() {
                   </div>
                   <div>
                     <p className="text-sm text-purple-100/70">Design playground</p>
-                    <p className="text-xl font-semibold">Story-driven sections that move with your brand.</p>
+                    <p className={`${headingFont.className} text-xl font-semibold`}>Story-driven sections that move with your brand</p>
                   </div>
                 </div>
 
@@ -278,7 +278,7 @@ export default function Home() {
                         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
                           <card.icon className="w-5 h-5" />
                         </div>
-                        <h3 className="text-lg font-semibold">{card.title}</h3>
+                        <h3 className={`${headingFont.className} text-lg font-semibold`}>{card.title}</h3>
                         <p className="text-sm text-purple-100/70 leading-relaxed">{card.desc}</p>
                       </div>
                     </motion.div>
@@ -290,7 +290,7 @@ export default function Home() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-purple-100/70">Signal board</p>
-                    <p className="text-2xl font-semibold">Instant clarity across teams</p>
+                    <p className={`${headingFont.className} text-2xl font-semibold`}>Instant clarity across teams</p>
                   </div>
                   <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs">Live</span>
                 </div>
@@ -312,11 +312,11 @@ export default function Home() {
                 <div className="space-y-4">
                   <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-2 text-xs text-purple-100/70">
                     <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                    No templates. Purely engineered interactions.
+                    Built for enterprise-grade AI launches
                   </div>
-                  <h2 className="text-3xl sm:text-4xl font-semibold leading-tight">A motion-rich canvas that narrates your AI vision.</h2>
+                  <h2 className={`${headingFont.className} text-3xl sm:text-4xl font-semibold leading-tight`}>A motion-rich canvas that narrates your AI vision</h2>
                   <p className="text-purple-100/80 leading-relaxed max-w-2xl">
-                    Every section is orchestrated to feel alive: layered glows, kinetic gradients, micro-interactions, and data-forward storytelling. Showcase what Nexus AI unlocks—from compliant routing to multi-model creativity—without looking like a copied template.
+                    Nexus AI gives you immersive surfaces to spotlight orchestration blueprints, trust telemetry, and adaptive guardrails. Every animation is tuned to the product story—live signals, gradient choreography, and interactive pathways that feel purpose-built for your stack.
                   </p>
                   <div className="flex flex-wrap gap-3">
                     <Link
@@ -349,7 +349,7 @@ export default function Home() {
                         <item.icon className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-semibold">{item.title}</p>
+                        <p className={`${headingFont.className} text-sm font-semibold`}>{item.title}</p>
                         <p className="text-sm text-purple-100/70 leading-relaxed">{item.detail}</p>
                       </div>
                     </motion.div>
