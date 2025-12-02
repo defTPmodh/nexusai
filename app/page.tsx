@@ -20,9 +20,13 @@ import {
 } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import { motion } from 'framer-motion';
-import { Syne } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
-const headingFont = Syne({ subsets: ['latin'], weight: ['600', '700'], variable: '--font-heading' });
+const headingFont = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['600', '700'],
+  variable: '--font-heading',
+});
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -39,6 +43,13 @@ const orbitGlow = {
       repeat: Infinity,
       ease: 'easeInOut',
     },
+  },
+};
+
+const parallaxWave = {
+  animate: {
+    x: [0, -12, 12, 0],
+    transition: { duration: 18, repeat: Infinity, ease: 'easeInOut' },
   },
 };
 
@@ -149,21 +160,26 @@ export default function Home() {
             animate="animate"
           />
           <motion.div
+            className="absolute inset-x-8 top-28 h-56 rounded-[32px] bg-gradient-to-r from-white/5 via-purple-500/10 to-cyan-400/10 blur-3xl"
+            variants={parallaxWave}
+            animate="animate"
+          />
+          <motion.div
             className="absolute inset-x-16 top-0 bottom-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.06),transparent_45%)] blur-3xl"
             variants={floatGlow}
             animate="animate"
           />
         </div>
 
-        <div className="relative z-10 px-6 pt-12 pb-16 lg:px-12">
-          <div className="max-w-6xl mx-auto flex flex-col gap-14">
-            <header className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 items-center">
+        <div className="relative z-10 px-6 pt-10 pb-16 lg:px-12">
+          <div className="max-w-6xl mx-auto flex flex-col gap-12">
+            <header className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
               <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={fadeInUp}
                 transition={{ duration: 0.5 }}
-                className="space-y-8"
+                className="space-y-6"
               >
                 <div className={`flex flex-wrap items-center gap-3 text-[13px] uppercase tracking-[0.25em] text-purple-100/70 ${headingFont.className}`}>
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
@@ -178,23 +194,24 @@ export default function Home() {
                   </span>
                 </div>
 
-                <div className="space-y-4">
-                  <h1 className={`${headingFont.className} text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight`}>
-                    The neural runway for teams building audacious AI products
+                <div className="space-y-3">
+                  <h1 className={`${headingFont.className} text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] tracking-tight`}>
+                    A luminous runway for adaptive AI
                   </h1>
                   <p className="text-lg text-purple-100/80 max-w-3xl leading-relaxed">
-                    Nexus AI stitches every LLM, dataset, and policy into one expressive canvas. Design orchestrations, route intelligently, and watch real-time trust signals before you ever ship to millions of users.
+                    Nexus AI choreographs models, data, and policies into cinematic experiences. Compose orchestrations, preview trust telemetry, and launch adaptive products that feel born in-house.
                   </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4">
-                  <a
+                <div className="flex flex-wrap items-center gap-3">
+                  <motion.a
                     href="/api/auth/login"
+                    whileHover={{ scale: 1.02, y: -2 }}
                     className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 px-6 py-3 text-sm font-semibold shadow-lg shadow-purple-500/30 transition hover:shadow-purple-400/40"
                   >
                     Launch the workspace
                     <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                  </a>
+                  </motion.a>
                   <Link
                     href="/pricing"
                     className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm text-purple-100/80 transition hover:border-purple-400/40"
