@@ -20,13 +20,26 @@ import {
 } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import { motion } from 'framer-motion';
-import { Sora } from 'next/font/google';
+import { Syne } from 'next/font/google';
 
-const headingFont = Sora({ subsets: ['latin'], weight: ['600', '700'], variable: '--font-heading' });
+const headingFont = Syne({ subsets: ['latin'], weight: ['600', '700'], variable: '--font-heading' });
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
+};
+
+const orbitGlow = {
+  animate: {
+    x: [0, 10, -10, 0],
+    y: [0, -8, 8, 0],
+    rotate: [0, 2, -2, 0],
+    transition: {
+      duration: 14,
+      repeat: Infinity,
+      ease: 'easeInOut',
+    },
+  },
 };
 
 const floatGlow = {
@@ -49,6 +62,16 @@ const pulseLine = {
       repeat: Infinity,
       ease: 'linear',
     },
+  },
+};
+
+const cardHover = {
+  rest: { scale: 1, rotate: 0, y: 0 },
+  hover: {
+    scale: 1.03,
+    rotate: -1.25,
+    y: -10,
+    transition: { type: 'spring', stiffness: 220, damping: 18 },
   },
 };
 
@@ -142,16 +165,16 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 className="space-y-8"
               >
-                <div className="flex flex-wrap items-center gap-3 text-[13px] uppercase tracking-[0.25em] text-purple-100/70">
+                <div className={`flex flex-wrap items-center gap-3 text-[13px] uppercase tracking-[0.25em] text-purple-100/70 ${headingFont.className}`}>
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-60" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-300" />
                     </span>
-                    Adaptive AI cloud
+                    Adaptive AI autopilot
                   </span>
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                    <Sparkles className="w-4 h-4" /> Live orchestration & trust
+                    <Sparkles className="w-4 h-4" /> Kinetic guardrails in motion
                   </span>
                 </div>
 
@@ -181,18 +204,35 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {experienceCards.map((item) => (
+                  {experienceCards.map((item, idx) => (
                     <motion.div
                       key={item.title}
-                      whileHover={{ y: -6, rotate: -0.5, scale: 1.02 }}
-                      className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-purple-500/10 backdrop-blur relative overflow-hidden"
+                      variants={cardHover}
+                      initial="rest"
+                      animate="rest"
+                      whileHover="hover"
+                      whileTap="hover"
+                      className="group rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-purple-500/10 backdrop-blur relative overflow-hidden"
+                      style={{ transformOrigin: idx % 2 === 0 ? 'top left' : 'top right' }}
                     >
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100" />
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
-                        <item.icon className="w-5 h-5" />
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-purple-500/10"
+                        variants={pulseLine}
+                        animate="animate"
+                      />
+                      <motion.div
+                        className="absolute -inset-6 rounded-3xl bg-gradient-to-r from-purple-500/20 via-indigo-500/15 to-cyan-400/20 blur-3xl"
+                        variants={orbitGlow}
+                        animate="animate"
+                        aria-hidden
+                      />
+                      <div className="relative z-10 space-y-3">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
+                          <item.icon className="w-5 h-5" />
+                        </div>
+                        <p className={`${headingFont.className} text-sm font-semibold`}>{item.title}</p>
+                        <p className="text-xs text-purple-100/70 leading-relaxed">{item.copy}</p>
                       </div>
-                      <p className={`${headingFont.className} text-sm font-semibold`}>{item.title}</p>
-                      <p className="text-xs text-purple-100/70 leading-relaxed">{item.copy}</p>
                     </motion.div>
                   ))}
                 </div>
