@@ -1,7 +1,7 @@
 -- Seed additional models for Supabase (run directly in Supabase SQL Editor)
--- Includes Grok, updated DeepSeek, free GPT-OSS, and Minimax coverage.
+-- Includes updated DeepSeek, free GPT-OSS, Minimax, Amazon, and AllenAI models.
 
--- Step 1: Ensure provider constraint allows xAI
+-- Step 1: Ensure provider constraint allows amazon and allenai
 DO $$
 BEGIN
     IF EXISTS (
@@ -14,7 +14,7 @@ BEGIN
 
     ALTER TABLE llm_models
     ADD CONSTRAINT llm_models_provider_check
-    CHECK (provider IN ('openai', 'deepseek', 'minimax', 'google', 'xai'));
+    CHECK (provider IN ('openai', 'deepseek', 'minimax', 'google', 'amazon', 'allenai'));
 END $$;
 
 INSERT INTO llm_models (
@@ -26,9 +26,11 @@ INSERT INTO llm_models (
     max_tokens,
     is_active
 ) VALUES
-    ('xai', 'grok-4.1-fast:free', 'xAI Grok-4.1 Fast', 0, 0, 32768, true),
     ('openai', 'gpt-oss-20b:free', 'OpenAI GPT-OSS-20B', 0, 0, 4096, true),
-    ('minimax', 'minimax-m2:free', 'Minimax M2', 0, 0, 32768, true)
+    ('minimax', 'minimax-m2:free', 'Minimax M2', 0, 0, 32768, true),
+    ('amazon', 'nova-2-lite-v1:free', 'Amazon Nova 2 Lite v1', 0, 0, 32768, true),
+    ('allenai', 'olmo-3-32b-think:free', 'AllenAI OLMO 3 32B Think', 0, 0, 32768, true),
+    ('openai', 'gpt-oss-120b:free', 'OpenAI GPT-OSS-120B', 0, 0, 32768, true)
 ON CONFLICT (provider, model_name)
 DO UPDATE SET
     is_active = true,
@@ -40,25 +42,31 @@ DO UPDATE SET
 -- Step 3: Grant permissions for all roles
 INSERT INTO model_permissions (model_id, role, can_use)
 SELECT id, 'employee', true FROM llm_models WHERE (provider, model_name) IN (
-    ('xai', 'grok-4.1-fast:free'),
     ('openai', 'gpt-oss-20b:free'),
-    ('minimax', 'minimax-m2:free')
+    ('minimax', 'minimax-m2:free'),
+    ('amazon', 'nova-2-lite-v1:free'),
+    ('allenai', 'olmo-3-32b-think:free'),
+    ('openai', 'gpt-oss-120b:free')
 )
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
 INSERT INTO model_permissions (model_id, role, can_use)
 SELECT id, 'manager', true FROM llm_models WHERE (provider, model_name) IN (
-    ('xai', 'grok-4.1-fast:free'),
     ('openai', 'gpt-oss-20b:free'),
-    ('minimax', 'minimax-m2:free')
+    ('minimax', 'minimax-m2:free'),
+    ('amazon', 'nova-2-lite-v1:free'),
+    ('allenai', 'olmo-3-32b-think:free'),
+    ('openai', 'gpt-oss-120b:free')
 )
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
 INSERT INTO model_permissions (model_id, role, can_use)
 SELECT id, 'admin', true FROM llm_models WHERE (provider, model_name) IN (
-    ('xai', 'grok-4.1-fast:free'),
     ('openai', 'gpt-oss-20b:free'),
-    ('minimax', 'minimax-m2:free')
+    ('minimax', 'minimax-m2:free'),
+    ('amazon', 'nova-2-lite-v1:free'),
+    ('allenai', 'olmo-3-32b-think:free'),
+    ('openai', 'gpt-oss-120b:free')
 )
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
@@ -72,8 +80,10 @@ SELECT
 FROM llm_models lm
 LEFT JOIN model_permissions mp ON mp.model_id = lm.id AND mp.can_use = true
 WHERE (lm.provider, lm.model_name) IN (
-    ('xai', 'grok-4.1-fast:free'),
     ('openai', 'gpt-oss-20b:free'),
-    ('minimax', 'minimax-m2:free')
+    ('minimax', 'minimax-m2:free'),
+    ('amazon', 'nova-2-lite-v1:free'),
+    ('allenai', 'olmo-3-32b-think:free'),
+    ('openai', 'gpt-oss-120b:free')
 )
 GROUP BY lm.provider, lm.model_name, lm.display_name, lm.is_active;

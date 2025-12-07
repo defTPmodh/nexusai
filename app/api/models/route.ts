@@ -20,9 +20,25 @@ const DEFAULT_MODELS = [
     max_tokens: 32768,
   },
   {
-    provider: 'xai',
-    model_name: 'grok-4.1-fast:free',
-    display_name: 'xAI Grok-4.1 Fast',
+    provider: 'amazon',
+    model_name: 'nova-2-lite-v1:free',
+    display_name: 'Amazon Nova 2 Lite v1',
+    cost_per_1k_input_tokens: 0,
+    cost_per_1k_output_tokens: 0,
+    max_tokens: 32768,
+  },
+  {
+    provider: 'allenai',
+    model_name: 'olmo-3-32b-think:free',
+    display_name: 'AllenAI OLMO 3 32B Think',
+    cost_per_1k_input_tokens: 0,
+    cost_per_1k_output_tokens: 0,
+    max_tokens: 32768,
+  },
+  {
+    provider: 'openai',
+    model_name: 'gpt-oss-120b:free',
+    display_name: 'OpenAI GPT-OSS-120B',
     cost_per_1k_input_tokens: 0,
     cost_per_1k_output_tokens: 0,
     max_tokens: 32768,
@@ -34,6 +50,7 @@ const DISABLED_MODELS = [
   { provider: 'deepseek', model_name: 'deepseek-chat-v3-0324:free' },
   { provider: 'deepseek', model_name: 'deepseek-v3.1' },
   { provider: 'openai', model_name: 'gpt-oss-20b' },
+  { provider: 'xai', model_name: 'grok-4.1-fast:free' },
 ];
 
 async function ensureDefaultModels(supabase: ReturnType<typeof getSupabaseAdmin>) {

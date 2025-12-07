@@ -35,8 +35,12 @@ const OPENROUTER_MODELS: Record<string, string> = {
   'gpt-oss-20b:free': 'openai/gpt-oss-20b:free',
   // Minimax M2 Free
   'minimax-m2:free': 'minimax/minimax-m2:free',
-  // xAI Grok 4.1 Fast (Free)
-  'grok-4.1-fast:free': 'x-ai/grok-4.1-fast:free',
+  // Amazon Nova 2 Lite v1 (Free)
+  'nova-2-lite-v1:free': 'amazon/nova-2-lite-v1:free',
+  // AllenAI OLMO 3 32B Think (Free)
+  'olmo-3-32b-think:free': 'allenai/olmo-3-32b-think:free',
+  // OpenAI GPT-OSS-120B (Free)
+  'gpt-oss-120b:free': 'openai/gpt-oss-120b:free',
 };
 
 export async function callLLM(
