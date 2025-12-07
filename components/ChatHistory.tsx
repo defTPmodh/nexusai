@@ -305,7 +305,6 @@ export default function ChatHistory({
                         <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-purple-500/20 blur-sm -z-10" />
                       )}
                       <div className="absolute inset-0 bg-slate-950/60 rounded-lg backdrop-blur-sm -z-10" />
-                    >
 
                       <div className="relative z-10">
                         {/* Title */}
