@@ -5,6 +5,9 @@ import { callLLM, calculateCost } from '@/lib/llm/providers';
 import { LLMConfig } from '@/lib/llm/providers';
 // Note: queryDocuments is imported dynamically when RAG is enabled to avoid initialization errors
 
+// Force dynamic rendering since we use cookies (getSession)
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
