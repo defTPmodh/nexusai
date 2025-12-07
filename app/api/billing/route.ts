@@ -86,6 +86,47 @@ export async function GET(request: NextRequest) {
 
         subscription = subData;
 
+        // If subscription is scheduled to cancel, ensure plan is reverted to free immediately
+        // (This is a safety check in case cancel route didn't complete properly)
+        if (subData && subData.cancel_at_period_end) {
+          const { data: freePlan } = await supabase
+            .from('plans')
+            .select('id, name, display_name, price_per_user_monthly, currency')
+            .eq('name', 'free')
+            .single();
+
+          if (freePlan) {
+            // Ensure team plan is free
+            await supabase
+              .from('teams')
+              .update({ plan_id: freePlan.id })
+              .eq('id', currentUser.team_id);
+
+            // Ensure all team members' plans are free
+            const { data: teamMembers } = await supabase
+              .from('team_members')
+              .select('user_id')
+              .eq('team_id', currentUser.team_id);
+
+            if (teamMembers && teamMembers.length > 0) {
+              const userIds = teamMembers.map(m => m.user_id);
+              await supabase
+                .from('users')
+                .update({ plan_id: freePlan.id })
+                .in('id', userIds);
+            }
+
+            // Update plan to free for response
+            plan = {
+              id: freePlan.id,
+              name: freePlan.name,
+              display_name: freePlan.display_name,
+              price_per_user_monthly: freePlan.price_per_user_monthly,
+              currency: freePlan.currency,
+            };
+          }
+        }
+
         // Check if subscription should be canceled (period ended and cancel_at_period_end is true)
         if (subData && subData.cancel_at_period_end && subData.current_period_end) {
           const periodEnd = new Date(subData.current_period_end);
@@ -234,6 +275,33 @@ export async function GET(request: NextRequest) {
       if (subData) {
         subscription = subData;
         plan = subData.plan;
+
+        // If subscription is scheduled to cancel, ensure plan is reverted to free immediately
+        // (This is a safety check in case cancel route didn't complete properly)
+        if (subData.cancel_at_period_end) {
+          const { data: freePlan } = await supabase
+            .from('plans')
+            .select('id, name, display_name, price_per_user_monthly, currency')
+            .eq('name', 'free')
+            .single();
+
+          if (freePlan) {
+            // Ensure user plan is free
+            await supabase
+              .from('users')
+              .update({ plan_id: freePlan.id })
+              .eq('id', currentUser.id);
+
+            // Update plan to free for response
+            plan = {
+              id: freePlan.id,
+              name: freePlan.name,
+              display_name: freePlan.display_name,
+              price_per_user_monthly: freePlan.price_per_user_monthly,
+              currency: freePlan.currency,
+            };
+          }
+        }
 
         // Check if subscription should be canceled (period ended and cancel_at_period_end is true)
         if (subData.cancel_at_period_end && subData.current_period_end) {

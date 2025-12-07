@@ -57,7 +57,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No active subscription found' }, { status: 404 });
     }
 
+    // Get free plan (100k token limit)
+    const { data: freePlan } = await supabase
+      .from('plans')
+      .select('id, name, display_name, token_limit')
+      .eq('name', 'free')
+      .single();
+
+    if (!freePlan) {
+      return NextResponse.json({ error: 'Free plan not found' }, { status: 500 });
+    }
+
     // Cancel subscription (set cancel_at_period_end to true)
+    // Status remains 'active' until period ends, but plan is reverted immediately
     const { error: updateError } = await supabase
       .from('subscriptions')
       .update({
@@ -70,13 +82,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
 
-    // Note: Actual cancellation and team plan reversion will happen in billing route
-    // when period_end is reached (checked on each billing page load)
+    // Immediately revert plan to free (100k limit) for both team and individual subscriptions
+    if (currentUser.team_id) {
+      // Team subscription - revert team plan and all team members' plans
+      await supabase
+        .from('teams')
+        .update({ plan_id: freePlan.id })
+        .eq('id', currentUser.team_id);
+
+      // Revert all team members' plans to free
+      const { data: teamMembers } = await supabase
+        .from('team_members')
+        .select('user_id')
+        .eq('team_id', currentUser.team_id);
+
+      if (teamMembers && teamMembers.length > 0) {
+        const userIds = teamMembers.map(m => m.user_id);
+        await supabase
+          .from('users')
+          .update({ plan_id: freePlan.id })
+          .in('id', userIds);
+      }
+    } else {
+      // Individual subscription - revert user plan to free
+      await supabase
+        .from('users')
+        .update({ plan_id: freePlan.id })
+        .eq('id', currentUser.id);
+    }
 
     return NextResponse.json({ 
       success: true,
-      message: 'Subscription will be cancelled at the end of the current billing period',
-      cancelAtPeriodEnd: true
+      message: 'Subscription cancelled. Plan reverted to free (100k token limit).',
+      cancelAtPeriodEnd: true,
+      planReverted: true
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
