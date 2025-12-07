@@ -5,6 +5,7 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { BarChart3, TrendingUp, DollarSign, Activity, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
+import Loading from '@/components/Loading';
 
 interface AnalyticsData {
   summary: {
@@ -123,7 +124,7 @@ export default function AnalyticsPage() {
         <main className="flex-1 overflow-y-auto px-8 py-8 relative z-10">
           {loading ? (
             <div className="text-center py-20">
-              <div className="text-purple-200/70">Loading analytics...</div>
+              <Loading size="md" text="Loading analytics..." />
             </div>
           ) : data ? (
             <>

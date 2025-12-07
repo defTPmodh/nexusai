@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Sidebar from '@/components/Sidebar';
+import Loading from '@/components/Loading';
 import { motion } from 'framer-motion';
 import {
   User,
@@ -137,17 +138,7 @@ export default function ProfilePage() {
         <div className="flex-1 ml-64 flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-cyan-500/5 to-purple-600/10 blur-3xl" />
           <div className="relative z-10 w-full max-w-2xl px-8">
-            <div className="animate-pulse rounded-2xl border border-white/5 bg-white/5 p-8 shadow-2xl shadow-emerald-500/10">
-              <div className="flex items-center justify-between mb-6">
-                <div className="h-10 w-36 rounded-full bg-white/10" />
-                <div className="h-10 w-10 rounded-full bg-white/10" />
-              </div>
-              <div className="space-y-4">
-                <div className="h-16 rounded-xl bg-white/10" />
-                <div className="h-16 rounded-xl bg-white/10" />
-                <div className="h-16 rounded-xl bg-white/10" />
-              </div>
-            </div>
+            <Loading size="lg" text="Loading your profile..." />
           </div>
         </div>
       </div>

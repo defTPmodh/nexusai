@@ -7,6 +7,7 @@ import { LLMModel } from '@/types';
 import { Send, Bot, User, Sparkles, Bookmark, Star, Settings as SettingsIcon, Wand2, Mic, Globe, Image as ImageIcon, Rocket, FileText, Plus, History } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import ChatHistory from '@/components/ChatHistory';
+import Loading from '@/components/Loading';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Helper function to render formatted message content
@@ -833,29 +834,13 @@ export default function ChatPage() {
                               <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="flex gap-3 justify-start"
+                                className="flex gap-3 justify-start items-center"
                               >
-                                <div className="w-8 h-8 bg-gradient-to-br from-green-500/30 to-emerald-500/30 rounded-full flex items-center justify-center flex-shrink-0 border border-green-400/30">
-                                  <Bot className="w-4 h-4 text-green-300" />
+                                <div className="w-8 h-8 flex items-center justify-center">
+                                  <Loading size="sm" />
                                 </div>
-                                <div className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 border border-green-500/20 rounded-xl px-4 py-3">
-                                  <div className="flex gap-2 items-center">
-                                    <motion.div
-                                      animate={{ scale: [1, 1.2, 1] }}
-                                      transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-                                      className="w-2 h-2 bg-green-400 rounded-full"
-                                    />
-                                    <motion.div
-                                      animate={{ scale: [1, 1.2, 1] }}
-                                      transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                                      className="w-2 h-2 bg-green-400 rounded-full"
-                                    />
-                                    <motion.div
-                                      animate={{ scale: [1, 1.2, 1] }}
-                                      transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-                                      className="w-2 h-2 bg-green-400 rounded-full"
-                                    />
-                                  </div>
+                                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                                  <p className="text-xs text-white/50">Processing...</p>
                                 </div>
                               </motion.div>
                             )}
@@ -1195,42 +1180,16 @@ export default function ChatPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="flex gap-4 mb-6"
+              className="flex gap-4 mb-6 items-center"
             >
-              <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center flex-shrink-0 border border-gray-700"
-              >
-                <Bot className="w-5 h-5 text-green-400" />
-              </motion.div>
-              <motion.div 
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                className="bg-[#1a1a1a] border border-gray-800 rounded-2xl px-6 py-4 shadow-lg"
-              >
-                <div className="flex gap-2 items-center">
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-                    className="w-2.5 h-2.5 bg-green-400 rounded-full"
-                  ></motion.div>
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                    className="w-2.5 h-2.5 bg-green-400 rounded-full"
-                  ></motion.div>
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-                    className="w-2.5 h-2.5 bg-green-400 rounded-full"
-                  ></motion.div>
-                  <span className="ml-3 text-xs text-gray-400">
-                    {multiModelMode ? 'Querying all models...' : 'Thinking...'}
-                  </span>
-                </div>
-              </motion.div>
+              <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
+                <Loading size="sm" />
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                <p className="text-xs text-white/60">
+                  {multiModelMode ? 'Querying all models...' : 'Thinking...'}
+                </p>
+              </div>
             </motion.div>
           )}
             <div ref={messagesEndRef} />

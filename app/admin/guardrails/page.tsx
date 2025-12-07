@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Sidebar from '@/components/Sidebar';
+import Loading from '@/components/Loading';
 import { motion } from 'framer-motion';
 import { Shield, Save, Check, X, AlertTriangle, Eye, Ban, MessageSquare } from 'lucide-react';
 
@@ -188,7 +189,7 @@ export default function GuardrailsPage() {
       <div className="h-screen flex bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#0a0a0f]">
         <Sidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          <div className="text-purple-200/70">Loading guardrails...</div>
+          <Loading size="md" text="Loading guardrails..." />
         </div>
       </div>
     );

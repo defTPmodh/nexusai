@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { History, Trash2, MessageSquare, X, Clock, Sparkles, User as UserIcon, Shield } from 'lucide-react';
 import { ChatSession } from '@/types';
+import Loading from '@/components/Loading';
 
 interface ChatHistoryProps {
   isOpen: boolean;
@@ -242,11 +243,7 @@ export default function ChatHistory({
             >
               {loading ? (
                 <div className="flex items-center justify-center h-64">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                    className="w-8 h-8 border-2 border-white/20 border-t-white/50 rounded-full"
-                  />
+                  <Loading size="md" />
                 </div>
               ) : sessions.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-64 text-center px-4">

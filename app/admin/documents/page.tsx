@@ -5,6 +5,7 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { Document } from '@/types';
 import { FileText, Upload, Trash2, CheckCircle, XCircle, Clock, Sparkles } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
+import Loading from '@/components/Loading';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function DocumentsPage() {
@@ -110,7 +111,7 @@ export default function DocumentsPage() {
       case 'failed':
         return <XCircle className="w-4 h-4 text-red-400" />;
       default:
-        return <Clock className="w-4 h-4 text-yellow-400 animate-spin" />;
+        return <Loading size="sm" />;
     }
   };
 
@@ -176,7 +177,7 @@ export default function DocumentsPage() {
           {/* Documents List */}
           {loading ? (
             <div className="text-center py-20">
-              <div className="text-gray-400">Loading documents...</div>
+              <Loading size="md" text="Loading documents..." />
             </div>
           ) : documents.length === 0 ? (
             <motion.div

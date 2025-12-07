@@ -17,6 +17,7 @@ import {
   Zap,
 } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
+import Loading from '@/components/Loading';
 import { motion } from 'framer-motion';
 
 const fadeInUp = {
@@ -32,14 +33,7 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0b0b12] via-[#0e0e16] to-[#0b0b12] relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(139,92,246,0.12),transparent_35%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(6,182,212,0.1),transparent_30%)]" />
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex items-center gap-3 px-6 py-4 rounded-full glass-card border border-purple-500/30 shadow-2xl"
-        >
-          <div className="h-3 w-3 rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 animate-pulse" />
-          <div className="text-purple-100/80 font-medium">Loading your workspace...</div>
-        </motion.div>
+        <Loading size="lg" text="Loading your workspace..." />
       </div>
     );
   }

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Users, UserPlus, Mail, Crown, Shield, User as UserIcon, Trash2, Copy, Check, DollarSign, TrendingUp, LogOut, ArrowUp } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
+import Loading from '@/components/Loading';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
@@ -235,15 +236,8 @@ export default function TeamPage() {
         <Sidebar />
         <div className="flex-1 ml-64 flex items-center justify-center relative">
           <div className="absolute inset-0 bg-grid-pattern opacity-30" />
-          <div className={`relative z-10 glass-card border border-purple-500/20 px-6 py-4 rounded-xl text-white flex items-center gap-3 ${shimmer}`}>
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-              className="p-2 rounded-full bg-purple-500/10 border border-purple-500/30"
-            >
-              <Users className="w-4 h-4 text-purple-200" />
-            </motion.div>
-            <span className="text-sm tracking-wide text-purple-100">Loading your team space...</span>
+          <div className="relative z-10">
+            <Loading size="lg" text="Loading your team space..." />
           </div>
         </div>
       </div>
@@ -687,8 +681,8 @@ export default function TeamPage() {
                     <h3 className="text-lg font-semibold">Spending</h3>
                   </div>
                   {loadingSpending ? (
-                    <div className="glass-card border border-purple-500/20 rounded-xl p-6 text-center text-purple-200/70">
-                      Loading spending data...
+                    <div className="glass-card border border-purple-500/20 rounded-xl p-6 text-center">
+                      <Loading size="sm" text="Loading spending data..." />
                     </div>
                   ) : spending.length > 0 ? (
                     <div className="glass-card border border-purple-500/20 rounded-xl overflow-hidden">

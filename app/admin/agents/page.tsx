@@ -5,6 +5,7 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { Agent } from '@/types';
 import { Bot, Plus, Trash2, Power, PowerOff } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
+import Loading from '@/components/Loading';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AgentsPage() {
@@ -87,7 +88,7 @@ export default function AgentsPage() {
         <main className="flex-1 overflow-y-auto px-8 py-8 relative z-10">
           {loading ? (
             <div className="text-center py-20">
-              <div className="text-purple-200/70">Loading agents...</div>
+              <Loading size="md" text="Loading agents..." />
             </div>
           ) : agents.length === 0 ? (
             <motion.div

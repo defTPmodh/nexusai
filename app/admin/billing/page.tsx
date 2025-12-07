@@ -18,6 +18,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
+import Loading from '@/components/Loading';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
@@ -130,12 +131,8 @@ export default function BillingPage() {
         <div className="flex-1 ml-64 relative flex items-center justify-center">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(52,211,153,0.15),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.15),transparent_30%),radial-gradient(circle_at_10%_80%,rgba(168,85,247,0.12),transparent_28%)]" />
           <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
-          <div className="relative z-10 flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-6 py-4 backdrop-blur-xl shadow-[0_20px_120px_-60px_rgba(16,185,129,0.7)]">
-            <Loader2 className="h-5 w-5 animate-spin text-emerald-300" />
-            <div>
-              <p className="text-sm text-gray-300 font-semibold">Preparing your billing space</p>
-              <p className="text-xs text-gray-500">Fetching subscription, invoices, and payment details...</p>
-            </div>
+          <div className="relative z-10">
+            <Loading size="lg" text="Preparing your billing space" />
           </div>
         </div>
       </div>
