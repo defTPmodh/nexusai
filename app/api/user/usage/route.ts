@@ -71,20 +71,14 @@ export async function GET(request: NextRequest) {
     let tokenLimit = 100000; // Default to free plan limit
 
     if (planName === 'premium') {
-<<<<<<< Updated upstream
       tokenLimit = 1000000; // Premium members get 1M credits
     } else if (isOwner) {
       tokenLimit = 1000000; // Owners get 1M credits regardless of plan
-=======
-      tokenLimit = 2500000; // Premium members get 250k credits
-    } else if (isOwner) {
-      tokenLimit = 2500000; // Owners get 250k credits regardless of plan
->>>>>>> Stashed changes
     } else if (plan?.token_limit !== null) {
       tokenLimit = plan.token_limit || 100000;
     }
 
-    // Get total tokens used (individual usage only - each member has their own 250k limit)
+    // Get total tokens used (individual usage only - each member has their own limit)
     const { data: requests } = await supabase
       .from('llm_requests')
       .select('input_tokens, output_tokens')
