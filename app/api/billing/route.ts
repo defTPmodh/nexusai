@@ -157,7 +157,8 @@ export async function GET(request: NextRequest) {
             .single();
 
           // If team still has premium plan but subscription is cancelled, revert it
-          if (cancelledSub && plan && plan.name !== 'free') {
+          const planName = Array.isArray(plan) ? plan[0]?.name : plan?.name;
+          if (cancelledSub && plan && planName && planName !== 'free') {
             const { data: freePlan } = await supabase
               .from('plans')
               .select('id, name, display_name, price_per_user_monthly, currency')
@@ -376,10 +377,10 @@ export async function GET(request: NextRequest) {
         cancelAtPeriodEnd: subscription.cancel_at_period_end,
       } : null,
       plan: plan ? {
-        name: plan.name,
-        displayName: plan.display_name,
-        pricePerUser: plan.price_per_user_monthly,
-        currency: plan.currency,
+        name: Array.isArray(plan) ? plan[0]?.name : plan.name,
+        displayName: Array.isArray(plan) ? plan[0]?.display_name : plan.display_name,
+        pricePerUser: Array.isArray(plan) ? plan[0]?.price_per_user_monthly : plan.price_per_user_monthly,
+        currency: Array.isArray(plan) ? plan[0]?.currency : plan.currency,
       } : null,
       team: team ? {
         id: team.id,
