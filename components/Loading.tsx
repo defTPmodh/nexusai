@@ -11,10 +11,10 @@ interface LoadingProps {
 }
 
 const sizeMap = {
-  sm: 32,
-  md: 48,
-  lg: 64,
-  xl: 80,
+  sm: 48,
+  md: 72,
+  lg: 96,
+  xl: 120,
 };
 
 export default function Loading({ 
@@ -24,50 +24,118 @@ export default function Loading({
   fullScreen = false 
 }: LoadingProps) {
   const dimension = sizeMap[size];
-  const dotSize = dimension * 0.25;
+  const ringWidth = dimension * 0.12;
 
   const content = (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-      className={`flex flex-col items-center justify-center gap-4 ${className}`}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className={`flex flex-col items-center justify-center gap-6 ${className}`}
     >
-      {/* Modern Orbital Loading Animation */}
+      {/* Premium Multi-Layer Loading Animation */}
       <div 
-        className="relative"
+        className="relative flex items-center justify-center"
         style={{ width: dimension, height: dimension }}
       >
-        {/* Outer rotating ring */}
+        {/* Outer glow ring */}
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-transparent"
+          className="absolute inset-0 rounded-full"
           style={{
-            background: `conic-gradient(from 0deg, transparent, rgba(139, 92, 246, 0.3), transparent)`,
-            mask: 'radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 2px))',
-            WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 2px))',
+            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, transparent 70%)',
+            filter: 'blur(8px)',
+          }}
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.4, 0.7, 0.4],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+
+        {/* Main rotating ring with gradient */}
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          style={{
+            width: dimension,
+            height: dimension,
+            background: `conic-gradient(
+              from 0deg,
+              rgba(139, 92, 246, 0) 0%,
+              rgba(139, 92, 246, 0.8) 25%,
+              rgba(6, 182, 212, 1) 50%,
+              rgba(139, 92, 246, 0.8) 75%,
+              rgba(139, 92, 246, 0) 100%
+            )`,
+            mask: `radial-gradient(farthest-side, transparent calc(100% - ${ringWidth}px), black calc(100% - ${ringWidth}px))`,
+            WebkitMask: `radial-gradient(farthest-side, transparent calc(100% - ${ringWidth}px), black calc(100% - ${ringWidth}px))`,
+            filter: 'drop-shadow(0 0 12px rgba(139, 92, 246, 0.6))',
           }}
           animate={{ rotate: 360 }}
           transition={{ 
-            duration: 1.5, 
+            duration: 1.2, 
+            repeat: Infinity, 
+            ease: 'linear' 
+          }}
+        />
+
+        {/* Secondary inner ring (counter-rotating) */}
+        <motion.div
+          className="absolute rounded-full"
+          style={{
+            width: dimension * 0.65,
+            height: dimension * 0.65,
+            top: '50%',
+            left: '50%',
+            x: -dimension * 0.325,
+            y: -dimension * 0.325,
+            background: `conic-gradient(
+              from 180deg,
+              rgba(6, 182, 212, 0) 0%,
+              rgba(6, 182, 212, 0.6) 30%,
+              rgba(139, 92, 246, 0.8) 60%,
+              rgba(6, 182, 212, 0.6) 90%,
+              rgba(6, 182, 212, 0) 100%
+            )`,
+            mask: `radial-gradient(farthest-side, transparent calc(100% - ${ringWidth * 0.8}px), black calc(100% - ${ringWidth * 0.8}px))`,
+            WebkitMask: `radial-gradient(farthest-side, transparent calc(100% - ${ringWidth * 0.8}px), black calc(100% - ${ringWidth * 0.8}px))`,
+            filter: 'drop-shadow(0 0 8px rgba(6, 182, 212, 0.5))',
+          }}
+          animate={{ rotate: -360 }}
+          transition={{ 
+            duration: 1.8, 
             repeat: Infinity, 
             ease: 'linear' 
           }}
         />
         
-        {/* Inner pulsing dot */}
+        {/* Pulsing center core */}
         <motion.div
           className="absolute top-1/2 left-1/2 rounded-full"
           style={{
-            width: dotSize,
-            height: dotSize,
-            x: -dotSize / 2,
-            y: -dotSize / 2,
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 1), rgba(6, 182, 212, 1))',
-            boxShadow: `0 0 ${dotSize}px rgba(139, 92, 246, 0.6), 0 0 ${dotSize * 1.5}px rgba(6, 182, 212, 0.4)`,
+            width: dimension * 0.3,
+            height: dimension * 0.3,
+            x: -dimension * 0.15,
+            y: -dimension * 0.15,
+            background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(139, 92, 246, 1), rgba(6, 182, 212, 1))',
+            boxShadow: `
+              0 0 ${dimension * 0.2}px rgba(139, 92, 246, 0.8),
+              0 0 ${dimension * 0.4}px rgba(6, 182, 212, 0.6),
+              inset 0 0 ${dimension * 0.15}px rgba(255, 255, 255, 0.3)
+            `,
+            filter: 'blur(0.5px)',
           }}
           animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.8, 1, 0.8],
+            scale: [1, 1.15, 1],
+            opacity: [0.9, 1, 0.9],
+            boxShadow: [
+              `0 0 ${dimension * 0.2}px rgba(139, 92, 246, 0.8), 0 0 ${dimension * 0.4}px rgba(6, 182, 212, 0.6)`,
+              `0 0 ${dimension * 0.3}px rgba(139, 92, 246, 1), 0 0 ${dimension * 0.6}px rgba(6, 182, 212, 0.8)`,
+              `0 0 ${dimension * 0.2}px rgba(139, 92, 246, 0.8), 0 0 ${dimension * 0.4}px rgba(6, 182, 212, 0.6)`,
+            ],
           }}
           transition={{
             duration: 1.5,
@@ -76,65 +144,84 @@ export default function Loading({
           }}
         />
 
-        {/* Orbiting dots */}
-        {[0, 1, 2].map((index) => (
-          <motion.div
-            key={index}
-            className="absolute rounded-full"
-            style={{
-              width: dotSize * 0.6,
-              height: dotSize * 0.6,
-              background: `linear-gradient(135deg, rgba(${139 - index * 20}, ${92 - index * 10}, ${246 - index * 20}, 0.8), rgba(${6 - index * 5}, ${182 - index * 10}, ${212 - index * 5}, 0.8))`,
-              top: '50%',
-              left: '50%',
-              x: -dotSize * 0.3,
-              y: -dotSize * 0.3,
-            }}
-            animate={{
-              rotate: 360,
-              x: [
-                -dotSize * 0.3,
-                Math.cos((index * 120) * Math.PI / 180) * (dimension * 0.35) - dotSize * 0.3,
-                Math.cos((index * 120) * Math.PI / 180) * (dimension * 0.35) - dotSize * 0.3,
-                -dotSize * 0.3,
-              ],
-              y: [
-                -dotSize * 0.3,
-                Math.sin((index * 120) * Math.PI / 180) * (dimension * 0.35) - dotSize * 0.3,
-                Math.sin((index * 120) * Math.PI / 180) * (dimension * 0.35) - dotSize * 0.3,
-                -dotSize * 0.3,
-              ],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: index * 0.2,
-            }}
-          />
-        ))}
+        {/* Orbiting particles */}
+        {[0, 1, 2, 3].map((index) => {
+          const angle = (index * 90) * Math.PI / 180;
+          const radius = dimension * 0.4;
+          return (
+            <motion.div
+              key={index}
+              className="absolute rounded-full"
+              style={{
+                width: dimension * 0.08,
+                height: dimension * 0.08,
+                top: '50%',
+                left: '50%',
+                background: index % 2 === 0 
+                  ? 'linear-gradient(135deg, rgba(139, 92, 246, 1), rgba(168, 85, 247, 1))'
+                  : 'linear-gradient(135deg, rgba(6, 182, 212, 1), rgba(14, 165, 233, 1))',
+                boxShadow: `0 0 ${dimension * 0.1}px ${index % 2 === 0 ? 'rgba(139, 92, 246, 0.8)' : 'rgba(6, 182, 212, 0.8)'}`,
+                filter: 'blur(0.5px)',
+              }}
+              animate={{
+                x: [
+                  Math.cos(angle) * radius - dimension * 0.04,
+                  Math.cos(angle + Math.PI * 2) * radius - dimension * 0.04,
+                ],
+                y: [
+                  Math.sin(angle) * radius - dimension * 0.04,
+                  Math.sin(angle + Math.PI * 2) * radius - dimension * 0.04,
+                ],
+                scale: [1, 1.3, 1],
+                opacity: [0.7, 1, 0.7],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: 'linear',
+                delay: index * 0.1,
+              }}
+            />
+          );
+        })}
       </div>
 
-      {/* Loading text with animated dots */}
+      {/* Enhanced loading text */}
       {text && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          className="flex items-center gap-1"
+          transition={{ delay: 0.3, duration: 0.4, ease: 'easeOut' }}
+          className="flex flex-col items-center gap-2"
         >
-          <span className="text-sm text-white/70 font-medium">{text}</span>
-          <motion.span
-            className="text-sm text-white/70"
-            animate={{ opacity: [0.3, 1, 0.3] }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          >
-            ...
-          </motion.span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-base font-semibold gradient-text">
+              {text}
+            </span>
+            <motion.div
+              className="flex gap-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              {[0, 1, 2].map((i) => (
+                <motion.span
+                  key={i}
+                  className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-400 to-cyan-400"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                    opacity: [0.4, 1, 0.4],
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: i * 0.2,
+                  }}
+                />
+              ))}
+            </motion.div>
+          </div>
         </motion.div>
       )}
     </motion.div>
@@ -142,7 +229,8 @@ export default function Loading({
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-black/80 via-black/60 to-black/80 backdrop-blur-xl">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.1),transparent_70%)]" />
         {content}
       </div>
     );
