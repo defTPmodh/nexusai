@@ -56,7 +56,7 @@ export default function Loading({
           }}
         />
 
-        {/* Main rotating ring with gradient */}
+        {/* Main rotating ring with gradient - enhanced speed variation */}
         <motion.div
           className="absolute inset-0 rounded-full"
           style={{
@@ -65,20 +65,32 @@ export default function Loading({
             background: `conic-gradient(
               from 0deg,
               rgba(139, 92, 246, 0) 0%,
-              rgba(139, 92, 246, 0.8) 25%,
+              rgba(139, 92, 246, 0.9) 20%,
+              rgba(168, 85, 247, 1) 30%,
               rgba(6, 182, 212, 1) 50%,
-              rgba(139, 92, 246, 0.8) 75%,
+              rgba(14, 165, 233, 1) 60%,
+              rgba(139, 92, 246, 0.9) 80%,
               rgba(139, 92, 246, 0) 100%
             )`,
             mask: `radial-gradient(farthest-side, transparent calc(100% - ${ringWidth}px), black calc(100% - ${ringWidth}px))`,
             WebkitMask: `radial-gradient(farthest-side, transparent calc(100% - ${ringWidth}px), black calc(100% - ${ringWidth}px))`,
-            filter: 'drop-shadow(0 0 12px rgba(139, 92, 246, 0.6))',
+            filter: 'drop-shadow(0 0 16px rgba(139, 92, 246, 0.7)) drop-shadow(0 0 24px rgba(6, 182, 212, 0.5))',
           }}
-          animate={{ rotate: 360 }}
+          animate={{ 
+            rotate: 360,
+            scale: [1, 1.02, 1],
+          }}
           transition={{ 
-            duration: 1.2, 
-            repeat: Infinity, 
-            ease: 'linear' 
+            rotate: {
+              duration: 1,
+              repeat: Infinity, 
+              ease: 'linear',
+            },
+            scale: {
+              duration: 2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            },
           }}
         />
 
@@ -112,7 +124,7 @@ export default function Loading({
           }}
         />
         
-        {/* Pulsing center core */}
+        {/* Pulsing center core with enhanced motion */}
         <motion.div
           className="absolute top-1/2 left-1/2 rounded-full"
           style={{
@@ -120,7 +132,7 @@ export default function Loading({
             height: dimension * 0.3,
             x: -dimension * 0.15,
             y: -dimension * 0.15,
-            background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(139, 92, 246, 1), rgba(6, 182, 212, 1))',
+            background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(139, 92, 246, 1), rgba(6, 182, 212, 1))',
             boxShadow: `
               0 0 ${dimension * 0.2}px rgba(139, 92, 246, 0.8),
               0 0 ${dimension * 0.4}px rgba(6, 182, 212, 0.6),
@@ -129,24 +141,27 @@ export default function Loading({
             filter: 'blur(0.5px)',
           }}
           animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.9, 1, 0.9],
+            scale: [1, 1.2, 0.95, 1.15, 1],
+            opacity: [0.9, 1, 0.85, 1, 0.9],
+            rotate: [0, 90, 180, 270, 360],
             boxShadow: [
               `0 0 ${dimension * 0.2}px rgba(139, 92, 246, 0.8), 0 0 ${dimension * 0.4}px rgba(6, 182, 212, 0.6)`,
-              `0 0 ${dimension * 0.3}px rgba(139, 92, 246, 1), 0 0 ${dimension * 0.6}px rgba(6, 182, 212, 0.8)`,
+              `0 0 ${dimension * 0.35}px rgba(139, 92, 246, 1), 0 0 ${dimension * 0.7}px rgba(6, 182, 212, 0.9)`,
+              `0 0 ${dimension * 0.15}px rgba(139, 92, 246, 0.6), 0 0 ${dimension * 0.3}px rgba(6, 182, 212, 0.5)`,
+              `0 0 ${dimension * 0.35}px rgba(139, 92, 246, 1), 0 0 ${dimension * 0.7}px rgba(6, 182, 212, 0.9)`,
               `0 0 ${dimension * 0.2}px rgba(139, 92, 246, 0.8), 0 0 ${dimension * 0.4}px rgba(6, 182, 212, 0.6)`,
             ],
           }}
           transition={{
-            duration: 1.5,
+            duration: 2,
             repeat: Infinity,
-            ease: 'easeInOut',
+            ease: [0.4, 0, 0.6, 1],
           }}
         />
 
-        {/* Orbiting particles */}
-        {[0, 1, 2, 3].map((index) => {
-          const angle = (index * 90) * Math.PI / 180;
+        {/* Orbiting particles with enhanced motion */}
+        {[0, 1, 2, 3, 4, 5].map((index) => {
+          const angle = (index * 60) * Math.PI / 180;
           const radius = dimension * 0.4;
           return (
             <motion.div
@@ -160,7 +175,7 @@ export default function Loading({
                 background: index % 2 === 0 
                   ? 'linear-gradient(135deg, rgba(139, 92, 246, 1), rgba(168, 85, 247, 1))'
                   : 'linear-gradient(135deg, rgba(6, 182, 212, 1), rgba(14, 165, 233, 1))',
-                boxShadow: `0 0 ${dimension * 0.1}px ${index % 2 === 0 ? 'rgba(139, 92, 246, 0.8)' : 'rgba(6, 182, 212, 0.8)'}`,
+                boxShadow: `0 0 ${dimension * 0.12}px ${index % 2 === 0 ? 'rgba(139, 92, 246, 1)' : 'rgba(6, 182, 212, 1)'}, 0 0 ${dimension * 0.2}px ${index % 2 === 0 ? 'rgba(139, 92, 246, 0.5)' : 'rgba(6, 182, 212, 0.5)'}`,
                 filter: 'blur(0.5px)',
               }}
               animate={{
@@ -172,14 +187,53 @@ export default function Loading({
                   Math.sin(angle) * radius - dimension * 0.04,
                   Math.sin(angle + Math.PI * 2) * radius - dimension * 0.04,
                 ],
-                scale: [1, 1.3, 1],
-                opacity: [0.7, 1, 0.7],
+                scale: [1, 1.4, 0.9, 1.2, 1],
+                opacity: [0.6, 1, 0.8, 1, 0.6],
+                rotate: [0, 180, 360],
               }}
               transition={{
-                duration: 2,
+                duration: 2.5,
                 repeat: Infinity,
-                ease: 'linear',
-                delay: index * 0.1,
+                ease: [0.4, 0, 0.6, 1],
+                delay: index * 0.15,
+              }}
+            />
+          );
+        })}
+
+        {/* Additional inner rotating dots */}
+        {[0, 1, 2].map((index) => {
+          const innerAngle = (index * 120) * Math.PI / 180;
+          const innerRadius = dimension * 0.25;
+          return (
+            <motion.div
+              key={`inner-${index}`}
+              className="absolute rounded-full"
+              style={{
+                width: dimension * 0.05,
+                height: dimension * 0.05,
+                top: '50%',
+                left: '50%',
+                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(139, 92, 246, 0.8))',
+                boxShadow: `0 0 ${dimension * 0.08}px rgba(255, 255, 255, 0.6)`,
+              }}
+              animate={{
+                x: [
+                  Math.cos(innerAngle) * innerRadius - dimension * 0.025,
+                  Math.cos(innerAngle + Math.PI * 2) * innerRadius - dimension * 0.025,
+                ],
+                y: [
+                  Math.sin(innerAngle) * innerRadius - dimension * 0.025,
+                  Math.sin(innerAngle + Math.PI * 2) * innerRadius - dimension * 0.025,
+                ],
+                scale: [0.8, 1.2, 0.8],
+                opacity: [0.5, 1, 0.5],
+              }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: index * 0.3,
               }}
             />
           );

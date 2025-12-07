@@ -128,20 +128,26 @@ export default function ChatHistory({
             }}
             className="fixed right-0 top-0 h-full w-96 z-50 flex flex-col overflow-hidden"
           >
-            {/* Background */}
-            <div className="absolute inset-0 bg-slate-950/95 backdrop-blur-xl" />
-            <div className="absolute inset-0 border-l border-white/5" />
+            {/* Background with gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-950/98 via-purple-950/95 to-slate-950/98 backdrop-blur-xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.1),transparent_50%)]" />
+            <div className="absolute inset-0 border-l border-gradient-to-b from-purple-500/20 via-cyan-500/20 to-purple-500/20" />
+            <div className="absolute inset-0 border-l border-transparent bg-gradient-to-b from-purple-500/20 via-transparent to-purple-500/20" style={{ maskImage: 'linear-gradient(to right, black 0px, black 1px, transparent 1px)' }} />
             
             <div className="relative flex flex-col h-full">
-            {/* Header */}
+            {/* Header with gradient */}
             <motion.div
               initial={{ y: -10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="relative p-6 border-b border-white/10"
+              className="relative p-6 border-b border-transparent bg-gradient-to-r from-transparent via-purple-500/10 to-transparent"
+              style={{
+                borderImage: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.3), rgba(6, 182, 212, 0.3), transparent) 1',
+              }}
             >
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-cyan-500/5 to-purple-500/5" />
               
-              <div className="relative">
+              <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
                   <motion.div
                     initial={{ x: -20, opacity: 0 }}
@@ -149,14 +155,17 @@ export default function ChatHistory({
                     transition={{ delay: 0.2, type: 'spring' }}
                     className="flex items-center gap-3"
                   >
-                    <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center">
-                      <History className="w-5 h-5 text-white/70" />
+                    <div className="relative w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-cyan-500/20 to-purple-500/20" />
+                      <div className="absolute inset-0 bg-white/5 backdrop-blur-sm" />
+                      <div className="absolute inset-0 border border-white/10" />
+                      <History className="relative w-5 h-5 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400" />
                     </div>
                     <div>
-                      <h2 className="text-lg font-semibold text-white">
+                      <h2 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-cyan-300 to-purple-300">
                         Chat History
                       </h2>
-                      <p className="text-xs text-white/50 mt-0.5">
+                      <p className="text-xs text-white/60 mt-0.5">
                         {sessions.length} {sessions.length === 1 ? 'chat' : 'chats'}
                       </p>
                     </div>
@@ -181,21 +190,22 @@ export default function ChatHistory({
                       transition={{ duration: 0.3, ease: 'easeInOut' }}
                       className="flex items-center gap-2 overflow-hidden"
                     >
-                      <div className="flex items-center gap-2 p-1 bg-white/5 rounded-lg border border-white/10">
+                      <div className="relative flex items-center gap-2 p-1 rounded-lg border border-transparent bg-gradient-to-r from-purple-500/10 via-cyan-500/10 to-purple-500/10 backdrop-blur-sm">
+                        <div className="absolute inset-0 bg-white/5 rounded-lg" />
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => setViewMode('all')}
-                          className={`relative px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                          className={`relative px-3 py-1.5 rounded-md text-xs font-medium transition-all z-10 ${
                             viewMode === 'all'
-                              ? 'text-white bg-white/10'
+                              ? 'text-white'
                               : 'text-white/60 hover:text-white/80'
                           }`}
                         >
                           {viewMode === 'all' && (
                             <motion.div
                               layoutId="activeTab"
-                              className="absolute inset-0 bg-white/10 rounded-md"
+                              className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-cyan-500/30 to-purple-500/30 rounded-md border border-purple-500/30"
                               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                             />
                           )}
@@ -208,16 +218,16 @@ export default function ChatHistory({
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => setViewMode('own')}
-                          className={`relative px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                          className={`relative px-3 py-1.5 rounded-md text-xs font-medium transition-all z-10 ${
                             viewMode === 'own'
-                              ? 'text-white bg-white/10'
+                              ? 'text-white'
                               : 'text-white/60 hover:text-white/80'
                           }`}
                         >
                           {viewMode === 'own' && (
                             <motion.div
                               layoutId="activeTab"
-                              className="absolute inset-0 bg-white/10 rounded-md"
+                              className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-cyan-500/30 to-purple-500/30 rounded-md border border-purple-500/30"
                               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                             />
                           )}
@@ -247,13 +257,16 @@ export default function ChatHistory({
                 </div>
               ) : sessions.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-64 text-center px-4">
-                  <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center mb-4">
-                    <MessageSquare className="w-8 h-8 text-white/30" />
+                  <div className="relative w-16 h-16 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-cyan-500/20 to-purple-500/20" />
+                    <div className="absolute inset-0 bg-white/5 backdrop-blur-sm" />
+                    <div className="absolute inset-0 border border-white/10" />
+                    <MessageSquare className="relative w-8 h-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400/50 to-cyan-400/50" />
                   </div>
-                  <p className="text-white/60 text-sm mb-1">
+                  <p className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-cyan-300 text-sm mb-1 font-medium">
                     No chat history yet
                   </p>
-                  <p className="text-white/40 text-xs">
+                  <p className="text-white/50 text-xs">
                     Start a new conversation to see it here
                   </p>
                 </div>
@@ -276,18 +289,33 @@ export default function ChatHistory({
                         onSelectSession(session.id);
                         onClose();
                       }}
-                      className={`group relative p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
+                      className={`group relative p-4 rounded-lg cursor-pointer transition-all duration-300 overflow-hidden ${
                         currentSessionId === session.id
-                          ? 'bg-white/10 border-white/20'
-                          : 'bg-white/5 border-white/10 hover:bg-white/8 hover:border-white/15'
+                          ? 'border border-purple-500/40'
+                          : 'border border-transparent hover:border-purple-500/30'
                       }`}
+                      style={{
+                        background: currentSessionId === session.id
+                          ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.15))'
+                          : 'linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(6, 182, 212, 0.05))',
+                      }}
+                    >
+                      {/* Gradient border glow effect */}
+                      {currentSessionId === session.id && (
+                        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-purple-500/20 blur-sm -z-10" />
+                      )}
+                      <div className="absolute inset-0 bg-slate-950/60 rounded-lg backdrop-blur-sm -z-10" />
                     >
 
                       <div className="relative z-10">
                         {/* Title */}
                         <div className="flex items-start justify-between mb-3">
-                          <h3 className="text-sm font-medium text-white truncate flex-1">
-                            {session.title || (
+                          <h3 className="text-sm font-medium truncate flex-1">
+                            {session.title ? (
+                              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-200 via-cyan-200 to-purple-200">
+                                {session.title}
+                              </span>
+                            ) : (
                               <span className="text-white/50 italic">New Chat</span>
                             )}
                           </h3>
@@ -319,10 +347,10 @@ export default function ChatHistory({
 
                         {/* User Info (for admin viewing all chats) */}
                         {isAdmin && viewMode === 'all' && !session.is_own_session && (
-                          <div className="mb-3 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-md">
+                          <div className="mb-3 px-2.5 py-1.5 rounded-md border border-purple-500/20 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 backdrop-blur-sm">
                             <div className="flex items-center gap-2">
-                              <UserIcon className="w-3.5 h-3.5 text-white/40" />
-                              <p className="text-xs text-white/60 font-medium">
+                              <UserIcon className="w-3.5 h-3.5 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400" />
+                              <p className="text-xs text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-cyan-300 font-medium">
                                 {session.user_name || session.user_email || 'Unknown User'}
                               </p>
                             </div>
