@@ -104,33 +104,15 @@ export default function ChatHistory({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop with animated gradient */}
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-40"
-          >
-            <motion.div
-              className="absolute inset-0 bg-black/60 backdrop-blur-md"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-cyan-500/10"
-              animate={{
-                background: [
-                  'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.15), transparent 50%)',
-                  'radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.15), transparent 50%)',
-                  'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.15), transparent 50%)',
-                ],
-              }}
-              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          </motion.div>
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+          />
 
           {/* Sidebar */}
           <motion.div
@@ -145,49 +127,18 @@ export default function ChatHistory({
             }}
             className="fixed right-0 top-0 h-full w-96 z-50 flex flex-col overflow-hidden"
           >
-            {/* Animated background layers */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-purple-950/60 to-black" />
-            <motion.div
-              className="absolute inset-0 border-l border-purple-500/30"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            />
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-b from-purple-500/5 via-transparent to-cyan-500/5"
-              animate={{
-                opacity: [0.3, 0.6, 0.3],
-              }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <div className="absolute inset-0 shadow-2xl shadow-purple-500/20" />
+            {/* Background */}
+            <div className="absolute inset-0 bg-slate-950/95 backdrop-blur-xl" />
+            <div className="absolute inset-0 border-l border-white/5" />
             
-            <div className="relative flex flex-col h-full backdrop-blur-xl">
+            <div className="relative flex flex-col h-full">
             {/* Header */}
             <motion.div
-              initial={{ y: -20, opacity: 0 }}
+              initial={{ y: -10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
-              className="relative p-6 border-b border-purple-500/20 overflow-hidden"
+              transition={{ delay: 0.1 }}
+              className="relative p-6 border-b border-white/10"
             >
-              {/* Animated header background */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-purple-900/50 via-indigo-900/40 to-purple-900/50"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              />
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-cyan-500/10"
-                animate={{
-                  background: [
-                    'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.2), transparent 70%)',
-                    'radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.2), transparent 70%)',
-                    'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.2), transparent 70%)',
-                  ],
-                }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <div className="absolute inset-0 backdrop-blur-xl" />
               
               <div className="relative">
                 <div className="flex items-center justify-between mb-4">
@@ -197,73 +148,25 @@ export default function ChatHistory({
                     transition={{ delay: 0.2, type: 'spring' }}
                     className="flex items-center gap-3"
                   >
-                    <motion.div
-                      whileHover={{ 
-                        rotate: [0, -10, 10, -10, 0],
-                        scale: 1.1
-                      }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ duration: 0.5 }}
-                      className="relative"
-                    >
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-purple-500 via-indigo-500 to-cyan-500 rounded-xl blur-lg opacity-50"
-                        animate={{
-                          scale: [1, 1.2, 1],
-                          opacity: [0.5, 0.7, 0.5],
-                        }}
-                        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                      <div className="relative w-12 h-12 bg-gradient-to-br from-purple-500 via-indigo-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
-                        <History className="w-6 h-6 text-white" />
-                      </div>
-                    </motion.div>
+                    <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center">
+                      <History className="w-5 h-5 text-white/70" />
+                    </div>
                     <div>
-                      <motion.h2
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        className="text-xl font-bold bg-gradient-to-r from-white via-purple-100 to-cyan-100 bg-clip-text text-transparent"
-                      >
+                      <h2 className="text-lg font-semibold text-white">
                         Chat History
-                      </motion.h2>
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                        className="text-xs text-purple-300/80 flex items-center gap-1.5 mt-0.5"
-                      >
-                        <motion.span
-                          key={sessions.length}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ type: 'spring', stiffness: 300 }}
-                          className="inline-block"
-                        >
-                          {sessions.length}
-                        </motion.span>
-                        <span>{sessions.length === 1 ? 'chat' : 'chats'}</span>
-                      </motion.p>
+                      </h2>
+                      <p className="text-xs text-white/50 mt-0.5">
+                        {sessions.length} {sessions.length === 1 ? 'chat' : 'chats'}
+                      </p>
                     </div>
                   </motion.div>
                   <motion.button
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
-                    whileHover={{ 
-                      scale: 1.15, 
-                      rotate: 90,
-                      backgroundColor: 'rgba(139, 92, 246, 0.2)'
-                    }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={onClose}
-                    className="p-2.5 rounded-xl transition-all relative overflow-hidden group"
+                    className="p-2 hover:bg-white/5 rounded-lg transition-colors"
                   >
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100"
-                      transition={{ duration: 0.3 }}
-                    />
-                    <X className="w-5 h-5 text-purple-300 relative z-10" />
+                    <X className="w-5 h-5 text-white/50" />
                   </motion.button>
                 </div>
                 
@@ -277,55 +180,52 @@ export default function ChatHistory({
                       transition={{ duration: 0.3, ease: 'easeInOut' }}
                       className="flex items-center gap-2 overflow-hidden"
                     >
-                      <motion.div
-                        className="flex items-center gap-2 p-1 bg-white/5 rounded-xl border border-purple-500/20 backdrop-blur-sm"
-                        layout
-                      >
+                      <div className="flex items-center gap-2 p-1 bg-white/5 rounded-lg border border-white/10">
                         <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() => setViewMode('all')}
-                          className={`relative px-4 py-2 rounded-lg text-xs font-semibold transition-all overflow-hidden ${
+                          className={`relative px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                             viewMode === 'all'
-                              ? 'text-white'
-                              : 'text-purple-300/70 hover:text-purple-200'
+                              ? 'text-white bg-white/10'
+                              : 'text-white/60 hover:text-white/80'
                           }`}
                         >
                           {viewMode === 'all' && (
                             <motion.div
                               layoutId="activeTab"
-                              className="absolute inset-0 bg-gradient-to-r from-purple-500/40 via-indigo-500/40 to-cyan-500/40 rounded-lg border border-purple-400/50 shadow-lg shadow-purple-500/30"
+                              className="absolute inset-0 bg-white/10 rounded-md"
                               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                             />
                           )}
                           <span className="relative z-10 flex items-center gap-1.5">
-                            <Shield className="w-3.5 h-3.5" />
+                            <Shield className="w-3 h-3" />
                             All Chats
                           </span>
                         </motion.button>
                         <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() => setViewMode('own')}
-                          className={`relative px-4 py-2 rounded-lg text-xs font-semibold transition-all overflow-hidden ${
+                          className={`relative px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                             viewMode === 'own'
-                              ? 'text-white'
-                              : 'text-purple-300/70 hover:text-purple-200'
+                              ? 'text-white bg-white/10'
+                              : 'text-white/60 hover:text-white/80'
                           }`}
                         >
                           {viewMode === 'own' && (
                             <motion.div
                               layoutId="activeTab"
-                              className="absolute inset-0 bg-gradient-to-r from-purple-500/40 via-indigo-500/40 to-cyan-500/40 rounded-lg border border-purple-400/50 shadow-lg shadow-purple-500/30"
+                              className="absolute inset-0 bg-white/10 rounded-md"
                               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                             />
                           )}
                           <span className="relative z-10 flex items-center gap-1.5">
-                            <UserIcon className="w-3.5 h-3.5" />
+                            <UserIcon className="w-3 h-3" />
                             My Chats
                           </span>
                         </motion.button>
-                      </motion.div>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -343,258 +243,114 @@ export default function ChatHistory({
               {loading ? (
                 <div className="flex items-center justify-center h-64">
                   <motion.div
-                    className="relative"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 200 }}
-                  >
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      className="w-12 h-12 border-3 border-purple-500/30 border-t-purple-500 rounded-full"
-                    />
-                    <motion.div
-                      animate={{ rotate: -360 }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                      className="absolute inset-0 border-3 border-cyan-500/30 border-t-cyan-500 rounded-full"
-                    />
-                  </motion.div>
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                    className="w-8 h-8 border-2 border-white/20 border-t-white/50 rounded-full"
+                  />
                 </div>
               ) : sessions.length === 0 ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 200 }}
-                  className="flex flex-col items-center justify-center h-64 text-center px-4"
-                >
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      rotate: [0, 5, -5, 0],
-                    }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                    className="w-20 h-20 bg-gradient-to-br from-purple-500/20 via-indigo-500/20 to-cyan-500/20 rounded-2xl flex items-center justify-center mb-4 border border-purple-500/30"
-                  >
-                    <MessageSquare className="w-10 h-10 text-purple-300/50" />
-                  </motion.div>
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-purple-300/80 text-sm mb-1 font-medium"
-                  >
+                <div className="flex flex-col items-center justify-center h-64 text-center px-4">
+                  <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center mb-4">
+                    <MessageSquare className="w-8 h-8 text-white/30" />
+                  </div>
+                  <p className="text-white/60 text-sm mb-1">
                     No chat history yet
-                  </motion.p>
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-purple-400/60 text-xs"
-                  >
+                  </p>
+                  <p className="text-white/40 text-xs">
                     Start a new conversation to see it here
-                  </motion.p>
-                </motion.div>
+                  </p>
+                </div>
               ) : (
                 <AnimatePresence>
                   {sessions.map((session, index) => (
                     <motion.div
                       key={session.id}
                       layout
-                      initial={{ opacity: 0, x: 30, scale: 0.9 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      exit={{ 
-                        opacity: 0, 
-                        x: -30, 
-                        scale: 0.8,
-                        transition: { duration: 0.2 }
-                      }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
                       transition={{ 
-                        delay: index * 0.03,
-                        type: 'spring', 
-                        stiffness: 400, 
-                        damping: 25,
-                        layout: { duration: 0.3 }
+                        delay: index * 0.02,
+                        duration: 0.2,
+                        layout: { duration: 0.2 }
                       }}
-                      whileHover={{ 
-                        scale: 1.02,
-                        y: -2,
-                        transition: { duration: 0.2 }
-                      }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ y: -1 }}
                       onClick={() => {
                         onSelectSession(session.id);
                         onClose();
                       }}
-                      className={`group relative p-4 rounded-2xl border cursor-pointer transition-all duration-300 overflow-hidden ${
+                      className={`group relative p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
                         currentSessionId === session.id
-                          ? 'bg-gradient-to-br from-purple-500/40 via-indigo-500/30 to-purple-500/20 border-purple-400/60 shadow-xl shadow-purple-500/30'
-                          : 'bg-white/5 border-purple-500/20 hover:bg-white/10 hover:border-purple-400/50 hover:shadow-lg hover:shadow-purple-500/10'
+                          ? 'bg-white/10 border-white/20'
+                          : 'bg-white/5 border-white/10 hover:bg-white/8 hover:border-white/15'
                       }`}
                     >
-                      {/* Animated background gradient */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-cyan-500/0 to-purple-500/0 rounded-2xl"
-                        animate={{
-                          background: currentSessionId === session.id
-                            ? [
-                                'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.1) 50%, rgba(139, 92, 246, 0.2) 100%)',
-                                'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(6, 182, 212, 0.2) 100%)',
-                                'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.1) 50%, rgba(139, 92, 246, 0.2) 100%)',
-                              ]
-                            : [
-                                'linear-gradient(135deg, rgba(139, 92, 246, 0) 0%, rgba(6, 182, 212, 0) 50%, rgba(139, 92, 246, 0) 100%)',
-                                'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 50%, rgba(139, 92, 246, 0.1) 100%)',
-                                'linear-gradient(135deg, rgba(139, 92, 246, 0) 0%, rgba(6, 182, 212, 0) 50%, rgba(139, 92, 246, 0) 100%)',
-                              ],
-                        }}
-                        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                      
-                      {/* Shimmer effect */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
-                        initial={{ x: '-100%' }}
-                        animate={{ x: '200%' }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          repeatDelay: 3,
-                          ease: 'easeInOut',
-                        }}
-                      />
-                      
-                      {/* Glow effect */}
-                      {currentSessionId === session.id && (
-                        <motion.div
-                          className="absolute -inset-0.5 bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-purple-500/20 rounded-2xl blur-xl"
-                          animate={{
-                            opacity: [0.5, 0.8, 0.5],
-                            scale: [1, 1.05, 1],
-                          }}
-                          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                        />
-                      )}
 
                       <div className="relative z-10">
                         {/* Title */}
                         <div className="flex items-start justify-between mb-3">
-                          <motion.h3
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: index * 0.03 + 0.1 }}
-                            className="text-sm font-bold text-white truncate flex-1 leading-tight"
-                          >
+                          <h3 className="text-sm font-medium text-white truncate flex-1">
                             {session.title || (
-                              <span className="text-purple-300/60 italic">New Chat</span>
+                              <span className="text-white/50 italic">New Chat</span>
                             )}
-                          </motion.h3>
+                          </h3>
                           <motion.button
-                            initial={{ scale: 0, rotate: -90 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            transition={{ delay: index * 0.03 + 0.15, type: 'spring' }}
-                            whileHover={{ 
-                              scale: 1.2, 
-                              rotate: [0, -10, 10, 0],
-                              backgroundColor: 'rgba(239, 68, 68, 0.2)'
-                            }}
+                            whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={(e) => handleDelete(session.id, e)}
                             disabled={deletingId === session.id}
-                            className="p-2 hover:bg-red-500/20 rounded-xl transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50 relative overflow-hidden"
+                            className="p-1.5 hover:bg-white/10 rounded-md transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50"
                           >
                             {deletingId === session.id ? (
                               <motion.div
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                                className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full"
+                                className="w-4 h-4 border-2 border-white/40 border-t-transparent rounded-full"
                               />
                             ) : (
-                              <>
-                                <motion.div
-                                  className="absolute inset-0 bg-red-500/20 rounded-xl"
-                                  whileHover={{ scale: 1.5, opacity: 0 }}
-                                  transition={{ duration: 0.3 }}
-                                />
-                                <Trash2 className="w-4 h-4 text-red-400 relative z-10" />
-                              </>
+                              <Trash2 className="w-4 h-4 text-white/50" />
                             )}
                           </motion.button>
                         </div>
 
                         {/* Preview */}
                         {session.preview && (
-                          <motion.p
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.03 + 0.2 }}
-                            className="text-xs text-purple-300/70 mb-3 line-clamp-2 leading-relaxed"
-                          >
+                          <p className="text-xs text-white/50 mb-3 line-clamp-2">
                             {session.preview}
-                          </motion.p>
+                          </p>
                         )}
 
                         {/* User Info (for admin viewing all chats) */}
-                        <AnimatePresence>
-                          {isAdmin && viewMode === 'all' && !session.is_own_session && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                              className="mb-3 px-3 py-2 bg-gradient-to-r from-purple-500/15 via-indigo-500/10 to-cyan-500/15 border border-purple-400/30 rounded-xl backdrop-blur-sm overflow-hidden"
-                            >
-                              <motion.div
-                                className="flex items-center gap-2"
-                                initial={{ x: -10 }}
-                                animate={{ x: 0 }}
-                              >
-                                <motion.div
-                                  whileHover={{ scale: 1.1, rotate: 360 }}
-                                  transition={{ duration: 0.5 }}
-                                  className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-500/30 to-cyan-500/30 border border-purple-400/50 flex items-center justify-center"
-                                >
-                                  <UserIcon className="w-3 h-3 text-purple-300" />
-                                </motion.div>
-                                <p className="text-xs text-purple-200/90 font-medium">
-                                  {session.user_name || session.user_email || 'Unknown User'}
-                                </p>
-                              </motion.div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                        {isAdmin && viewMode === 'all' && !session.is_own_session && (
+                          <div className="mb-3 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-md">
+                            <div className="flex items-center gap-2">
+                              <UserIcon className="w-3.5 h-3.5 text-white/40" />
+                              <p className="text-xs text-white/60 font-medium">
+                                {session.user_name || session.user_email || 'Unknown User'}
+                              </p>
+                            </div>
+                          </div>
+                        )}
 
                         {/* Metadata */}
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: index * 0.03 + 0.25 }}
-                          className="flex items-center gap-3 text-xs text-purple-400/80 flex-wrap"
-                        >
-                          <motion.div
-                            whileHover={{ scale: 1.1 }}
-                            className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-lg border border-purple-500/20"
-                          >
-                            <Clock className="w-3.5 h-3.5 text-purple-300" />
-                            <span className="font-medium">{formatDate(session.updated_at)}</span>
-                          </motion.div>
+                        <div className="flex items-center gap-3 text-xs text-white/40 flex-wrap">
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-3 h-3" />
+                            <span>{formatDate(session.updated_at)}</span>
+                          </div>
                           {session.message_count > 0 && (
-                            <motion.div
-                              whileHover={{ scale: 1.1 }}
-                              className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-lg border border-purple-500/20"
-                            >
-                              <MessageSquare className="w-3.5 h-3.5 text-cyan-300" />
-                              <span className="font-medium">{session.message_count} {session.message_count === 1 ? 'msg' : 'msgs'}</span>
-                            </motion.div>
+                            <div className="flex items-center gap-1.5">
+                              <MessageSquare className="w-3 h-3" />
+                              <span>{session.message_count} {session.message_count === 1 ? 'msg' : 'msgs'}</span>
+                            </div>
                           )}
                           {session.model_name && (
-                            <motion.div
-                              whileHover={{ scale: 1.1 }}
-                              className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-lg border border-purple-500/20"
-                            >
-                              <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
-                              <span className="font-medium truncate max-w-[100px]">{session.model_name}</span>
-                            </motion.div>
+                            <div className="flex items-center gap-1.5">
+                              <Sparkles className="w-3 h-3" />
+                              <span className="truncate max-w-[100px]">{session.model_name}</span>
+                            </div>
                           )}
-                        </motion.div>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
