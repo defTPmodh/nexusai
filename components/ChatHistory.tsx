@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { History, Trash2, MessageSquare, X, Clock, Sparkles, User as UserIcon, Shield } from 'lucide-react';
 import { ChatSession } from '@/types';
 
@@ -101,7 +101,7 @@ export default function ChatHistory({
   };
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {isOpen && (
         <>
           {/* Backdrop with animated gradient */}
@@ -395,7 +395,7 @@ export default function ChatHistory({
                   </motion.p>
                 </motion.div>
               ) : (
-                <AnimatePresence mode="popLayout">
+                <AnimatePresence>
                   {sessions.map((session, index) => (
                     <motion.div
                       key={session.id}
@@ -600,6 +600,7 @@ export default function ChatHistory({
                   ))}
                 </AnimatePresence>
               )}
+            </motion.div>
             </div>
           </motion.div>
         </>
