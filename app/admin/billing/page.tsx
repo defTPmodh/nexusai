@@ -325,11 +325,75 @@ export default function BillingPage() {
               </div>
 
               {billing.subscription?.cancelAtPeriodEnd && (
-                <div className="rounded-xl border border-yellow-400/40 bg-yellow-500/10 p-4 text-yellow-200 flex items-start gap-3">
-                  <Clock className="w-5 h-5" />
-                  <div>
-                    <p className="font-semibold">Scheduled to cancel</p>
-                    <p className="text-sm text-yellow-100/80">Your subscription will end after this billing cycle.</p>
+                <div className="rounded-xl border border-yellow-400/40 bg-yellow-500/10 p-4 text-yellow-200">
+                  <div className="flex items-start gap-3 mb-3">
+                    <Clock className="w-5 h-5" />
+                    <div>
+                      <p className="font-semibold">Scheduled to cancel</p>
+                      <p className="text-sm text-yellow-100/80">Your subscription will end after this billing cycle.</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap justify-end gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={async () => {
+                        if (!confirm('Resume subscription? It will continue after the current billing period.')) return;
+                        try {
+                          const res = await fetch('/api/billing/restart', { method: 'POST' });
+                          const data = await res.json();
+                          if (res.ok) {
+                            alert('Subscription restarted successfully!');
+                            fetchBilling();
+                          } else {
+                            alert(`Failed to restart: ${data.error}`);
+                          }
+                        } catch (error: any) {
+                          alert(`Failed to restart subscription: ${error.message}`);
+                        }
+                      }}
+                      className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-500/20"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      Resume subscription
+                    </motion.button>
+                  </div>
+                </div>
+              )}
+
+              {!billing.subscription && (
+                <div className="rounded-xl border border-gray-400/40 bg-gray-500/10 p-4 text-gray-200">
+                  <div className="flex items-start gap-3 mb-3">
+                    <XCircle className="w-5 h-5" />
+                    <div>
+                      <p className="font-semibold">Subscription cancelled</p>
+                      <p className="text-sm text-gray-100/80">Your subscription has been cancelled. You can restart it anytime.</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap justify-end gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={async () => {
+                        if (!confirm('Restart subscription? You will be charged for the next billing period.')) return;
+                        try {
+                          const res = await fetch('/api/billing/restart', { method: 'POST' });
+                          const data = await res.json();
+                          if (res.ok) {
+                            alert('Subscription restarted successfully!');
+                            fetchBilling();
+                          } else {
+                            alert(`Failed to restart: ${data.error}`);
+                          }
+                        } catch (error: any) {
+                          alert(`Failed to restart subscription: ${error.message}`);
+                        }
+                      }}
+                      className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-500/20"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      Restart subscription
+                    </motion.button>
                   </div>
                 </div>
               )}

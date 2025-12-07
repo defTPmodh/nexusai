@@ -2,6 +2,9 @@ import { getSession } from '@auth0/nextjs-auth0';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase/client';
 
+// Force dynamic rendering since we use cookies (getSession)
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -82,6 +85,58 @@ export async function GET(request: NextRequest) {
           .single();
 
         subscription = subData;
+
+        // Check if subscription should be canceled (period ended and cancel_at_period_end is true)
+        if (subData && subData.cancel_at_period_end && subData.current_period_end) {
+          const periodEnd = new Date(subData.current_period_end);
+          const now = new Date();
+          
+          if (now >= periodEnd) {
+            // Period has ended, cancel the subscription
+            await supabase
+              .from('subscriptions')
+              .update({
+                status: 'cancelled',
+                cancel_at_period_end: false,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', subData.id);
+
+            // Get free plan
+            const { data: freePlan } = await supabase
+              .from('plans')
+              .select('id')
+              .eq('name', 'free')
+              .single();
+
+            if (freePlan) {
+              // Revert team plan to free
+              await supabase
+                .from('teams')
+                .update({ plan_id: freePlan.id })
+                .eq('id', currentUser.team_id);
+
+              // Revert all team members' plans to free
+              const { data: teamMembers } = await supabase
+                .from('team_members')
+                .select('user_id')
+                .eq('team_id', currentUser.team_id);
+
+              if (teamMembers && teamMembers.length > 0) {
+                const userIds = teamMembers.map(m => m.user_id);
+                await supabase
+                  .from('users')
+                  .update({ plan_id: freePlan.id })
+                  .in('id', userIds);
+              }
+
+              // Update plan to free
+              plan = { ...plan, id: freePlan.id, name: 'free', display_name: 'Free Plan', price_per_user_monthly: null, currency: 'AED' };
+            }
+
+            subscription = null; // Subscription is now cancelled
+          }
+        }
       }
     } else {
       // Get individual subscription
@@ -106,6 +161,42 @@ export async function GET(request: NextRequest) {
       if (subData) {
         subscription = subData;
         plan = subData.plan;
+
+        // Check if subscription should be canceled (period ended and cancel_at_period_end is true)
+        if (subData.cancel_at_period_end && subData.current_period_end) {
+          const periodEnd = new Date(subData.current_period_end);
+          const now = new Date();
+          
+          if (now >= periodEnd) {
+            // Period has ended, cancel the subscription
+            await supabase
+              .from('subscriptions')
+              .update({
+                status: 'cancelled',
+                cancel_at_period_end: false,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', subData.id);
+
+            // Get free plan and update user
+            const { data: freePlan } = await supabase
+              .from('plans')
+              .select('id')
+              .eq('name', 'free')
+              .single();
+
+            if (freePlan) {
+              await supabase
+                .from('users')
+                .update({ plan_id: freePlan.id })
+                .eq('id', currentUser.id);
+
+              plan = { ...plan, id: freePlan.id, name: 'free', display_name: 'Free Plan', price_per_user_monthly: null, currency: 'AED' };
+            }
+
+            subscription = null; // Subscription is now cancelled
+          }
+        }
       }
     }
 
