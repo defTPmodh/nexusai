@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
           model_name: (session.llm_models as any)?.display_name || null,
           user_email: (session.users as any)?.email || null,
           user_name: (session.users as any)?.name || null,
-          is_own_session: !isAdmin || (session.user_id === user.id),
+          is_own_session: session.user_id === user.id,
         };
       })
     );
