@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
             // Get free plan
             const { data: freePlan } = await supabase
               .from('plans')
-              .select('id')
+              .select('id, name, display_name, price_per_user_monthly, currency')
               .eq('name', 'free')
               .single();
 
@@ -131,10 +131,82 @@ export async function GET(request: NextRequest) {
               }
 
               // Update plan to free
-              plan = { ...plan, id: freePlan.id, name: 'free', display_name: 'Free Plan', price_per_user_monthly: null, currency: 'AED' };
+              plan = {
+                id: freePlan.id,
+                name: freePlan.name,
+                display_name: freePlan.display_name,
+                price_per_user_monthly: freePlan.price_per_user_monthly,
+                currency: freePlan.currency,
+              };
             }
 
             subscription = null; // Subscription is now cancelled
+          }
+        }
+
+        // Also check if there's a cancelled subscription that should have reverted the plan
+        // This handles cases where subscription was cancelled but plan wasn't reverted
+        if (!subscription || (subscription && subscription.status === 'cancelled')) {
+          const { data: cancelledSub } = await supabase
+            .from('subscriptions')
+            .select('*')
+            .eq('team_id', currentUser.team_id)
+            .eq('status', 'cancelled')
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+          // If team still has premium plan but subscription is cancelled, revert it
+          if (cancelledSub && plan && plan.name !== 'free') {
+            const { data: freePlan } = await supabase
+              .from('plans')
+              .select('id, name, display_name, price_per_user_monthly, currency')
+              .eq('name', 'free')
+              .single();
+
+            if (freePlan) {
+              // Revert team plan to free
+              await supabase
+                .from('teams')
+                .update({ plan_id: freePlan.id })
+                .eq('id', currentUser.team_id);
+
+              // Revert all team members' plans to free
+              const { data: teamMembers } = await supabase
+                .from('team_members')
+                .select('user_id')
+                .eq('team_id', currentUser.team_id);
+
+              if (teamMembers && teamMembers.length > 0) {
+                const userIds = teamMembers.map(m => m.user_id);
+                await supabase
+                  .from('users')
+                  .update({ plan_id: freePlan.id })
+                  .in('id', userIds);
+              }
+
+              // Refresh team data to get updated plan
+              const { data: updatedTeamData } = await supabase
+                .from('teams')
+                .select(`
+                  id,
+                  name,
+                  plan:plans (
+                    id,
+                    name,
+                    display_name,
+                    price_per_user_monthly,
+                    currency
+                  )
+                `)
+                .eq('id', currentUser.team_id)
+                .single();
+
+              if (updatedTeamData) {
+                team = updatedTeamData;
+                plan = updatedTeamData.plan;
+              }
+            }
           }
         }
       }
@@ -181,7 +253,7 @@ export async function GET(request: NextRequest) {
             // Get free plan and update user
             const { data: freePlan } = await supabase
               .from('plans')
-              .select('id')
+              .select('id, name, display_name, price_per_user_monthly, currency')
               .eq('name', 'free')
               .single();
 
@@ -191,10 +263,70 @@ export async function GET(request: NextRequest) {
                 .update({ plan_id: freePlan.id })
                 .eq('id', currentUser.id);
 
-              plan = { ...plan, id: freePlan.id, name: 'free', display_name: 'Free Plan', price_per_user_monthly: null, currency: 'AED' };
+              plan = {
+                id: freePlan.id,
+                name: freePlan.name,
+                display_name: freePlan.display_name,
+                price_per_user_monthly: freePlan.price_per_user_monthly,
+                currency: freePlan.currency,
+              };
             }
 
             subscription = null; // Subscription is now cancelled
+          }
+        }
+      }
+
+      // Also check if there's a cancelled subscription that should have reverted the plan
+      // This handles cases where subscription was cancelled but plan wasn't reverted
+      if (!subscription || (subscription && subscription.status === 'cancelled')) {
+        const { data: cancelledSub } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', currentUser.id)
+          .eq('status', 'cancelled')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        // If user still has premium plan but subscription is cancelled, revert it
+        if (cancelledSub) {
+          // Get current user plan
+          const { data: userData } = await supabase
+            .from('users')
+            .select('plan_id')
+            .eq('id', currentUser.id)
+            .single();
+
+          if (userData && userData.plan_id) {
+            const { data: currentPlan } = await supabase
+              .from('plans')
+              .select('name')
+              .eq('id', userData.plan_id)
+              .single();
+
+            if (currentPlan && currentPlan.name !== 'free') {
+              const { data: freePlan } = await supabase
+                .from('plans')
+                .select('id, name, display_name, price_per_user_monthly, currency')
+                .eq('name', 'free')
+                .single();
+
+              if (freePlan) {
+                await supabase
+                  .from('users')
+                  .update({ plan_id: freePlan.id })
+                  .eq('id', currentUser.id);
+
+                plan = {
+                  id: freePlan.id,
+                  name: freePlan.name,
+                  display_name: freePlan.display_name,
+                  price_per_user_monthly: freePlan.price_per_user_monthly,
+                  currency: freePlan.currency,
+                };
+              }
+            }
           }
         }
       }
