@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Aggregate spending
+    
     (requests || []).forEach((req: any) => {
       const userId = req.user_id;
       if (spendingMap[userId]) {

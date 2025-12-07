@@ -4,8 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { LLMModel } from '@/types';
-import { Send, Bot, User, Sparkles, Bookmark, Star, Settings as SettingsIcon, Wand2, Mic, Globe, Image as ImageIcon, Rocket, FileText, Plus } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Bookmark, Star, Settings as SettingsIcon, Wand2, Mic, Globe, Image as ImageIcon, Rocket, FileText, Plus, History } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
+import ChatHistory from '@/components/ChatHistory';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Helper function to render formatted message content
@@ -99,6 +100,8 @@ export default function ChatPage() {
   const [useRAG, setUseRAG] = useState(false);
   const [imageMode, setImageMode] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [isNewChat, setIsNewChat] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const columnRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -110,6 +113,59 @@ export default function ChatPage() {
       fetchModels();
     }
   }, [user]);
+
+  // Load session when sessionId changes
+  useEffect(() => {
+    if (sessionId && user) {
+      loadSession(sessionId);
+    }
+  }, [sessionId, user]);
+
+  const loadSession = async (id: string) => {
+    try {
+      const res = await fetch(`/api/chat/sessions/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        const loadedMessages = (data.messages || []).map((msg: any) => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+          piiDetected: msg.pii_detected || false,
+        }));
+        setMessages(loadedMessages);
+        setIsNewChat(false);
+      }
+    } catch (error) {
+      console.error('Failed to load session:', error);
+    }
+  };
+
+  const startNewChat = () => {
+    setMessages([]);
+    setModelMessages({});
+    setSessionId(null);
+    setIsNewChat(true);
+    setInput('');
+  };
+
+  const handleSelectSession = (id: string) => {
+    if (id === '') {
+      startNewChat();
+    } else {
+      setSessionId(id);
+    }
+  };
+
+  const updateSessionTitle = async (sessionId: string, title: string) => {
+    try {
+      await fetch(`/api/chat/sessions/${sessionId}/title`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title }),
+      });
+    } catch (error) {
+      console.error('Failed to update session title:', error);
+    }
+  };
 
   useEffect(() => {
     if (!multiModelMode) {
@@ -348,7 +404,10 @@ export default function ChatPage() {
         const data = await res.json();
 
         if (res.ok) {
-          setSessionId(data.sessionId);
+          const newSessionId = data.sessionId;
+          setSessionId(newSessionId);
+          setIsNewChat(false);
+          
           // Update user message if it was redacted
           if (data.piiDetected && data.redactedMessage) {
             setMessages((prev) => {
@@ -595,6 +654,15 @@ export default function ChatPage() {
                       })}
                     </div>
                     <div className="ml-auto flex items-center gap-3 flex-shrink-0">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setHistoryOpen(true)}
+                        className="p-2 hover:bg-white/10 rounded-lg transition-colors duration-300"
+                        title="Chat History"
+                      >
+                        <History className="w-5 h-5 text-white/70 hover:text-white/90" />
+                      </motion.button>
                       <SettingsIcon className="w-5 h-5 text-white/50 hover:text-white/80 cursor-pointer transition-colors duration-300" />
                       <div className="w-8 h-8 bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
                         <User className="w-4 h-4 text-white/70" />
@@ -1176,6 +1244,15 @@ export default function ChatPage() {
           {/* Action Buttons Above Input */}
           <div className="flex justify-center gap-3 mb-4">
             <motion.button
+              onClick={startNewChat}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-5 py-2.5 border rounded-full text-sm transition-all duration-300 flex items-center gap-2 glass-card border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10 hover:border-emerald-400/50 hover:text-emerald-200"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="font-medium">New Chat</span>
+            </motion.button>
+            <motion.button
               onClick={() => {
                 const newMode = !multiModelMode;
                 setMultiModelMode(newMode);
@@ -1340,6 +1417,14 @@ export default function ChatPage() {
         </div>
         </div>
       </div>
+
+      {/* Chat History Sidebar */}
+      <ChatHistory
+        isOpen={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        onSelectSession={handleSelectSession}
+        currentSessionId={sessionId}
+      />
     </div>
   );
 }

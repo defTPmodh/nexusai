@@ -86,12 +86,16 @@ export async function POST(request: NextRequest) {
 
     // Get or create chat session
     let chatSessionId = sessionId;
+    let isNewSession = false;
     if (!chatSessionId) {
+      // Create title from first 50 characters of message
+      const title = message.substring(0, 50).trim() || 'New Chat';
       const { data: newSession, error: sessionError } = await supabase
         .from('chat_sessions')
         .insert({
           user_id: user.id,
           model_id: modelId,
+          title: title,
         })
         .select()
         .single();
@@ -100,6 +104,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Failed to create session' }, { status: 500 });
       }
       chatSessionId = newSession.id;
+      isNewSession = true;
     }
 
     // Get conversation history
