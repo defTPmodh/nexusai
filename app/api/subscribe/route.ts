@@ -97,6 +97,25 @@ export async function POST(request: NextRequest) {
 
     const teamId = team.id;
 
+    // Ensure team exists (guard against replication lag)
+    let teamExists = false;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const { data: checkTeam } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('id', teamId)
+        .single();
+      if (checkTeam?.id) {
+        teamExists = true;
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 150 * (attempt + 1)));
+    }
+    if (!teamExists) {
+      console.error('Subscribe API - team not visible after insert (possible replication lag)');
+      return NextResponse.json({ error: 'Team creation delayed. Please retry.' }, { status: 500 });
+    }
+
     // Add user as owner
     const { error: memberError } = await supabase
       .from('team_members')
