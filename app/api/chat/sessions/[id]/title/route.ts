@@ -2,6 +2,10 @@ import { getSession } from '@auth0/nextjs-auth0';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase/client';
 
+
+// Force dynamic rendering since we use cookies (getSession)
+export const dynamic = 'force-dynamic';
+
 // PATCH /api/chat/sessions/[id]/title - Update session title
 export async function PATCH(
   request: NextRequest,

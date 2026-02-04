@@ -2,6 +2,10 @@ import { getSession } from '@auth0/nextjs-auth0';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase/client';
 
+
+// Force dynamic rendering since we use cookies (getSession)
+export const dynamic = 'force-dynamic';
+
 // Quick endpoint to promote user to admin for testing
 // In production, this should be protected and only accessible by existing admins
 export async function POST(request: NextRequest) {

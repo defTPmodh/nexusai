@@ -3,6 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase/client';
 import OpenAI from 'openai';
 
+
+// Force dynamic rendering since we use cookies (getSession)
+export const dynamic = 'force-dynamic';
+
 // Initialize OpenRouter client for image generation
 const openrouterClient = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,

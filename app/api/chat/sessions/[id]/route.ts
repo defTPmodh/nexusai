@@ -2,6 +2,10 @@ import { getSession } from '@auth0/nextjs-auth0';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase/client';
 
+
+// Force dynamic rendering since we use cookies (getSession)
+export const dynamic = 'force-dynamic';
+
 // GET /api/chat/sessions/[id] - Get a specific session with messages
 export async function GET(
   request: NextRequest,

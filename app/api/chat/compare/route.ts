@@ -4,6 +4,10 @@ import { getSupabaseAdmin } from '@/lib/supabase/client';
 import { callLLM, calculateCost } from '@/lib/llm/providers';
 import { LLMConfig } from '@/lib/llm/providers';
 
+
+// Force dynamic rendering since we use cookies (getSession)
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
