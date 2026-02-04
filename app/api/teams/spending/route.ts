@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     // Get current user
     const { data: currentUser } = await supabase
       .from('users')
-      .select('id')
+      .select('id, role')
       .eq('auth0_id', session.user.sub)
       .single();
 
@@ -32,16 +32,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Verify user is team owner (only owners can view spending)
-    const { data: teamMember } = await supabase
-      .from('team_members')
-      .select('role')
-      .eq('team_id', teamId)
-      .eq('user_id', currentUser.id)
-      .single();
+    // Admins can view any team. Teachers can view their team's spending.
+    // Students are restricted unless they are the team owner.
+    if (currentUser.role !== 'admin') {
+      const { data: teamMember } = await supabase
+        .from('team_members')
+        .select('role')
+        .eq('team_id', teamId)
+        .eq('user_id', currentUser.id)
+        .single();
 
-    if (!teamMember || teamMember.role !== 'owner') {
-      return NextResponse.json({ error: 'Only team owners can view spending breakdown' }, { status: 403 });
+      if (!teamMember) {
+        return NextResponse.json({ error: 'Only team members can view spending breakdown' }, { status: 403 });
+      }
+
+      const canView = currentUser.role === 'teacher' || teamMember.role === 'owner';
+      if (!canView) {
+        return NextResponse.json({ error: 'Only teachers or admins can view spending breakdown' }, { status: 403 });
+      }
     }
 
     // Get all team members with their plan details

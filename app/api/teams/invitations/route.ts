@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Verify user is team owner (only owners can view invitations)
+    // Verify user is team owner/admin (only owners/admins can view invitations)
     const { data: teamMember } = await supabase
       .from('team_members')
       .select('role')
@@ -37,13 +37,13 @@ export async function GET(request: NextRequest) {
       .eq('user_id', currentUser.id)
       .single();
 
-    if (!teamMember || teamMember.role !== 'owner') {
-      return NextResponse.json({ error: 'Only team owners can view invitations' }, { status: 403 });
+    if (!teamMember || (teamMember.role !== 'owner' && teamMember.role !== 'admin')) {
+      return NextResponse.json({ error: 'Only classroom owners or admins can view invitations' }, { status: 403 });
     }
 
     // Get all invitations (include token for copying links)
     const { data: invitations, error } = await supabase
-      .from('team_invitations')
+      .from('classroom_invitations')
       .select(`
         id,
         email,
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
         expires_at,
         created_at,
         token,
-        invited_by:users!team_invitations_invited_by_fkey (
+        invited_by:users!classroom_invitations_invited_by_fkey (
           name,
           email
         )

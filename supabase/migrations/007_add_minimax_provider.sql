@@ -26,11 +26,15 @@ DO UPDATE SET
 
 -- Add permissions for Minimax model (all roles can use)
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'employee', true FROM llm_models WHERE provider = 'minimax' AND model_name = 'minimax-m2:free'
+SELECT id, 'student', true FROM llm_models WHERE provider = 'minimax' AND model_name = 'minimax-m2:free'
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'manager', true FROM llm_models WHERE provider = 'minimax' AND model_name = 'minimax-m2:free'
+SELECT id, 'teacher', true FROM llm_models WHERE provider = 'minimax' AND model_name = 'minimax-m2:free'
+ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
+
+INSERT INTO model_permissions (model_id, role, can_use)
+SELECT id, 'guardian', true FROM llm_models WHERE provider = 'minimax' AND model_name = 'minimax-m2:free'
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
 INSERT INTO model_permissions (model_id, role, can_use)

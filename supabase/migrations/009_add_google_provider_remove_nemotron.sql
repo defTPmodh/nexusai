@@ -46,11 +46,15 @@ DO UPDATE SET
 
 -- Add permissions for Gemini model (all roles can use)
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'employee', true FROM llm_models WHERE provider = 'google' AND model_name = 'gemini-2.0-flash-exp:free'
+SELECT id, 'student', true FROM llm_models WHERE provider = 'google' AND model_name = 'gemini-2.0-flash-exp:free'
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'manager', true FROM llm_models WHERE provider = 'google' AND model_name = 'gemini-2.0-flash-exp:free'
+SELECT id, 'teacher', true FROM llm_models WHERE provider = 'google' AND model_name = 'gemini-2.0-flash-exp:free'
+ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
+
+INSERT INTO model_permissions (model_id, role, can_use)
+SELECT id, 'guardian', true FROM llm_models WHERE provider = 'google' AND model_name = 'gemini-2.0-flash-exp:free'
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
 INSERT INTO model_permissions (model_id, role, can_use)

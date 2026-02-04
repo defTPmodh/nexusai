@@ -1,4 +1,4 @@
-export type UserRole = 'employee' | 'manager' | 'admin';
+export type UserRole = 'student' | 'teacher' | 'guardian' | 'admin';
 export type LLMProvider = 'openai' | 'deepseek' | 'minimax' | 'google' | 'xai';
 export type DocumentStatus = 'processing' | 'completed' | 'failed';
 export type AgentExecutionStatus = 'running' | 'completed' | 'failed';

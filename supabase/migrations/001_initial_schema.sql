@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   auth0_id TEXT UNIQUE NOT NULL,
   email TEXT NOT NULL,
   name TEXT,
-  role TEXT NOT NULL DEFAULT 'employee' CHECK (role IN ('employee', 'manager', 'admin')),
+  role TEXT NOT NULL DEFAULT 'student' CHECK (role IN ('student', 'teacher', 'guardian', 'admin')),
   department TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS llm_models (
 CREATE TABLE IF NOT EXISTS model_permissions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   model_id UUID REFERENCES llm_models(id) ON DELETE CASCADE,
-  role TEXT NOT NULL CHECK (role IN ('employee', 'manager', 'admin')),
+  role TEXT NOT NULL CHECK (role IN ('student', 'teacher', 'guardian', 'admin')),
   can_use BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(model_id, role)

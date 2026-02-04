@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
           auth0_id: auth0Id,
           email: session.user.email || '',
           name: session.user.name || null,
-          role: (count || 0) === 0 ? 'admin' : 'employee', // First user is admin
+          role: (count || 0) === 0 ? 'admin' : 'student', // First user is admin
         })
         .select()
         .single();

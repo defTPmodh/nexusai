@@ -134,12 +134,12 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Reset user profile: remove team_id, set role to employee, remove plan_id, cancel subscriptions
+    // Reset user profile: remove team_id, set role to student, remove plan_id, cancel subscriptions
     const { error: updateError } = await supabase
       .from('users')
       .update({ 
         team_id: null,
-        role: 'employee', // Remove admin privileges
+        role: 'student', // Remove admin privileges
         plan_id: null // Reset to free plan
       })
       .eq('id', memberToRemove.user_id);

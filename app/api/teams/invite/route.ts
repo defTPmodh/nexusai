@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { email, role = 'member', teamId } = body;
+    const { email, role = 'student', teamId } = body;
 
     if (!email || !teamId) {
       return NextResponse.json({ error: 'Email and teamId are required' }, { status: 400 });
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Check if user is team owner (only owners can invite)
+    // Check if user is team owner/admin (only owners/admins can invite)
     const { data: teamMember } = await supabase
       .from('team_members')
       .select('role')
@@ -37,8 +37,13 @@ export async function POST(request: NextRequest) {
       .eq('user_id', currentUser.id)
       .single();
 
-    if (!teamMember || teamMember.role !== 'owner') {
-      return NextResponse.json({ error: 'Only team owners can invite members' }, { status: 403 });
+    if (!teamMember || (teamMember.role !== 'owner' && teamMember.role !== 'admin')) {
+      return NextResponse.json({ error: 'Only classroom owners or admins can invite members' }, { status: 403 });
+    }
+
+    const allowedRoles = new Set(['teacher', 'student', 'guardian']);
+    if (!allowedRoles.has(role)) {
+      return NextResponse.json({ error: 'Invalid invitation role' }, { status: 400 });
     }
 
     // Check if user already exists
@@ -75,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     // Create invitation
     const { data: invitation, error: inviteError } = await supabase
-      .from('team_invitations')
+      .from('classroom_invitations')
       .insert({
         team_id: teamId,
         email,

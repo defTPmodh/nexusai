@@ -47,9 +47,9 @@ DO UPDATE SET
     cost_per_1k_input_tokens = EXCLUDED.cost_per_1k_input_tokens,
     cost_per_1k_output_tokens = EXCLUDED.cost_per_1k_output_tokens;
 
--- Step 5: Add permissions for all roles (employee, manager, admin)
+-- Step 5: Add permissions for all roles (student, teacher, admin)
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'employee', true FROM llm_models WHERE (provider, model_name) IN (
+SELECT id, 'student', true FROM llm_models WHERE (provider, model_name) IN (
     ('amazon', 'nova-2-lite-v1:free'),
     ('allenai', 'olmo-3-32b-think:free'),
     ('openai', 'gpt-oss-120b:free')
@@ -57,7 +57,15 @@ SELECT id, 'employee', true FROM llm_models WHERE (provider, model_name) IN (
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'manager', true FROM llm_models WHERE (provider, model_name) IN (
+SELECT id, 'teacher', true FROM llm_models WHERE (provider, model_name) IN (
+    ('amazon', 'nova-2-lite-v1:free'),
+    ('allenai', 'olmo-3-32b-think:free'),
+    ('openai', 'gpt-oss-120b:free')
+)
+ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
+
+INSERT INTO model_permissions (model_id, role, can_use)
+SELECT id, 'guardian', true FROM llm_models WHERE (provider, model_name) IN (
     ('amazon', 'nova-2-lite-v1:free'),
     ('allenai', 'olmo-3-32b-think:free'),
     ('openai', 'gpt-oss-120b:free')

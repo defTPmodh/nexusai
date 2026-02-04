@@ -33,7 +33,7 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0b0b12] via-[#0e0e16] to-[#0b0b12] relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(139,92,246,0.12),transparent_35%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(6,182,212,0.1),transparent_30%)]" />
-        <Loading size="lg" text="Loading your workspace..." />
+        <Loading size="lg" text="Loading your classroom..." />
       </div>
     );
   }
@@ -61,15 +61,15 @@ export default function Home() {
                   <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 flex items-center justify-center">
                     <Sparkles className="w-4 h-4" />
                   </div>
-                  <p className="text-sm text-purple-100/80">React Bits • Premium AI canvas</p>
+                  <p className="text-sm text-purple-100/80">Nexus AI for Schools - Student-ready AI classroom</p>
                 </div>
 
                 <div className="space-y-4">
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-                    The Enterprise AI Orchestration Layer for High-Scale Applications.
+                    The Education AI Workspace Built for Students and Schools.
                   </h1>
                   <p className="text-lg text-purple-100/70 max-w-3xl">
-                    Nexus AI connects and manages your LLM workflow—from XAI and Minimax M2 to OpenAI—providing intelligent routing, compliance, and real-time observability your teams need to scale trusted applications.
+                    Nexus AI helps teachers and students collaborate with safe, fast AI with classroom-ready guardrails, auditability, and simple deployment for schools.
                   </p>
                 </div>
 
@@ -78,32 +78,32 @@ export default function Home() {
                     href="/api/auth/login"
                     className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 px-6 py-3 text-sm font-semibold shadow-lg shadow-purple-500/30 transition hover:shadow-purple-400/40"
                   >
-                    Launch the workspace
+                    Launch the classroom
                     <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </a>
                   <Link
                     href="/pricing"
                     className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm text-purple-100/80 transition hover:border-purple-400/40"
                   >
-                    Schedule a Technical Deep Dive
+                    See the school demo
                   </Link>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {[
                     {
-                      label: 'Intelligent Model Routing',
-                      detail: 'Optimize cost while balancing DeepSeek, OpenAI, NVIDIA.',
+                      label: 'Lesson-ready AI',
+                      detail: 'Student-safe responses tuned for classrooms.',
                       icon: Route,
                     },
                     {
-                      label: 'Enterprise Compliance & Auditing',
-                      detail: 'Mitigate risk with SSO, SCIM, and audit trails.',
+                      label: 'School Compliance & Safety',
+                      detail: 'PII guardrails, audit trails, and safe prompts.',
                       icon: ShieldCheck,
                     },
                     {
-                      label: 'Real-Time Observability',
-                      detail: 'Faster debugging with live usage, latency, trust.',
+                      label: 'Teacher Insights',
+                      detail: 'Track usage and engagement in real time.',
                       icon: Activity,
                     },
                   ].map((item) => (
@@ -130,8 +130,8 @@ export default function Home() {
                   <div className="relative z-10 space-y-5">
                     <div className="flex items-center justify-between gap-4">
                       <div>
-                        <p className="text-xs uppercase tracking-wide text-purple-100/60">Live workspace</p>
-                        <p className="text-xl font-semibold">Live AI Performance & Trust</p>
+                        <p className="text-xs uppercase tracking-wide text-purple-100/60">Live classroom</p>
+                        <p className="text-xl font-semibold">Live Classroom Pulse</p>
                       </div>
                       <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-purple-500/60 to-cyan-400/60 flex items-center justify-center">
                         <Wand2 className="w-5 h-5" />
@@ -154,8 +154,8 @@ export default function Home() {
 
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { title: 'Intelligent routing', copy: 'Adaptive multi-model failover.', icon: Route },
-                        { title: 'Real-time transparency', copy: 'Traces, compliance, live signals.', icon: ShieldCheck },
+                        { title: 'Safe model selection', copy: 'Reliable responses across subjects.', icon: Route },
+                        { title: 'Classroom transparency', copy: 'Clear audit trails and usage signals.', icon: ShieldCheck },
                       ].map((item) => (
                         <div key={item.title} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
                           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400/30 to-purple-500/40">
@@ -180,13 +180,13 @@ export default function Home() {
                     <Grid className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-sm text-purple-100/70">React bits suite</p>
-                    <p className="text-xl font-semibold">Composable sections crafted for story-driven apps.</p>
+                    <p className="text-sm text-purple-100/70">Student success suite</p>
+                    <p className="text-xl font-semibold">Purpose-built building blocks for learning.</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {[{ title: 'Launch-ready', desc: 'Hero, highlights, CTA strips and stat bars that animate out of the box.', icon: Rocket }, { title: 'Trust by default', desc: 'Enterprise-grade guardrails with SSO, auditability, and private tenancy.', icon: Shield }, { title: 'Adaptive insights', desc: 'Live usage, routing heatmaps, and latency ribbons tuned for observability.', icon: Zap }].map((card) => (
+                  {[{ title: 'Classroom-ready', desc: 'Fast setup for teachers with guided onboarding and invites.', icon: Rocket }, { title: 'Trust by default', desc: 'Student-safe guardrails, PII protection, and audit logs.', icon: Shield }, { title: 'Learning insights', desc: 'Live usage signals to guide lessons and support.', icon: Zap }].map((card) => (
                     <div key={card.title} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg transition hover:-translate-y-1 hover:border-purple-400/40">
                       <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-purple-500/5 opacity-0 transition group-hover:opacity-100" />
                       <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
@@ -202,8 +202,8 @@ export default function Home() {
               <div className="rounded-[26px] border border-white/10 bg-gradient-to-br from-white/5 via-purple-500/5 to-cyan-500/5 p-6 shadow-2xl">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-purple-100/70">Signal board</p>
-                    <p className="text-2xl font-semibold">Instant clarity across teams</p>
+                    <p className="text-sm text-purple-100/70">Classroom board</p>
+                    <p className="text-2xl font-semibold">Instant clarity for teachers</p>
                   </div>
                   <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs">Live</span>
                 </div>
@@ -292,7 +292,7 @@ export default function Home() {
                         href="/admin/documents"
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-white/10 text-sm text-purple-100/80"
                       >
-                        Admin console
+                        Teacher console
                       </Link>
                     </div>
                   </div>
@@ -317,7 +317,7 @@ export default function Home() {
                   accent: 'from-cyan-400/30 to-purple-500/30',
                 },
                 {
-                  label: 'Team status',
+                  label: 'Classroom status',
                   href: '/admin/team',
                   icon: Shield,
                   accent: 'from-purple-400/30 to-indigo-400/30',
@@ -345,8 +345,8 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[{
-                title: 'Chat workspace',
-                desc: 'Blend NVIDIA, DeepSeek, and OpenAI in one fluid canvas.',
+                title: 'Student chat',
+                desc: 'A focused chat space for homework, practice, and support.',
                 icon: MessageSquare,
                 href: '/chat',
               },
@@ -357,8 +357,8 @@ export default function Home() {
                 href: '/admin/documents',
               },
               {
-                title: 'Invites',
-                desc: 'Send curated invites with brand-forward landing flows.',
+                title: 'Classroom invites',
+                desc: 'Invite teachers, students, and guardians with secure links.',
                 icon: Rocket,
                 href: '/invite/sample',
               }].map((card) => (

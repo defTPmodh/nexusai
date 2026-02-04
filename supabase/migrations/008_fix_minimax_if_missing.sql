@@ -42,8 +42,9 @@ BEGIN
         -- Add/update permissions for all roles
         INSERT INTO model_permissions (model_id, role, can_use)
         VALUES 
-            (minimax_id, 'employee', true),
-            (minimax_id, 'manager', true),
+            (minimax_id, 'student', true),
+            (minimax_id, 'teacher', true),
+            (minimax_id, 'guardian', true),
             (minimax_id, 'admin', true)
         ON CONFLICT (model_id, role) 
         DO UPDATE SET can_use = true;

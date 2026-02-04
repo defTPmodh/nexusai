@@ -124,7 +124,7 @@ async function ensureDefaultModels(supabase: ReturnType<typeof getSupabaseAdmin>
     if (!modelId) continue;
 
     // Ensure permissions for all roles
-    for (const role of ['employee', 'manager', 'admin']) {
+    for (const role of ['student', 'teacher', 'guardian', 'admin']) {
       const { error: permissionError } = await supabase
         .from('model_permissions')
         .upsert(
@@ -178,7 +178,7 @@ export async function GET(request: NextRequest) {
           auth0_id: session.user.sub,
           email: session.user.email || '',
           name: session.user.name || null,
-          role: 'employee',
+          role: 'student',
         })
         .select('role')
         .single();

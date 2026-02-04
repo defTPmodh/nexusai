@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
 
     // Get invitation
     const { data: invitation, error: inviteError } = await supabase
-      .from('team_invitations')
+      .from('classroom_invitations')
       .select(`
         id,
         email,
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
     if (new Date(invitation.expires_at) < new Date()) {
       // Update status to expired
       await supabase
-        .from('team_invitations')
+        .from('classroom_invitations')
         .update({ status: 'expired' })
         .eq('id', invitation.id);
 
@@ -91,6 +91,17 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
 
     const supabase = getSupabaseAdmin();
 
+    // Get invitation
+    const { data: invitation, error: inviteError } = await supabase
+      .from('classroom_invitations')
+      .select('*')
+      .eq('token', token)
+      .single();
+
+    if (inviteError || !invitation) {
+      return NextResponse.json({ error: 'Invitation not found' }, { status: 404 });
+    }
+
     // Get or create current user
     let { data: currentUser } = await supabase
       .from('users')
@@ -122,7 +133,7 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
             auth0_id: session.user.sub,
             email: session.user.email || '',
             name: session.user.name || null,
-            role: 'employee', // Default role
+            role: invitation.role || 'student', // Default role from invite
           })
           .select('id, email, team_id, role')
           .single();
@@ -136,17 +147,6 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
       }
     }
 
-    // Get invitation
-    const { data: invitation, error: inviteError } = await supabase
-      .from('team_invitations')
-      .select('*')
-      .eq('token', token)
-      .single();
-
-    if (inviteError || !invitation) {
-      return NextResponse.json({ error: 'Invitation not found' }, { status: 404 });
-    }
-
     // Verify email matches
     if (currentUser.email.toLowerCase() !== invitation.email.toLowerCase()) {
       return NextResponse.json({ error: 'Invitation email does not match your account' }, { status: 403 });
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
     // Check if already expired
     if (new Date(invitation.expires_at) < new Date()) {
       await supabase
-        .from('team_invitations')
+        .from('classroom_invitations')
         .update({ status: 'expired' })
         .eq('id', invitation.id);
       return NextResponse.json({ error: 'Invitation has expired' }, { status: 400 });
@@ -172,7 +172,7 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
       .insert({
         team_id: invitation.team_id,
         user_id: currentUser.id,
-        role: invitation.role,
+        role: 'member',
       });
 
     if (memberError) {
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
       if (memberError.code === '23505') {
         // Update invitation status
         await supabase
-          .from('team_invitations')
+          .from('classroom_invitations')
           .update({ status: 'accepted', accepted_at: new Date().toISOString() })
           .eq('id', invitation.id);
 
@@ -192,12 +192,12 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
     // Update user's team_id
     await supabase
       .from('users')
-      .update({ team_id: invitation.team_id })
+      .update({ team_id: invitation.team_id, role: currentUser.role === 'admin' ? currentUser.role : invitation.role })
       .eq('id', currentUser.id);
 
     // Update invitation status
     await supabase
-      .from('team_invitations')
+      .from('classroom_invitations')
       .update({ status: 'accepted', accepted_at: new Date().toISOString() })
       .eq('id', invitation.id);
 
