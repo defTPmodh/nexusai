@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Determine plan (team plan takes precedence)
-    const plan = (Array.isArray(teamPlan) ? teamPlan[0] : teamPlan) || (Array.isArray(userPlan) ? userPlan[0] : userPlan);
+    const plan = (Array.isArray(teamPlan) ? teamPlan[0] : teamPlan) || (Array.isArray(userPlan) ? userPlan[0] : userPlan) || null;
     const planName = plan?.name || 'free';
     
     // Calculate token limit:
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
       tokenLimit = 1000000; // Premium members get 1M credits
     } else if (isOwner) {
       tokenLimit = 1000000; // Owners get 1M credits regardless of plan
-    } else if (plan?.token_limit !== null) {
+    } else if (plan && plan.token_limit !== null && plan.token_limit !== undefined) {
       tokenLimit = plan.token_limit || 100000;
     }
 

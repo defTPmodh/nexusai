@@ -2,6 +2,8 @@
 CREATE OR REPLACE FUNCTION public.add_team_owner_member()
 RETURNS TRIGGER AS $$
 BEGIN
+  -- Ensure FK checks can be deferred if constraint is deferrable
+  SET CONSTRAINTS ALL DEFERRED;
   IF NEW.owner_id IS NOT NULL THEN
     INSERT INTO public.team_members (team_id, user_id, role)
     VALUES (NEW.id, NEW.owner_id, 'owner')
