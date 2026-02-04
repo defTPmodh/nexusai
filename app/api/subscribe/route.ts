@@ -89,6 +89,9 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (teamError || !team || !team.id) {
+      if (teamError) {
+        console.error('Subscribe API - team create error:', teamError);
+      }
       return NextResponse.json({ error: teamError?.message || 'Failed to create team' }, { status: 500 });
     }
 
@@ -124,14 +127,17 @@ export async function POST(request: NextRequest) {
           if (!retryError) {
             // continue below
           } else {
+            console.error('Subscribe API - retry owner insert failed:', retryError);
             await supabase.from('teams').delete().eq('id', teamId);
             return NextResponse.json({ error: retryError.message || 'Failed to add owner to team' }, { status: 500 });
           }
         } else {
+          console.error('Subscribe API - team not found after insert, rolling back');
           await supabase.from('teams').delete().eq('id', teamId);
           return NextResponse.json({ error: 'Team creation did not persist. Please retry.' }, { status: 500 });
         }
       } else {
+        console.error('Subscribe API - owner insert error:', memberError);
         await supabase.from('teams').delete().eq('id', teamId);
         return NextResponse.json({ error: memberError.message || 'Failed to add owner to team' }, { status: 500 });
       }
@@ -160,6 +166,7 @@ export async function POST(request: NextRequest) {
       message: 'Premium plan activated successfully',
     });
   } catch (error: any) {
+    console.error('Subscribe API error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -24,6 +24,9 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (userError || !user) {
+      if (userError) {
+        console.error('Usage API - failed to load user:', userError);
+      }
       return NextResponse.json({ used: 0, limit: 100000, plan: 'free', unlimited: false });
     }
 
@@ -103,6 +106,7 @@ export async function GET(request: NextRequest) {
       unlimited: limit === null,
     });
   } catch (error: any) {
+    console.error('Usage API error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
