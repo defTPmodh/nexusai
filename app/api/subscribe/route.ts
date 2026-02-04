@@ -88,35 +88,66 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
 
-    if (teamError || !team) {
+    if (teamError || !team || !team.id) {
       return NextResponse.json({ error: teamError?.message || 'Failed to create team' }, { status: 500 });
     }
+
+    const teamId = team.id;
 
     // Add user as owner
     const { error: memberError } = await supabase
       .from('team_members')
       .insert({
-        team_id: team.id,
+        team_id: teamId,
         user_id: (currentUser as any).id,
         role: 'owner',
       });
 
     if (memberError) {
-      await supabase.from('teams').delete().eq('id', team.id);
-      return NextResponse.json({ error: 'Failed to add owner to team' }, { status: 500 });
+      // If FK fails, double-check the team exists and retry once
+      if (memberError.code === '23503') {
+        const { data: existingTeam } = await supabase
+          .from('teams')
+          .select('id')
+          .eq('id', teamId)
+          .single();
+
+        if (existingTeam?.id) {
+          const { error: retryError } = await supabase
+            .from('team_members')
+            .insert({
+              team_id: existingTeam.id,
+              user_id: (currentUser as any).id,
+              role: 'owner',
+            });
+
+          if (!retryError) {
+            // continue below
+          } else {
+            await supabase.from('teams').delete().eq('id', teamId);
+            return NextResponse.json({ error: retryError.message || 'Failed to add owner to team' }, { status: 500 });
+          }
+        } else {
+          await supabase.from('teams').delete().eq('id', teamId);
+          return NextResponse.json({ error: 'Team creation did not persist. Please retry.' }, { status: 500 });
+        }
+      } else {
+        await supabase.from('teams').delete().eq('id', teamId);
+        return NextResponse.json({ error: memberError.message || 'Failed to add owner to team' }, { status: 500 });
+      }
     }
 
     // Update user's team_id and set role to admin (team owners are admins)
     await supabase
       .from('users')
-      .update({ team_id: team.id, role: 'admin' })
+      .update({ team_id: teamId, role: 'admin' })
       .eq('id', (currentUser as any).id);
 
     // Create subscription
     await supabase
       .from('subscriptions')
       .insert({
-        team_id: team.id,
+        team_id: teamId,
         plan_id: plan.id,
         status: 'active',
         current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
