@@ -116,51 +116,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Team creation delayed. Please retry.' }, { status: 500 });
     }
 
-    // Add user as owner
-    const { error: memberError } = await supabase
-      .from('team_members')
-      .insert({
-        team_id: teamId,
-        user_id: (currentUser as any).id,
-        role: 'owner',
-      });
-
-    if (memberError) {
-      // If FK fails, double-check the team exists and retry once
-      if (memberError.code === '23503') {
-        const { data: existingTeam } = await supabase
-          .from('teams')
-          .select('id')
-          .eq('id', teamId)
-          .single();
-
-        if (existingTeam?.id) {
-          const { error: retryError } = await supabase
-            .from('team_members')
-            .insert({
-              team_id: existingTeam.id,
-              user_id: (currentUser as any).id,
-              role: 'owner',
-            });
-
-          if (!retryError) {
-            // continue below
-          } else {
-            console.error('Subscribe API - retry owner insert failed:', retryError);
-            await supabase.from('teams').delete().eq('id', teamId);
-            return NextResponse.json({ error: retryError.message || 'Failed to add owner to team' }, { status: 500 });
-          }
-        } else {
-          console.error('Subscribe API - team not found after insert, rolling back');
-          await supabase.from('teams').delete().eq('id', teamId);
-          return NextResponse.json({ error: 'Team creation did not persist. Please retry.' }, { status: 500 });
-        }
-      } else {
-        console.error('Subscribe API - owner insert error:', memberError);
-        await supabase.from('teams').delete().eq('id', teamId);
-        return NextResponse.json({ error: memberError.message || 'Failed to add owner to team' }, { status: 500 });
-      }
-    }
+    // NOTE: team owner membership is created by DB trigger (see migration 014)
 
     // Update user's team_id and set role to admin (team owners are admins)
     await supabase
