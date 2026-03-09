@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Admins can view any team. Teachers can view their team's spending.
-    // Students are restricted unless they are the team owner.
+    // Admins can view any team. Managers can view their team's spending.
+    // Employees are restricted unless they are the team owner.
     if (currentUser.role !== 'admin') {
       const { data: teamMember } = await supabase
         .from('team_members')
@@ -46,9 +46,9 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Only team members can view spending breakdown' }, { status: 403 });
       }
 
-      const canView = currentUser.role === 'teacher' || teamMember.role === 'owner';
+      const canView = currentUser.role === 'manager' || teamMember.role === 'owner';
       if (!canView) {
-        return NextResponse.json({ error: 'Only teachers or admins can view spending breakdown' }, { status: 403 });
+        return NextResponse.json({ error: 'Only managers or admins can view spending breakdown' }, { status: 403 });
       }
     }
 

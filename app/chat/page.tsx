@@ -8,6 +8,8 @@ import { Send, Bot, User, Sparkles, Bookmark, Star, Settings as SettingsIcon, Wa
 import Sidebar from '@/components/Sidebar';
 import ChatHistory from '@/components/ChatHistory';
 import Loading from '@/components/Loading';
+import Aurora from '@/components/effects/Aurora';
+import { useTheme } from '@/components/ThemeProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Helper function to render formatted message content
@@ -72,6 +74,8 @@ function renderMessageContent(content: string): React.ReactElement {
 
 export default function ChatPage() {
   const { user } = useUser();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const [models, setModels] = useState<LLMModel[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('');
   const [messages, setMessages] = useState<Array<{ 
@@ -470,20 +474,40 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen flex overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950/60 to-black text-white">
+    <div
+      className={`chat-page min-h-screen flex overflow-hidden ${
+        isLight
+          ? 'bg-gradient-to-br from-slate-50 via-emerald-50/60 to-cyan-50 text-slate-900'
+          : 'bg-gradient-to-br from-slate-950 via-emerald-950/60 to-black text-white'
+      }`}
+    >
       <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 ml-64 flex flex-col relative overflow-x-hidden">
         {/* Ambient Background */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-50"></div>
-        <div className="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 w-[30rem] h-[30rem] rounded-full bg-teal-400/10 blur-3xl" />
+        <div className={`absolute inset-0 bg-grid-pattern ${isLight ? 'opacity-35' : 'opacity-50'}`} />
+        <div className={`pointer-events-none absolute inset-0 ${isLight ? 'opacity-55' : 'opacity-45'}`}>
+          <Aurora
+            colorStops={isLight ? ['#84cc16', '#14b8a6', '#3b82f6'] : ['#22c55e', '#14b8a6', '#6366f1']}
+            speed={0.55}
+            blend={0.4}
+            className="h-full w-full"
+          />
+        </div>
+        <div className={`absolute -top-32 -left-24 w-96 h-96 rounded-full blur-3xl ${isLight ? 'bg-emerald-500/20' : 'bg-emerald-500/10'}`} />
+        <div className={`absolute -bottom-24 -right-24 w-[30rem] h-[30rem] rounded-full blur-3xl ${isLight ? 'bg-cyan-400/20' : 'bg-teal-400/10'}`} />
 
         {/* Top Bar - Modern welcome and model selection */}
         <div className="relative z-10 px-6 pt-8">
           <div className="max-w-6xl mx-auto">
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_20px_120px_-50px_rgba(16,185,129,0.45)]">
+            <div
+              className={`relative overflow-hidden rounded-3xl backdrop-blur-xl ${
+                isLight
+                  ? 'border border-slate-900/10 bg-white/75 shadow-[0_20px_100px_-60px_rgba(15,23,42,0.25)]'
+                  : 'border border-white/10 bg-black/40 shadow-[0_20px_120px_-50px_rgba(16,185,129,0.45)]'
+              }`}
+            >
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/15 via-cyan-500/10 to-purple-700/20" />
             <div
               className="absolute inset-0 opacity-40"
@@ -497,32 +521,34 @@ export default function ChatPage() {
             <div className="relative px-6 sm:px-8 py-8 space-y-6">
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="space-y-3">
-                  <p className="text-xs uppercase tracking-[0.24em] text-emerald-200/70 flex items-center gap-2">
+                  <p className={`text-xs uppercase tracking-[0.24em] flex items-center gap-2 ${isLight ? 'text-emerald-700/80' : 'text-emerald-200/70'}`}>
                     <Sparkles className="w-4 h-4" />
                     Nexus Chat
                   </p>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <h2 className="text-3xl font-semibold text-white">Welcome back, {displayName}</h2>
+                    <h2 className={`text-3xl font-semibold ${isLight ? 'text-slate-900' : 'text-white'}`}>Welcome back, {displayName}</h2>
                     <motion.span
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ type: 'spring', stiffness: 140, damping: 16 }}
-                      className="px-3 py-1.5 rounded-full text-xs bg-white/10 border border-white/15 text-white/80 backdrop-blur"
+                      className={`px-3 py-1.5 rounded-full text-xs backdrop-blur ${
+                        isLight ? 'bg-slate-900/5 border border-slate-900/15 text-slate-700' : 'bg-white/10 border border-white/15 text-white/80'
+                      }`}
                     >
                       Sleek workspace ready
                     </motion.span>
                   </div>
-                  <p className="text-gray-300 max-w-3xl">
+                  <p className={`max-w-3xl ${isLight ? 'text-slate-700' : 'text-gray-300'}`}>
                     Craft conversations with a refined interface inspired by your profile space. Effortlessly switch models,
                     compare ideas, and keep your creative flow uninterrupted.
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/70">Conversational OS</span>
-                    <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-xs text-emerald-100 flex items-center gap-1">
+                    <span className={`px-3 py-1 rounded-full border text-xs ${isLight ? 'bg-white/75 border-slate-900/10 text-slate-700' : 'bg-white/5 border-white/10 text-white/70'}`}>Conversational OS</span>
+                    <span className={`px-3 py-1 rounded-full border text-xs flex items-center gap-1 ${isLight ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-700' : 'bg-emerald-500/10 border-emerald-400/30 text-emerald-100'}`}>
                       <Globe className="w-3 h-3" /> Live playground
                     </span>
-                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/70 flex items-center gap-1">
-                      <Star className="w-3 h-3 text-amber-300" /> Intuitive journey
+                    <span className={`px-3 py-1 rounded-full border text-xs flex items-center gap-1 ${isLight ? 'bg-white/75 border-slate-900/10 text-slate-700' : 'bg-white/5 border-white/10 text-white/70'}`}>
+                      <Star className={`w-3 h-3 ${isLight ? 'text-amber-500' : 'text-amber-300'}`} /> Intuitive journey
                     </span>
                   </div>
                 </div>
@@ -533,19 +559,25 @@ export default function ChatPage() {
                   className="relative"
                 >
                   <div className="absolute inset-0 blur-xl bg-gradient-to-br from-emerald-400/40 via-cyan-500/30 to-violet-500/30" />
-                  <div className="relative h-16 w-16 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                  <div
+                    className={`relative h-16 w-16 rounded-2xl backdrop-blur-xl overflow-hidden flex items-center justify-center shadow-lg ${
+                      isLight
+                        ? 'border border-slate-900/10 bg-white/70 text-slate-900 shadow-emerald-500/10'
+                        : 'border border-white/10 bg-white/5 text-white shadow-emerald-500/30'
+                    }`}
+                  >
                     <Wand2 className="w-7 h-7" />
                   </div>
                 </motion.div>
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/70 backdrop-blur">
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs backdrop-blur ${isLight ? 'bg-white/75 border-slate-900/10 text-slate-700' : 'bg-white/5 border-white/10 text-white/70'}`}>
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   <span>Live workspace</span>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/70 backdrop-blur">
-                  <Globe className="w-4 h-4 text-emerald-200" />
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs backdrop-blur ${isLight ? 'bg-white/75 border-slate-900/10 text-slate-700' : 'bg-white/5 border-white/10 text-white/70'}`}>
+                  <Globe className={`w-4 h-4 ${isLight ? 'text-emerald-600' : 'text-emerald-200'}`} />
                   <span>
                     {selectedModel && !multiModelMode
                       ? `Primary model: ${models.find((m) => m.id === selectedModel)?.display_name || 'Model selected'}`
@@ -556,7 +588,7 @@ export default function ChatPage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
+              <div className={`rounded-2xl border backdrop-blur-sm p-4 ${isLight ? 'border-slate-900/10 bg-white/75' : 'border-white/10 bg-white/5'}`}>
                 {multiModelMode ? (
                   <div className="flex items-center gap-3 overflow-x-auto">
                     <div className="flex items-center gap-3 min-w-max">
@@ -1198,7 +1230,7 @@ export default function ChatPage() {
         )}
 
         {/* Chat Input Area */}
-        <div className="relative z-10 px-6 py-6 bg-[#0f0f0f] border-t border-gray-800">
+        <div className={`relative z-10 px-6 py-6 border-t ${isLight ? 'bg-white/75 border-slate-900/10' : 'bg-[#0f0f0f] border-gray-800'}`}>
           <div className="max-w-5xl mx-auto w-full">
           {/* Action Buttons Above Input */}
           <div className="flex justify-center gap-3 mb-4">
@@ -1206,7 +1238,11 @@ export default function ChatPage() {
               onClick={startNewChat}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-5 py-2.5 border rounded-full text-sm transition-all duration-300 flex items-center gap-2 glass-card border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10 hover:border-emerald-400/50 hover:text-emerald-200"
+              className={`px-5 py-2.5 border rounded-full text-sm transition-all duration-300 flex items-center gap-2 glass-card ${
+                isLight
+                  ? 'border-emerald-500/30 text-emerald-700 hover:bg-emerald-500/10 hover:border-emerald-500/40'
+                  : 'border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10 hover:border-emerald-400/50 hover:text-emerald-200'
+              }`}
             >
               <Plus className="w-4 h-4" />
               <span className="font-medium">New Chat</span>
@@ -1227,8 +1263,12 @@ export default function ChatPage() {
               whileTap={{ scale: 0.95 }}
               className={`px-5 py-2.5 border rounded-full text-sm transition-all duration-300 flex items-center gap-2 relative overflow-hidden ${
                 multiModelMode
-                  ? 'bg-white/10 border-white/20 text-white/90 shadow-sm backdrop-blur-sm'
-                  : 'glass-card border-white/8 text-white/60 hover:bg-white/5 hover:border-white/12 hover:text-white/80'
+                  ? isLight
+                    ? 'bg-slate-900/8 border-slate-900/15 text-slate-800 shadow-sm backdrop-blur-sm'
+                    : 'bg-white/10 border-white/20 text-white/90 shadow-sm backdrop-blur-sm'
+                  : isLight
+                    ? 'glass-card border-slate-900/10 text-slate-600 hover:bg-slate-900/5 hover:border-slate-900/15 hover:text-slate-800'
+                    : 'glass-card border-white/8 text-white/60 hover:bg-white/5 hover:border-white/12 hover:text-white/80'
               }`}
             >
               {multiModelMode && (
@@ -1249,7 +1289,7 @@ export default function ChatPage() {
                   <motion.span
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="text-white/70"
+                    className={isLight ? 'text-slate-600' : 'text-white/70'}
                   >
                     (Active)
                   </motion.span>
@@ -1266,8 +1306,12 @@ export default function ChatPage() {
               whileTap={{ scale: 0.95 }}
               className={`px-5 py-2.5 border rounded-full text-sm transition-all duration-300 flex items-center gap-2 relative overflow-hidden ${
                 useRAG
-                  ? 'bg-white/10 border-white/20 text-white/90 shadow-sm backdrop-blur-sm'
-                  : 'glass-card border-white/8 text-white/60 hover:bg-white/5 hover:border-white/12 hover:text-white/80'
+                  ? isLight
+                    ? 'bg-slate-900/8 border-slate-900/15 text-slate-800 shadow-sm backdrop-blur-sm'
+                    : 'bg-white/10 border-white/20 text-white/90 shadow-sm backdrop-blur-sm'
+                  : isLight
+                    ? 'glass-card border-slate-900/10 text-slate-600 hover:bg-slate-900/5 hover:border-slate-900/15 hover:text-slate-800'
+                    : 'glass-card border-white/8 text-white/60 hover:bg-white/5 hover:border-white/12 hover:text-white/80'
               }`}
             >
               {useRAG && (
@@ -1288,7 +1332,7 @@ export default function ChatPage() {
                   <motion.span
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="text-white/70"
+                    className={isLight ? 'text-slate-600' : 'text-white/70'}
                   >
                     (Active)
                   </motion.span>
@@ -1303,14 +1347,18 @@ export default function ChatPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="relative glass-card border border-white/8 rounded-2xl px-4 py-4 flex items-end gap-3 focus-within:border-white/15 focus-within:shadow-md focus-within:shadow-white/5 transition-all duration-300"
+              className={`relative glass-card border rounded-2xl px-4 py-4 flex items-end gap-3 transition-all duration-300 ${
+                isLight
+                  ? 'border-slate-900/10 focus-within:border-slate-900/20 focus-within:shadow-md focus-within:shadow-slate-900/10'
+                  : 'border-white/8 focus-within:border-white/15 focus-within:shadow-md focus-within:shadow-white/5'
+              }`}
             >
               <motion.button 
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
-                className="p-2 hover:bg-white/5 rounded-lg transition-colors duration-300"
+                className={`p-2 rounded-lg transition-colors duration-300 ${isLight ? 'hover:bg-slate-900/5' : 'hover:bg-white/5'}`}
               >
-                <Plus className="w-5 h-5 text-white/50 hover:text-white/80" />
+                <Plus className={`w-5 h-5 ${isLight ? 'text-slate-500 hover:text-slate-700' : 'text-white/50 hover:text-white/80'}`} />
               </motion.button>
               <textarea
                 ref={inputRef}
@@ -1318,7 +1366,9 @@ export default function ChatPage() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder={imageMode ? "Describe the image you want to generate..." : useRAG ? "Ask a question with document context..." : "Ask me anything..."}
-                className="flex-1 bg-transparent text-white/90 placeholder-white/40 resize-none outline-none text-sm"
+                className={`flex-1 bg-transparent resize-none outline-none text-sm ${
+                  isLight ? 'text-slate-900 placeholder-slate-500' : 'text-white/90 placeholder-white/40'
+                }`}
                 rows={1}
                 disabled={loading || (!multiModelMode && !imageMode && !selectedModel)}
                 style={{ minHeight: '24px', maxHeight: '120px' }}
@@ -1327,23 +1377,27 @@ export default function ChatPage() {
                 <motion.button 
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="p-2 hover:bg-white/5 rounded-lg transition-colors duration-300"
+                  className={`p-2 rounded-lg transition-colors duration-300 ${isLight ? 'hover:bg-slate-900/5' : 'hover:bg-white/5'}`}
                 >
-                  <Mic className="w-5 h-5 text-white/50 hover:text-white/80" />
+                  <Mic className={`w-5 h-5 ${isLight ? 'text-slate-500 hover:text-slate-700' : 'text-white/50 hover:text-white/80'}`} />
                 </motion.button>
                 <motion.button 
                   whileHover={{ scale: 1.1, rotate: 15 }}
                   whileTap={{ scale: 0.9 }}
-                  className="p-2 hover:bg-white/5 rounded-lg transition-colors duration-300"
+                  className={`p-2 rounded-lg transition-colors duration-300 ${isLight ? 'hover:bg-slate-900/5' : 'hover:bg-white/5'}`}
                 >
-                  <Wand2 className="w-5 h-5 text-white/50 hover:text-white/80" />
+                  <Wand2 className={`w-5 h-5 ${isLight ? 'text-slate-500 hover:text-slate-700' : 'text-white/50 hover:text-white/80'}`} />
                 </motion.button>
                 <motion.button
                   onClick={sendMessage}
                   disabled={loading || (!multiModelMode && !imageMode && !selectedModel) || !input.trim()}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-2.5 bg-gradient-to-r from-white/15 to-white/10 text-white rounded-lg hover:from-white/20 hover:to-white/15 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-sm shadow-white/5 disabled:shadow-none border border-white/10 hover:border-white/15 backdrop-blur-sm"
+                  className={`p-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 border backdrop-blur-sm ${
+                    isLight
+                      ? 'bg-gradient-to-r from-slate-900/10 to-slate-900/5 text-slate-900 hover:from-slate-900/15 hover:to-slate-900/10 shadow-sm shadow-slate-900/10 disabled:shadow-none border-slate-900/15 hover:border-slate-900/25'
+                      : 'bg-gradient-to-r from-white/15 to-white/10 text-white hover:from-white/20 hover:to-white/15 shadow-sm shadow-white/5 disabled:shadow-none border-white/10 hover:border-white/15'
+                  }`}
                 >
                   <motion.div
                     animate={{ rotate: loading ? 360 : 0 }}

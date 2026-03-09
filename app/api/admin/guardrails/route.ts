@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
           auth0_id: session.user.sub,
           email: session.user.email || '',
           name: session.user.name || null,
-          role: (count || 0) === 0 ? 'admin' : 'student',
+          role: (count || 0) === 0 ? 'admin' : 'employee',
         })
         .select('id, role, team_id')
         .single();
@@ -120,7 +120,7 @@ export async function PUT(request: NextRequest) {
           auth0_id: session.user.sub,
           email: session.user.email || '',
           name: session.user.name || null,
-          role: (count || 0) === 0 ? 'admin' : 'student',
+          role: (count || 0) === 0 ? 'admin' : 'employee',
         })
         .select('id, role, team_id')
         .single();

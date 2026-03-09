@@ -42,12 +42,12 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (!teamMember || (teamMember.role !== 'owner' && teamMember.role !== 'admin')) {
-      return NextResponse.json({ error: 'Only classroom owners or admins can view invitations' }, { status: 403 });
+      return NextResponse.json({ error: 'Only team owners or admins can view invitations' }, { status: 403 });
     }
 
     // Get all invitations (include token for copying links)
     const { data: invitations, error } = await supabase
-      .from('classroom_invitations')
+      .from('business_invitations')
       .select(`
         id,
         email,
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         expires_at,
         created_at,
         token,
-        invited_by:users!classroom_invitations_invited_by_fkey (
+        invited_by:users!business_invitations_invited_by_fkey (
           name,
           email
         )

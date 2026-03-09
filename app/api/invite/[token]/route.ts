@@ -19,7 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
 
     // Get invitation
     const { data: invitation, error: inviteError } = await supabase
-      .from('classroom_invitations')
+      .from('business_invitations')
       .select(`
         id,
         email,
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
     if (new Date(invitation.expires_at) < new Date()) {
       // Update status to expired
       await supabase
-        .from('classroom_invitations')
+        .from('business_invitations')
         .update({ status: 'expired' })
         .eq('id', invitation.id);
 
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
 
     // Get invitation
     const { data: invitation, error: inviteError } = await supabase
-      .from('classroom_invitations')
+      .from('business_invitations')
       .select('*')
       .eq('token', token)
       .single();
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
             auth0_id: session.user.sub,
             email: session.user.email || '',
             name: session.user.name || null,
-            role: invitation.role || 'student', // Default role from invite
+            role: invitation.role || 'employee', // Default role from invite
           })
           .select('id, email, team_id, role')
           .single();
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
     // Check if already expired
     if (new Date(invitation.expires_at) < new Date()) {
       await supabase
-        .from('classroom_invitations')
+        .from('business_invitations')
         .update({ status: 'expired' })
         .eq('id', invitation.id);
       return NextResponse.json({ error: 'Invitation has expired' }, { status: 400 });
@@ -184,7 +184,7 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
       if (memberError.code === '23505') {
         // Update invitation status
         await supabase
-          .from('classroom_invitations')
+          .from('business_invitations')
           .update({ status: 'accepted', accepted_at: new Date().toISOString() })
           .eq('id', invitation.id);
 
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest, { params }: { params: { token: 
 
     // Update invitation status
     await supabase
-      .from('classroom_invitations')
+      .from('business_invitations')
       .update({ status: 'accepted', accepted_at: new Date().toISOString() })
       .eq('id', invitation.id);
 

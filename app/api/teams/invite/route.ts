@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { email, role = 'student', teamId } = body;
+    const { email, role = 'employee', teamId } = body;
 
     if (!email || !teamId) {
       return NextResponse.json({ error: 'Email and teamId are required' }, { status: 400 });
@@ -42,10 +42,10 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!teamMember || (teamMember.role !== 'owner' && teamMember.role !== 'admin')) {
-      return NextResponse.json({ error: 'Only classroom owners or admins can invite members' }, { status: 403 });
+      return NextResponse.json({ error: 'Only team owners or admins can invite members' }, { status: 403 });
     }
 
-    const allowedRoles = new Set(['teacher', 'student', 'guardian']);
+    const allowedRoles = new Set(['manager', 'employee', 'contractor']);
     if (!allowedRoles.has(role)) {
       return NextResponse.json({ error: 'Invalid invitation role' }, { status: 400 });
     }
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     // Create invitation
     const { data: invitation, error: inviteError } = await supabase
-      .from('classroom_invitations')
+      .from('business_invitations')
       .insert({
         team_id: teamId,
         email,

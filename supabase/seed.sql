@@ -14,15 +14,15 @@ ON CONFLICT (provider, model_name) DO NOTHING;
 -- Seed Model Permissions
 -- All roles can use all models
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'student', true FROM llm_models
+SELECT id, 'employee', true FROM llm_models
 ON CONFLICT (model_id, role) DO NOTHING;
 
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'teacher', true FROM llm_models
+SELECT id, 'manager', true FROM llm_models
 ON CONFLICT (model_id, role) DO NOTHING;
 
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'guardian', true FROM llm_models
+SELECT id, 'contractor', true FROM llm_models
 ON CONFLICT (model_id, role) DO NOTHING;
 
 INSERT INTO model_permissions (model_id, role, can_use)

@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
           auth0_id: session.user.sub,
           email: session.user.email || '',
           name: session.user.name || null,
-          role: 'student',
+          role: 'employee',
         })
         .select('id, role, team_id')
         .single();

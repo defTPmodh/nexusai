@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import Particles from '@/components/Particles';
+import ThemeProvider from '@/components/ThemeProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={inter.className}>
-        <Particles />
-        <div className="relative z-10">
-          <UserProvider>{children}</UserProvider>
-        </div>
+        <ThemeProvider>
+          <Particles />
+          <div className="relative z-10">
+            <UserProvider>{children}</UserProvider>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

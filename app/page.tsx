@@ -18,6 +18,9 @@ import {
 } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import Loading from '@/components/Loading';
+import ThemeToggle from '@/components/ThemeToggle';
+import Aurora from '@/components/effects/Aurora';
+import FluidGlassBadge from '@/components/effects/FluidGlassBadge';
 import { motion } from 'framer-motion';
 
 const fadeInUp = {
@@ -33,230 +36,165 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0b0b12] via-[#0e0e16] to-[#0b0b12] relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(139,92,246,0.12),transparent_35%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(6,182,212,0.1),transparent_30%)]" />
-        <Loading size="lg" text="Loading your classroom..." />
+        <Loading size="lg" text="Loading your workspace..." />
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#07070f] via-[#0b0b16] to-[#04040b] text-white">
-        <div className="absolute inset-0 opacity-70" aria-hidden>
-          <div className="absolute -left-32 top-10 h-96 w-96 bg-purple-600/15 blur-[160px]" />
-          <div className="absolute right-10 top-0 h-96 w-96 bg-cyan-400/15 blur-[160px]" />
-          <div className="absolute left-1/2 bottom-0 h-[520px] w-[520px] -translate-x-1/2 bg-indigo-500/10 blur-[200px]" />
+      <div className="relative min-h-screen overflow-hidden bg-[#f5f5f7] text-[#1d1d1f]">
+        <div className="pointer-events-none absolute inset-0 opacity-90">
+          <Aurora
+            colorStops={['#5227FF', '#7cff67', '#3b82f6']}
+            speed={0.8}
+            blend={0.45}
+            className="h-full w-full"
+          />
         </div>
-
-        <div className="relative z-10 px-6 pt-14 pb-16 lg:px-12">
-          <div className="max-w-6xl mx-auto flex flex-col gap-12">
-            <header className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-10 items-center">
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={fadeInUp}
-                transition={{ duration: 0.5 }}
-                className="space-y-6"
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-6 lg:px-10">
+          <motion.nav
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-14 flex items-center justify-between rounded-full border border-black/10 bg-white/80 px-5 py-3 backdrop-blur-xl"
+          >
+            <FluidGlassBadge className="text-sm font-semibold tracking-tight">
+              <span className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                <span>Nexus AI</span>
+              </span>
+            </FluidGlassBadge>
+            <div className="hidden items-center gap-8 text-sm text-black/70 md:flex">
+              <Link href="/pricing" className="transition hover:text-black">Pricing</Link>
+              <a href="#features" className="transition hover:text-black">Features</a>
+            </div>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <a
+                href="/api/auth/login"
+                className="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-black/85"
               >
-                <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 shadow-[0_10px_60px_-30px_rgba(124,58,237,0.9)]">
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                  <p className="text-sm text-purple-100/80">Nexus AI for Schools - Student-ready AI classroom</p>
-                </div>
+                Sign In
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+          </motion.nav>
 
-                <div className="space-y-4">
-                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-                    The Education AI Workspace Built for Students and Schools.
-                  </h1>
-                  <p className="text-lg text-purple-100/70 max-w-3xl">
-                    Nexus AI helps teachers and students collaborate with safe, fast AI with classroom-ready guardrails, auditability, and simple deployment for schools.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-4">
-                  <a
-                    href="/api/auth/login"
-                    className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 px-6 py-3 text-sm font-semibold shadow-lg shadow-purple-500/30 transition hover:shadow-purple-400/40"
-                  >
-                    Launch the classroom
-                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                  </a>
-                  <Link
-                    href="/pricing"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm text-purple-100/80 transition hover:border-purple-400/40"
-                  >
-                    See the school demo
-                  </Link>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {[
-                    {
-                      label: 'Lesson-ready AI',
-                      detail: 'Student-safe responses tuned for classrooms.',
-                      icon: Route,
-                    },
-                    {
-                      label: 'School Compliance & Safety',
-                      detail: 'PII guardrails, audit trails, and safe prompts.',
-                      icon: ShieldCheck,
-                    },
-                    {
-                      label: 'Teacher Insights',
-                      detail: 'Track usage and engagement in real time.',
-                      icon: Activity,
-                    },
-                  ].map((item) => (
-                    <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-purple-500/10 backdrop-blur">
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
-                        <item.icon className="w-5 h-5" />
-                      </div>
-                      <p className="text-sm font-semibold">{item.label}</p>
-                      <p className="text-xs text-purple-100/70">{item.detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
+          <main className="space-y-24 pb-14">
+            <section className="text-center">
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="relative"
+                transition={{ duration: 0.5 }}
+                className="mb-4 text-sm font-medium text-black/55"
               >
-                <div className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-purple-500/25 via-indigo-500/15 to-cyan-400/20 blur-3xl" aria-hidden />
-                <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-2xl">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(139,92,246,0.25),transparent_35%),radial-gradient(circle_at_70%_0%,rgba(6,182,212,0.22),transparent_30%)]" aria-hidden />
-                  <div className="relative z-10 space-y-5">
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <p className="text-xs uppercase tracking-wide text-purple-100/60">Live classroom</p>
-                        <p className="text-xl font-semibold">Live Classroom Pulse</p>
-                      </div>
-                      <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-purple-500/60 to-cyan-400/60 flex items-center justify-center">
-                        <Wand2 className="w-5 h-5" />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3 text-left">
-                      {[
-                        { label: 'Latency', value: '82ms', accent: 'from-emerald-400/70 to-cyan-400/60' },
-                        { label: 'Uptime', value: '99.99%', accent: 'from-purple-400/70 to-indigo-400/60' },
-                        { label: 'Requests', value: '2.3M', accent: 'from-amber-300/70 to-orange-400/60' },
-                      ].map((metric) => (
-                        <div key={metric.label} className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-inner shadow-purple-500/10">
-                          <div className={`mb-3 h-10 w-10 rounded-xl bg-gradient-to-br ${metric.accent}`} />
-                          <p className="text-xs text-purple-100/60">{metric.label}</p>
-                          <p className="text-xl font-semibold">{metric.value}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      {[
-                        { title: 'Safe model selection', copy: 'Reliable responses across subjects.', icon: Route },
-                        { title: 'Classroom transparency', copy: 'Clear audit trails and usage signals.', icon: ShieldCheck },
-                      ].map((item) => (
-                        <div key={item.title} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400/30 to-purple-500/40">
-                            <item.icon className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <p className="text-sm text-purple-100/70">{item.title}</p>
-                            <p className="text-sm font-semibold leading-snug">{item.copy}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                Built for modern business teams
+              </motion.p>
+              <motion.h1
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.05 }}
+                className="mx-auto max-w-5xl text-4xl font-semibold tracking-tight sm:text-6xl lg:text-7xl"
+              >
+                Focused AI workspace.
+                <br />
+                Designed to feel effortless.
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.12 }}
+                className="mx-auto mt-6 max-w-2xl text-base text-black/65 sm:text-lg"
+              >
+                Nexus AI gives your team one calm place for chat, documents, and governance with clean controls and real-time visibility.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.18 }}
+                className="mt-8 flex flex-wrap items-center justify-center gap-3"
+              >
+                <a href="/api/auth/login" className="rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-black/85">
+                  Open Workspace
+                </a>
+                <Link href="/pricing" className="rounded-full border border-black/15 bg-white px-6 py-3 text-sm font-medium text-black transition hover:bg-black/[0.03]">
+                  View Plans
+                </Link>
               </motion.div>
-            </header>
-
-            <section className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-8">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-indigo-500/30 flex items-center justify-center">
-                    <Grid className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-purple-100/70">Student success suite</p>
-                    <p className="text-xl font-semibold">Purpose-built building blocks for learning.</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {[{ title: 'Classroom-ready', desc: 'Fast setup for teachers with guided onboarding and invites.', icon: Rocket }, { title: 'Trust by default', desc: 'Student-safe guardrails, PII protection, and audit logs.', icon: Shield }, { title: 'Learning insights', desc: 'Live usage signals to guide lessons and support.', icon: Zap }].map((card) => (
-                    <div key={card.title} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg transition hover:-translate-y-1 hover:border-purple-400/40">
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-purple-500/5 opacity-0 transition group-hover:opacity-100" />
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/25 to-cyan-400/25">
-                        <card.icon className="w-5 h-5" />
-                      </div>
-                      <h3 className="text-lg font-semibold">{card.title}</h3>
-                      <p className="text-sm text-purple-100/70 leading-relaxed">{card.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="rounded-[26px] border border-white/10 bg-gradient-to-br from-white/5 via-purple-500/5 to-cyan-500/5 p-6 shadow-2xl">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-purple-100/70">Classroom board</p>
-                    <p className="text-2xl font-semibold">Instant clarity for teachers</p>
-                  </div>
-                  <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs">Live</span>
-                </div>
-                <div className="mt-6 grid grid-cols-2 gap-4">
-                  {[{ label: 'Active seats', value: '128', tone: 'from-emerald-400/60 to-cyan-400/60' }, { label: 'Models blended', value: '9', tone: 'from-purple-400/60 to-indigo-400/60' }, { label: 'Avg. latency', value: '82ms', tone: 'from-amber-300/70 to-orange-400/60' }, { label: 'Trust score', value: '99.5%', tone: 'from-emerald-400/60 to-lime-400/60' }].map((stat) => (
-                    <div key={stat.label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <div className={`mb-3 h-12 w-12 rounded-2xl bg-gradient-to-br ${stat.tone}`} />
-                      <p className="text-xs text-purple-100/60">{stat.label}</p>
-                      <p className="text-xl font-semibold">{stat.value}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </section>
-            <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-purple-100/60">
-              <div className="flex flex-wrap items-center gap-2">
-                <span>© {new Date().getFullYear()} Nexus AI. All rights reserved.</span>
-                <div className="flex items-center gap-2 text-[11px] text-purple-100/70">
-                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1">
-                    <svg
-                      aria-hidden
-                      viewBox="0 0 256 256"
-                      className="h-3.5 w-3.5"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle cx="128" cy="128" r="24" fill="#61DAFB" />
-                      <ellipse cx="128" cy="128" rx="80" ry="32" stroke="#61DAFB" strokeWidth="12" />
-                      <ellipse cx="128" cy="128" rx="32" ry="80" stroke="#61DAFB" strokeWidth="12" transform="rotate(60 128 128)" />
-                      <ellipse cx="128" cy="128" rx="32" ry="80" stroke="#61DAFB" strokeWidth="12" transform="rotate(120 128 128)" />
-                    </svg>
-                    Built with React
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1">
-                    <svg aria-hidden viewBox="0 0 256 256" className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M128 32L16 224h224L128 32Z" fill="currentColor" />
-                    </svg>
-                    Deployed on Vercel
-                  </span>
+
+            <motion.section
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7 }}
+              className="relative overflow-hidden rounded-[36px] border border-black/10 bg-gradient-to-b from-white to-[#ececf0] p-5 shadow-[0_30px_90px_-50px_rgba(0,0,0,0.45)] sm:p-10"
+            >
+              <div className="absolute -left-16 top-0 h-56 w-56 rounded-full bg-[#c8d9ff]/55 blur-3xl" aria-hidden />
+              <div className="absolute -right-10 bottom-0 h-56 w-56 rounded-full bg-[#ffd8be]/55 blur-3xl" aria-hidden />
+              <div className="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+                <div className="rounded-3xl border border-black/10 bg-[#0f1115] p-6 text-white sm:p-8">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/60">Live Overview</p>
+                  <p className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">Everything your team needs, without the noise.</p>
+                  <div className="mt-7 grid grid-cols-3 gap-3">
+                    {[
+                      { label: 'Latency', value: '82ms' },
+                      { label: 'Uptime', value: '99.99%' },
+                      { label: 'Requests', value: '2.3M' },
+                    ].map((metric) => (
+                      <div key={metric.label} className="rounded-2xl border border-white/15 bg-white/5 p-3">
+                        <p className="text-[11px] text-white/60">{metric.label}</p>
+                        <p className="mt-1 text-xl font-semibold">{metric.value}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <span className="text-[10px] text-purple-100/50">Built and developed by Tanish Modh.</span>
+
+                <div id="features" className="space-y-3">
+                  {[
+                    { title: 'Secure by default', copy: 'PII guardrails, model permissions, and audit logs built in.', icon: ShieldCheck },
+                    { title: 'Fast team rollout', copy: 'Role-based invites for managers, employees, and contractors.', icon: Rocket },
+                    { title: 'Decision-ready insights', copy: 'Clear usage visibility across teams and plans.', icon: Activity },
+                  ].map((item, index) => (
+                    <motion.div
+                      key={item.title}
+                      initial={{ opacity: 0, x: 12 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, amount: 0.4 }}
+                      transition={{ duration: 0.45, delay: index * 0.08 }}
+                      className="rounded-2xl border border-black/10 bg-white/75 p-4 backdrop-blur"
+                    >
+                      <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-black text-white">
+                        <item.icon className="h-5 w-5" />
+                      </div>
+                      <p className="text-sm font-semibold">{item.title}</p>
+                      <p className="text-sm text-black/65">{item.copy}</p>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
+            </motion.section>
+
+            <motion.footer
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col items-center justify-between gap-4 border-t border-black/10 pt-8 text-xs text-black/50 sm:flex-row"
+            >
+              <span>© {new Date().getFullYear()} Nexus AI. All rights reserved.</span>
               <a
                 href="https://github.com/defTPmodh"
-                className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-purple-100/80 hover:border-purple-400/40 hover:text-purple-100 transition"
+                className="inline-flex items-center justify-center rounded-full border border-black/15 bg-white px-3 py-2 text-black/70 transition hover:text-black"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Visit defTPmodh on GitHub"
               >
-                <Github className="w-5 h-5" strokeWidth={1.75} />
+                <Github className="h-4 w-4" strokeWidth={1.8} />
               </a>
-            </footer>
-          </div>
+            </motion.footer>
+          </main>
         </div>
       </div>
     );
@@ -292,7 +230,7 @@ export default function Home() {
                         href="/admin/documents"
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-white/10 text-sm text-purple-100/80"
                       >
-                        Teacher console
+                        Admin console
                       </Link>
                     </div>
                   </div>
@@ -317,7 +255,7 @@ export default function Home() {
                   accent: 'from-cyan-400/30 to-purple-500/30',
                 },
                 {
-                  label: 'Classroom status',
+                  label: 'Team status',
                   href: '/admin/team',
                   icon: Shield,
                   accent: 'from-purple-400/30 to-indigo-400/30',
@@ -345,8 +283,8 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[{
-                title: 'Student chat',
-                desc: 'A focused chat space for homework, practice, and support.',
+                title: 'Team chat',
+                desc: 'A focused chat space for workflows, planning, and support.',
                 icon: MessageSquare,
                 href: '/chat',
               },
@@ -357,8 +295,8 @@ export default function Home() {
                 href: '/admin/documents',
               },
               {
-                title: 'Classroom invites',
-                desc: 'Invite teachers, students, and guardians with secure links.',
+                title: 'Team invites',
+                desc: 'Invite managers, employees, and contractors with secure links.',
                 icon: Rocket,
                 href: '/invite/sample',
               }].map((card) => (
@@ -387,3 +325,4 @@ export default function Home() {
     </div>
   );
 }
+

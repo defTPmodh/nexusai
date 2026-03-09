@@ -41,7 +41,7 @@ export default function TeamPage() {
   const [invitations, setInvitations] = useState<TeamInvitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<'teacher' | 'student' | 'guardian'>('student');
+  const [inviteRole, setInviteRole] = useState<'manager' | 'employee' | 'contractor'>('employee');
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
   const [inviting, setInviting] = useState(false);
   const [spending, setSpending] = useState<any[]>([]);
@@ -111,7 +111,7 @@ export default function TeamPage() {
   }, [team, members, user, fetchSpending]);
 
   const handleRemoveMember = async (memberId: string) => {
-    if (!confirm('Are you sure you want to remove this member from the classroom?')) return;
+    if (!confirm('Are you sure you want to remove this member from the team workspace?')) return;
     if (!team) return;
 
     try {
@@ -153,7 +153,7 @@ export default function TeamPage() {
 
   const handleCreateTeam = async () => {
     if (!teamName.trim()) {
-      alert('Please enter a classroom name');
+      alert('Please enter a team workspace name');
       return;
     }
 
@@ -171,25 +171,25 @@ export default function TeamPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert('Classroom created successfully! Redirecting...');
+        alert('Team workspace created successfully! Redirecting...');
         window.location.href = '/admin/team';
       } else {
         if (data.error?.includes('plan') || data.error?.includes('subscription')) {
           alert('Please purchase a premium plan first. Redirecting to pricing...');
           window.location.href = '/pricing';
         } else {
-          alert(`Failed to create classroom: ${data.error}`);
+          alert(`Failed to create team workspace: ${data.error}`);
         }
       }
     } catch (error: any) {
-      alert(`Failed to create classroom: ${error.message}`);
+      alert(`Failed to create team workspace: ${error.message}`);
     } finally {
       setCreatingTeam(false);
     }
   };
 
   const handleLeaveTeam = async () => {
-    if (!confirm('Are you sure you want to leave this classroom? You will lose access to all classroom features.')) return;
+    if (!confirm('Are you sure you want to leave this team workspace? You will lose access to all team workspace features.')) return;
     if (!team) return;
 
     try {
@@ -200,13 +200,13 @@ export default function TeamPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert('Successfully left the classroom. Redirecting...');
+        alert('Successfully left the team workspace. Redirecting...');
         window.location.href = '/';
       } else {
-        alert(`Failed to leave classroom: ${data.error}`);
+        alert(`Failed to leave team workspace: ${data.error}`);
       }
     } catch (error: any) {
-      alert(`Failed to leave classroom: ${error.message}`);
+      alert(`Failed to leave team workspace: ${error.message}`);
     }
   };
 
@@ -237,7 +237,7 @@ export default function TeamPage() {
         <div className="flex-1 ml-64 flex items-center justify-center relative">
           <div className="absolute inset-0 bg-grid-pattern opacity-30" />
           <div className="relative z-10">
-            <Loading size="lg" text="Loading your classroom space..." />
+            <Loading size="lg" text="Loading your team workspace..." />
           </div>
         </div>
       </div>
@@ -253,10 +253,10 @@ export default function TeamPage() {
           <div className={`relative z-10 w-full max-w-xl mx-auto text-center px-6 py-10 glass-card border border-purple-500/20 rounded-2xl shadow-2xl ${shimmer}`}>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-100 text-xs mb-3">
               <Crown className="w-4 h-4" />
-              Classroom Workspace
+              Team Workspace
             </div>
-            <h2 className="text-3xl font-semibold gradient-text mb-3">Create your first classroom</h2>
-            <p className="text-purple-200/70 mb-6">Set up a classroom space with invites, roles, and student-safe analytics in minutes.</p>
+            <h2 className="text-3xl font-semibold gradient-text mb-3">Create your first team workspace</h2>
+            <p className="text-purple-200/70 mb-6">Set up a team workspace with invites, roles, and enterprise-ready analytics in minutes.</p>
 
             {!showCreateModal ? (
               <div className="flex items-center justify-center gap-3">
@@ -266,7 +266,7 @@ export default function TeamPage() {
                   onClick={() => setShowCreateModal(true)}
                   className="px-6 py-3 bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500 text-white rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all glow-purple"
                 >
-                  Create classroom
+                  Create team workspace
                 </motion.button>
                 <Link
                   href="/pricing"
@@ -281,12 +281,12 @@ export default function TeamPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="glass-card border border-purple-500/25 rounded-xl p-6 mt-4 text-left"
               >
-                <h3 className="text-lg font-semibold text-white mb-4">Name your classroom</h3>
+                <h3 className="text-lg font-semibold text-white mb-4">Name your team workspace</h3>
                 <input
                   type="text"
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
-                  placeholder={`${user?.name || user?.email?.split('@')[0] || 'My'}'s Classroom`}
+                  placeholder={`${user?.name || user?.email?.split('@')[0] || 'My'}'s team workspace`}
                   className="w-full mb-4 glass-card border border-purple-500/30 rounded-lg px-4 py-3 text-white placeholder-purple-300/50 focus:outline-none focus:border-purple-400/50 focus:ring-2 focus:ring-purple-500/20"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !creatingTeam) {
@@ -328,7 +328,7 @@ export default function TeamPage() {
                     ) : (
                       <>
                         <Users className="w-4 h-4" />
-                        Launch classroom
+                        Launch team workspace
                       </>
                     )}
                   </motion.button>
@@ -363,7 +363,7 @@ export default function TeamPage() {
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-100 text-xs">
                     <Shield className="w-4 h-4" />
-                    Secure classroom
+                    Secure team workspace
                   </div>
                   <div className="flex items-center gap-3 flex-wrap">
                     <h1 className="text-3xl font-semibold gradient-text leading-tight">{team.name}</h1>
@@ -377,7 +377,7 @@ export default function TeamPage() {
                     )}
                   </div>
                   <p className="text-sm text-purple-200/80 max-w-2xl">
-                    Bring your classroom together with clear roles, guardian-safe invites, and transparent usage. Everything inherits the same UI so it feels cohesive with chat.
+                    Bring your team workspace together with clear roles, role-based invites, and transparent usage. Everything inherits the same UI so it feels cohesive with chat.
                   </p>
                   <div className="flex flex-wrap gap-3 pt-2">
                     {canManage && (
@@ -388,7 +388,7 @@ export default function TeamPage() {
                         className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500 text-white font-semibold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/35 transition glow-purple flex items-center gap-2"
                       >
                         <UserPlus className="w-4 h-4" />
-                        Invite classroom member
+                        Invite team member
                       </motion.button>
                     )}
                     {currentUserRole !== 'owner' && (
@@ -399,7 +399,7 @@ export default function TeamPage() {
                         className="px-4 py-2 rounded-lg border border-red-500/40 text-red-300 bg-red-500/10 hover:bg-red-500/15 transition flex items-center gap-2"
                       >
                         <LogOut className="w-4 h-4" />
-                        Leave classroom
+                        Leave team workspace
                       </motion.button>
                     )}
                     <Link
@@ -488,19 +488,19 @@ export default function TeamPage() {
                       type="email"
                       value={inviteEmail}
                       onChange={(e) => setInviteEmail(e.target.value)}
-                        placeholder="name@school.edu"
+                        placeholder="name@company.com"
                       className="flex-1 glass-card border border-purple-500/30 rounded-lg px-4 py-3 text-white placeholder-purple-300/50 focus:outline-none focus:border-purple-400/50 focus:ring-2 focus:ring-purple-500/20"
                       required
                     />
                     <div className="flex items-center gap-3 w-full md:w-auto">
                       <select
                         value={inviteRole}
-                        onChange={(e) => setInviteRole(e.target.value as 'teacher' | 'student' | 'guardian')}
+                        onChange={(e) => setInviteRole(e.target.value as 'manager' | 'employee' | 'contractor')}
                         className="glass-card border border-purple-500/30 rounded-lg px-3 py-3 text-white text-sm focus:outline-none focus:border-purple-400/50 focus:ring-2 focus:ring-purple-500/20 w-full md:w-32"
                       >
-                        <option value="teacher">Teacher</option>
-                        <option value="student">Student</option>
-                        <option value="guardian">Guardian</option>
+                        <option value="manager">Manager</option>
+                        <option value="employee">Employee</option>
+                        <option value="contractor">Contractor</option>
                       </select>
                       <motion.button
                         type="submit"
@@ -535,7 +535,7 @@ export default function TeamPage() {
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold flex items-center gap-2">
                     <Users className="w-5 h-5 text-purple-300" />
-                    Classroom Members
+                    Team Members
                   </h2>
                   <span className="px-3 py-1 rounded-full text-xs bg-purple-500/15 border border-purple-500/30 text-purple-100">
                     {members.length} active
@@ -593,7 +593,7 @@ export default function TeamPage() {
                             whileTap={{ scale: 0.94 }}
                             onClick={() => handleRemoveMember(member.id)}
                             className="p-2 rounded-lg border border-red-500/40 text-red-300 hover:bg-red-500/10 transition"
-                            title="Remove member from classroom"
+                            title="Remove member from team workspace"
                           >
                             <Trash2 className="w-4 h-4" />
                           </motion.button>
@@ -606,7 +606,7 @@ export default function TeamPage() {
                 {members.length === 0 && (
                   <div className="glass-card border border-purple-500/20 rounded-xl p-6 text-center text-purple-200/70">
                     <UserPlus className="w-10 h-10 text-purple-300/50 mx-auto mb-3" />
-                    Invite your first classroom member to get started.
+                    Invite your first team member to get started.
                   </div>
                 )}
               </div>
@@ -748,7 +748,7 @@ export default function TeamPage() {
                     <div className="glass-card border border-purple-500/20 rounded-xl p-6 text-center">
                       <TrendingUp className="w-10 h-10 text-purple-300/50 mx-auto mb-3" />
                       <p className="text-purple-200/70">No spending data available yet</p>
-                      <p className="text-xs text-purple-300/50 mt-1">Classroom members need to use chat to see spending</p>
+                      <p className="text-xs text-purple-300/50 mt-1">Team members need to use chat to see spending</p>
                     </div>
                   )}
                 </div>
@@ -758,7 +758,7 @@ export default function TeamPage() {
                     <Shield className="w-4 h-4" />
                     Owner actions
                   </div>
-                  <p className="text-purple-200/80 text-sm mb-4">Manage seats, update roles, and keep billing aligned without leaving the classroom.</p>
+                  <p className="text-purple-200/80 text-sm mb-4">Manage seats, update roles, and keep billing aligned without leaving the team workspace.</p>
                   <ul className="space-y-2 text-sm text-purple-200/80">
                     <li className="flex items-center gap-2"><ArrowUp className="w-4 h-4 text-purple-200" /> Elevate admins to manage invites</li>
                     <li className="flex items-center gap-2"><Users className="w-4 h-4 text-purple-200" /> Track member caps in real time</li>
@@ -773,3 +773,4 @@ export default function TeamPage() {
     </div>
   );
 }
+

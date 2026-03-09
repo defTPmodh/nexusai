@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const supabase = getSupabaseAdmin();
 
-    // Get user and check if admin or teacher (allow teachers to see analytics too)
+    // Get user and check if admin or manager (allow managers to see analytics too)
     const { data: user } = await supabase
       .from('users')
       .select('id, role, team_id')
@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Allow admin, teacher, or team owners only (not team admins)
-    const canViewAnalytics = user.role === 'admin' || user.role === 'teacher';
+    // Allow admin, manager, or team owners only (not team admins)
+    const canViewAnalytics = user.role === 'admin' || user.role === 'manager';
     
     if (!canViewAnalytics) {
       // Check if user is team owner (not admin)

@@ -41,7 +41,7 @@ DO UPDATE SET
 
 -- Step 3: Grant permissions for all roles
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'student', true FROM llm_models WHERE (provider, model_name) IN (
+SELECT id, 'employee', true FROM llm_models WHERE (provider, model_name) IN (
     ('openai', 'gpt-oss-20b:free'),
     ('minimax', 'minimax-m2:free'),
     ('amazon', 'nova-2-lite-v1:free'),
@@ -51,7 +51,7 @@ SELECT id, 'student', true FROM llm_models WHERE (provider, model_name) IN (
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'teacher', true FROM llm_models WHERE (provider, model_name) IN (
+SELECT id, 'manager', true FROM llm_models WHERE (provider, model_name) IN (
     ('openai', 'gpt-oss-20b:free'),
     ('minimax', 'minimax-m2:free'),
     ('amazon', 'nova-2-lite-v1:free'),
@@ -61,7 +61,7 @@ SELECT id, 'teacher', true FROM llm_models WHERE (provider, model_name) IN (
 ON CONFLICT (model_id, role) DO UPDATE SET can_use = true;
 
 INSERT INTO model_permissions (model_id, role, can_use)
-SELECT id, 'guardian', true FROM llm_models WHERE (provider, model_name) IN (
+SELECT id, 'contractor', true FROM llm_models WHERE (provider, model_name) IN (
     ('openai', 'gpt-oss-20b:free'),
     ('minimax', 'minimax-m2:free'),
     ('amazon', 'nova-2-lite-v1:free'),
